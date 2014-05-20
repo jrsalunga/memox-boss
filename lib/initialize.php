@@ -63,6 +63,8 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.customer.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.salesman.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apvhdr.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apvdtl.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.bank.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvchkdtl.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvhdr.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvdtl.php');

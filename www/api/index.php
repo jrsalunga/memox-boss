@@ -122,6 +122,9 @@ $app->get('/fbid/:table/:field/:fieldid', 'findAllByFieldId');
 
 $app->get('/cv-sched', 'getCVSched');
 $app->get('/report/cv', 'getReportCV');
+$app->get('/report/bank/total', 'getReportBankTotal');
+
+$app->get('/report/bank/status/:status', 'getReportBankByStatus');
 
 
 
@@ -287,6 +290,99 @@ function getReportCV(){
     //echo json_encode($bank);
 
 }
+
+
+
+function getReportBankTotal(){
+
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+
+    $range = new DateRange($r->get('fr'),$r->get('to'));
+
+    echo 'Days,Total';
+    echo PHP_EOL;
+
+    $begin = new DateTime($range->fr);
+    $end = new DateTime($range->to);
+    $end = $end->modify('+1 day'); 
+    
+    $interval = new DateInterval('P1D');
+    $daterange = new DatePeriod($begin, $interval ,$end);
+    
+    
+    foreach($daterange as $date){
+        $currdate = $date->format("Y-m-d");
+        echo $currdate.',';
+
+        //echo ','.rand(1,100);
+
+        $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+        $sql .= "WHERE checkdate = '".$currdate."' ";
+        //echo $sql. PHP_EOL;
+        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        $cvchkdtl = array_shift($cvchkdtl);
+        echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
+        //echo end($banks)==$bank ? '':',';
+
+        echo PHP_EOL;
+    }
+}
+
+
+
+
+function getReportBankByStatus($status){
+
+    if($status=='posted'){
+        $s = 1;
+    } else if($status=='unposted'){
+        $s = 0;
+    } else {
+
+    }
+
+
+
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+
+    $range = new DateRange($r->get('fr'),$r->get('to'));
+
+    echo 'Days,Total';
+    echo PHP_EOL;
+
+    $begin = new DateTime($range->fr);
+    $end = new DateTime($range->to);
+    $end = $end->modify('+1 day'); 
+    
+    $interval = new DateInterval('P1D');
+    $daterange = new DatePeriod($begin, $interval ,$end);
+    
+    
+    foreach($daterange as $date){
+        $currdate = $date->format("Y-m-d");
+        echo $currdate.',';
+
+        //echo ','.rand(1,100);
+
+        $sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
+        $sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
+        $sql .= "AND b.checkdate = '".$currdate."' ";
+        //echo $sql. PHP_EOL;
+        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        $cvchkdtl = array_shift($cvchkdtl);
+        echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
+        //echo end($banks)==$bank ? '':',';
+
+        echo PHP_EOL;
+    }
+
+
+
+
+}
+
 
 function getChildTable($child, $parent, $id){
 

@@ -1,6 +1,7 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
+$dr = new DateRange($_GET['fr'],$_GET['to']);
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -36,9 +37,9 @@ require_once('../../lib/initialize.php');
 <script src="../js/vendors/accounting.js"></script>
 <script src="../js/vendors/jquery.filedrop.js"></script>
 
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/data.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="../js/vendors/highcharts-4.0.1.min.js"></script>
+<script src="../js/vendors/highcharts.data.js"></script>
+<script src="../js/vendors/highcharts.exporting-4.0.1.js"></script>
 
 <script src="../js/common.js"></script>
 
@@ -47,13 +48,35 @@ require_once('../../lib/initialize.php');
 
 <script>
 
+function daterange(){
+
+  $( "#fr" ).datepicker({
+      defaultDate: "+1w",
+      dateFormat: 'yy-mm-dd',
+      changeMonth: true,
+      numberOfMonths: 2,
+      onClose: function( selectedDate ) {
+        $( "#to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#to" ).datepicker({
+      defaultDate: "+1w",
+      dateFormat: 'yy-mm-dd',
+      changeMonth: true,
+      numberOfMonths: 2,
+      onClose: function( selectedDate ) {
+        $( "#fr" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+}
 
 
 
 $(document).ready(function(e) {
 	
+	daterange();
 	
-	$.get('../api/report/cv?fr=<?=$_GET['fr']?>&to=<?=$_GET['to']?>', function (csv) {
+	$.get('../api/report/cv?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
 		//console.log(csv);
 		$('#graph').highcharts({
             data: {
@@ -250,14 +273,11 @@ $(document).ready(function(e) {
             <li>
 				<a href="apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
-            <li>
-				<a href="ap-project">Accounts Payable (Project)</a>
-			</li>
             <li class="active">
-            	<a href="cvhdr">Check</a>
+            	<a href="cvhdr">CV Schedule </a>
             <li>
             <li>
-            	<a href="cv-sched">CV Schedule</a>
+            	<a href="cv-sched">CV Schedule (Bank)</a>
             <li>
 		</ul>
     	</div>
@@ -265,7 +285,26 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedules</h1>
+                		<h1>Check Voucher Schedule</h1>
+                	</div>
+                </div>
+                <div class="row">
+                	<div class="col-md-12 datepick pull-right">
+                		<div>
+                        
+                        	<form role="form" class="form-inline pull-right">
+                           		<div class="form-group">
+                                	<label class="sr-only" for="exampleInputEmail2">Email address</label>
+                                    <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
+                                </div>	
+                               	<div class="form-group">
+                                    <label class="sr-only" for="exampleInputPassword2">Password</label>
+                                    <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
+                              	</div>
+              
+  								<button type="submit" class="btn btn-success">Go</button>
+                            </form>
+                        </div>
                 	</div>
                 </div>
                 <div class="row">

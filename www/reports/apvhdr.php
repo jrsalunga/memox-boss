@@ -127,19 +127,18 @@ $(document).ready(function(e) {
     <div class="stage">
 		<div class="col-sm-2 col-md-2 l-pane">
     	<ul class="nav nav-pills nav-stacked">
-			<li class="active">
-				<a href="apvhdr">Accounts Payable</a>
-			</li>
+            <li class="active">
+                <a href="apvhdr">Accounts Payable</a>
+            </li>
             <li>
 				<a href="apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
             <li>
-				<a href="ap-project">Accounts Payable (Project)</a>
-			</li>
-			<li>
-				<a href="cvhdr">Check</a>
-			<li>
-            
+            	<a href="cvhdr">CV Schedule </a>
+            <li>
+            <li>
+            	<a href="cv-sched">CV Schedule (Bank)</a>
+            <li>
 		</ul>
     	</div>
     	<div class="col-sm-10 col-md-10 r-pane pull-right">

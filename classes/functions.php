@@ -1,5 +1,90 @@
 <?php
 
+
+class DateRange {
+	
+	public $fr;
+	public $to;
+	
+	function __construct($fr=NULL, $to=NULL){
+		
+		
+		
+		if(is_null($fr) && !is_null($to)){
+			$this->to = date('Y-m-d', strtotime($to));
+			$this->fr = date('Y-m-01', strtotime($to));	
+		} else if (!is_null($fr) && is_null($to)){
+			$this->to = date('Y-m-t', strtotime($fr));
+			$this->fr = date('Y-m-d', strtotime($fr));
+		} else if(is_null($fr) && is_null($to)){
+			$this->get_current();
+		} else {
+			$this->to = date('Y-m-d', strtotime($to));
+			$this->fr = date('Y-m-d', strtotime($fr));
+		}
+		
+		setcookie("to", $this->to, time() + (86400 * 7)); // 86400 = 1 day
+		setcookie("fr", $this->fr, time() + (86400 * 7)); // 86400 = 1 day
+	}
+	
+	
+							
+							
+	function get_current(){
+		$query_date = 'now';
+		
+		if(!empty($_COOKIE['to'])){
+			$this->to = $_COOKIE['to'];
+		} else {
+			 // Last day of the month.
+       		$this->to = date('Y-m-t', strtotime('now'));
+		}
+		
+		
+		if(!empty($_COOKIE['fr'])){
+			$this->fr = $_COOKIE['fr'];
+		} else {
+			  // First day of the month.
+        	$this->fr = date('Y-m-01', strtotime($query_date));
+		}
+		
+		
+       
+       
+
+			
+	}
+								
+	
+	/*							
+	$fr = $r->get('fr');
+    $to = $r->get('to');
+
+
+    if(!empty($to) && !empty($fr)){
+        
+        if(strtotime($to) >= strtotime($fr)){
+            //return 'correct range';
+        } else {
+            return 'invalid range';
+        }   
+    } else {
+        $query_date = 'now';
+        // First day of the month.
+        $fr = date('Y-m-01', strtotime($query_date));
+        // Last day of the month.
+        $to = date('Y-m-t', strtotime('now'));
+        
+        // Minus 15 days from now
+        //$fr = date('Y-m-d', strtotime('-14 day'));
+        //$to = date('Y-m-d', strtotime('now'));
+    }
+								
+	}
+	*/
+							
+}
+
 function strip_zeros_from_date( $marked_string="" ) {
   // first remove the marked zeros
   $no_zeros = str_replace('*0', '', $marked_string);

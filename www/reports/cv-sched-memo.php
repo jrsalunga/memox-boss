@@ -1,6 +1,7 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
+$dr = new DateRange($_GET['fr'],$_GET['to']);
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -38,9 +39,9 @@ require_once('../../lib/initialize.php');
 
 
 
-<script src="http://code.highcharts.com/highcharts.js"></script>
-<script src="http://code.highcharts.com/modules/data.js"></script>
-<script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="../js/vendors/highcharts-4.0.1.min.js"></script>
+<script src="../js/vendors/highcharts.data.js"></script>
+<script src="../js/vendors/highcharts.exporting-4.0.1.js"></script>
 
 <!-- Additional files for the Highslide popup effect -->
 <!--
@@ -56,24 +57,266 @@ require_once('../../lib/initialize.php');
 
 <script>
 
+function daterange(){
+
+  $( "#fr" ).datepicker({
+      defaultDate: "+1w",
+      dateFormat: 'yy-mm-dd',
+      changeMonth: true,
+      numberOfMonths: 2,
+      onClose: function( selectedDate ) {
+        $( "#to" ).datepicker( "option", "minDate", selectedDate );
+      }
+    });
+    $( "#to" ).datepicker({
+      defaultDate: "+1w",
+      dateFormat: 'yy-mm-dd',
+      changeMonth: true,
+      numberOfMonths: 2,
+      onClose: function( selectedDate ) {
+        $( "#fr" ).datepicker( "option", "maxDate", selectedDate );
+      }
+    });
+}
+
+
 
 
 
 $(document).ready(function(e) {
 	
-
+	daterange();
 	
-	//$.getJSON('../api/cv-sched?fr=<?=$_GET['fr']?>&to=<?=$_GET['to']?>', function (csv) {
+	//$.getJSON('../api/cv-sched?fr=<?=$dr->fr?>&to=<?=$_GET['to']?>', function (csv) {
 		
 		
 		
     //});
 	
 	
+	$.get('../api/report/bank/total?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+		//console.log(csv);
+		//var totalOption = {
+		$('#sg-total').highcharts({
+			data: {
+				csv: csv,
+				parseDate: function (s) {		
+					var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
+					if (match) {
+						return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
+					}
+				}
+			},
+			chart: {
+				height: 50,
+				type: 'area',
+
+			},
+            title: {
+                text: null
+            },
+            tooltip: {
+                enabled: false,
+            },
+			xAxis: {
+                type: 'datetime',
+                tickInterval: 7 * 24 * 3600 * 1000, // one week
+                tickWidth: 0,
+                gridLineWidth: 0,
+                labels: {
+                     enabled: false
+                    
+                }
+            },
+			 yAxis: { // left y axis
+				min: 0,
+                gridLineWidth: 0,
+                labels: {
+                    enabled: false
+                },
+                showFirstLabel: false,
+                title: null
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        states: {
+                            hover: {
+                                enabled: false
+                            },
+                            select: {
+                                enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+			series: [{
+                name: null,
+                lineWidth: 2,
+                marker: {
+                    radius: 1
+                },
+                showInLegend: false,
+                fillOpacity: 0.3   
+			}],
+            exporting: { enabled: false }
+		
+	   });
+	});
+	
+	
+	
+	$.get('../api/report/bank/status/posted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+		console.log(csv);
+		//var totalOption = {
+		$('#sg-posted').highcharts({
+			data: {
+				csv: csv,
+				parseDate: function (s) {		
+					var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
+					if (match) {
+						return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
+					}
+				}
+			},
+			chart: {
+				height: 50,
+				type: 'area',
+
+			},
+            title: {
+                text: null
+            },
+            tooltip: {
+                enabled: false,
+            },
+			xAxis: {
+                type: 'datetime',
+                tickInterval: 7 * 24 * 3600 * 1000, // one week
+                tickWidth: 0,
+                gridLineWidth: 0,
+                labels: {
+                     enabled: false
+                    
+                }
+            },
+			 yAxis: { // left y axis
+				min: 0,
+                gridLineWidth: 0,
+                labels: {
+                    enabled: false
+                },
+                showFirstLabel: false,
+                title: null
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        states: {
+                            hover: {
+                                enabled: false
+                            },
+                            select: {
+                                enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+			series: [{
+                name: null,
+                lineWidth: 2,
+                marker: {
+                    radius: 1
+                },
+                showInLegend: false,
+                fillOpacity: 0.3   
+			}],
+            exporting: { enabled: false }
+		
+	   });
+	});
+	
+	
+	
+	$.get('../api/report/bank/status/unposted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+		console.log(csv);
+		//var totalOption = {
+		$('#sg-unposted').highcharts({
+			data: {
+				csv: csv,
+				parseDate: function (s) {		
+					var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
+					if (match) {
+						return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
+					}
+				}
+			},
+			chart: {
+				height: 50,
+				type: 'area',
+
+			},
+            title: {
+                text: null
+            },
+            tooltip: {
+                enabled: false,
+            },
+			xAxis: {
+                type: 'datetime',
+                tickInterval: 7 * 24 * 3600 * 1000, // one week
+                tickWidth: 0,
+                gridLineWidth: 0,
+                labels: {
+                     enabled: false
+                    
+                }
+            },
+			 yAxis: { // left y axis
+				min: 0,
+                gridLineWidth: 0,
+                labels: {
+                    enabled: false
+                },
+                showFirstLabel: false,
+                title: null
+            },
+            plotOptions: {
+                series: {
+                    marker: {
+                        states: {
+                            hover: {
+                                enabled: false
+                            },
+                            select: {
+                                enabled: false
+                            }
+                        }
+                    }
+                }
+            },
+			series: [{
+                name: null,
+                lineWidth: 2,
+                marker: {
+                    radius: 1
+                },
+                showInLegend: false,
+                fillOpacity: 0.3   
+			}],
+            exporting: { enabled: false }
+		
+	   });
+	});
+	
+	
+	
 	
 	//$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=analytics.csv&callback=?', function (csv) {
-	$.get('../api/cv-sched?fr=<?=$_GET['fr']?>&to=<?=$_GET['to']?>', function (csv) {
-        console.log(csv);
+	$.get('../api/cv-sched?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+        //console.log(csv);
         $('#graph').highcharts({
 
             data: {
@@ -107,9 +350,9 @@ $(document).ready(function(e) {
                 tickWidth: 0,
                 gridLineWidth: 1,
                 labels: {
-                    align: 'left',
+                    align: 'center',
                     x: 3,
-                    y: -3
+                    y: 15
                 }
             },
 
@@ -160,6 +403,8 @@ $(document).ready(function(e) {
                     point: {
                         events: {
                             click: function (e) {
+								console.log(Highcharts.dateFormat('%Y-%m-%d', this.x));
+								/*
                                 hs.htmlExpand(null, {
                                     pageOrigin: {
                                         x: e.pageX,
@@ -170,6 +415,7 @@ $(document).ready(function(e) {
                                         this.y +' visits',
                                     width: 200
                                 });
+								*/
                             }
                         }
                     },
@@ -321,13 +567,10 @@ $(document).ready(function(e) {
 				<a href="apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
             <li>
-				<a href="ap-project">Accounts Payable (Project)</a>
-			</li>
-            <li>
-            	<a href="cvhdr">Check</a>
+            	<a href="cvhdr">CV Schedule </a>
             <li>
             <li class="active">
-            	<a href="cv-sched">CV Schedule</a>
+            	<a href="cv-sched">CV Schedule (Bank)</a>
             <li>
 		</ul>
     	</div>
@@ -335,7 +578,26 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedules by Bank</h1>
+                		<h1>Check Voucher Schedule by Bank</h1>
+                	</div>
+                </div>
+                <div class="row">
+                	<div class="col-md-12 datepick pull-right">
+                		<div>
+                        
+                        	<form role="form" class="form-inline pull-right">
+                           		<div class="form-group">
+                                	<label class="sr-only" for="fr">From:</label>
+                                    <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
+                                </div>	
+                               	<div class="form-group">
+                                    <label class="sr-only" for="to">To:</label>
+                                    <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
+                              	</div>
+              
+  								<button type="submit" class="btn btn-success">Go</button>
+                            </form>
+                        </div>
                 	</div>
                 </div>
                 <div class="row">
@@ -346,7 +608,77 @@ $(document).ready(function(e) {
                         </div>
                 	</div>
                 </div>
+              	<div class="row">
+                	<div class="col-md-6 lb">
+                    	<div class="row">
+                        	<div class="col-md-6 GAcf">
+                            	<div>
+                                    <p>Total</p>
+                                    <div class="GAJv">
+                                    	<?php
+											$drtot = Cvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
+										?>
+                                        <h4><?=number_format($drtot->amount,2)?></h4>
+                                        <div id="sg-total" class="thumb-graph">
+                                        	
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        	<div class="col-md-6 GAcf">
+                            	<div>
+                                    <p></p>
+                                    <div class="GAJv">
+                                    	
+                                        <h4></h4>
+                                        <div id="sg-total" class="thumb-graph">
+                                        	
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 GAcf">
+                            	<div>
+                                    <p>Posted</p>
+                                    <div class="GAJv">
+                                    	<?php
+											$drtotp = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
+										?>
+                                        <h4><?=number_format($drtotp->amount,2)?></h4>
+                                        <div id="sg-posted" class="thumb-graph">
+                                        	
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 GAcf">
+                            	<div>
+                                    <p>Unposted</p>
+                                    <div class="GAJv">
+                                    	<?php
+											$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
+										?>
+                                        <h4><?=number_format($drtotu->amount,2)?></h4>
+                                        <div id="sg-unposted" class="thumb-graph">
+                                        	
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             
+                		</div>
+                	</div>
+                    <div class="col-md-6 rb">
+                		<div>
+                        dasdsa
+                        </div>
+                	</div>
+                    <div class="col-md-6 rb">
+                		<div>
+                        dasdsa
+                        </div>
+                	</div>
+                </div>      
             </section>
         </div>
   

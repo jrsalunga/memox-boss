@@ -619,3 +619,36 @@ background-repeat: no-repeat;
     margin: 0;
 }
 
+
+
+/********************* google stuff **************/
+.GAcf {
+	padding: 15px 0 10px 10px;
+	height: 127px;
+}
+.GAcf *{
+	margin: 0;
+	padding: 0;
+}
+
+.GAcf > div{
+	border-right: 1px solid #cbcbcb;
+	overflow:hidden;
+}
+
+.GAcf h4{
+	margin: 0px;
+	font-size: 20px;
+	text-align: right;
+	padding-right: 10px;
+}
+
+
+
+.GAJv {
+	margin: 5px auto;
+}
+
+.thumb-graph {
+	height: 50px;	
+}
