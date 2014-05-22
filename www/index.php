@@ -10,7 +10,8 @@ require_once('../lib/initialize.php');
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta http-equiv="Cache-control" content="public">
 
-<title>ModularFusion Inc - Boss Module</title>
+<title>MemoXpress - Home</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 
 <link rel="stylesheet" href="css/bootstrap.css">
@@ -30,7 +31,11 @@ require_once('../lib/initialize.php');
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="">MFI BOSS</a>
+  			<a href="/">
+          		<img src="images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+        	</a>
+           <a class="navbar-brand" href="/">MemoXpress</a>
+
         </div>
         
         <div class="navbar-collapse collapse">

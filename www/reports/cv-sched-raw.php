@@ -10,8 +10,8 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MFI - Check Voucher Scheduling</title>
-
+<title>MemoXpress - Check Voucher Scheduling</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -585,135 +585,127 @@ $(document).ready(function(e) {
                 	</div>
                 </div>
                 <div class="row">
-                	<div class="col-md-6">
-                        <a class="btn btn-primary" href="cv-sched-raw">
-                            <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span>
-                        </a>
+                    <div class="col-md-6">
+                        <a class="btn btn-primary" href="cv-sched"><span style="color: #fff;" class="glyphicon glyphicon-list-alt"></span></a>
                     </div>
                 	<div class="col-md-6 datepick">
-                        <form role="form" class="form-inline pull-right">
-                            <div class="form-group">
-                                <label class="sr-only" for="fr">From:</label>
+                    	<form role="form" class="form-inline pull-right">
+                       		<div class="form-group">
+                            	<label class="sr-only" for="fr">From:</label>
                                 <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
                             </div>	
-                            <div class="form-group">
+                           	<div class="form-group">
                                 <label class="sr-only" for="to">To:</label>
                                 <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
-                            </div>
-          
-                            <button type="submit" class="btn btn-success">Go</button>
+                          	</div>
+    						<button type="submit" class="btn btn-success">Go</button>
                         </form>
+                        
                 	</div>
                 </div>
-                <div class="row">
-                	<div class="col-md-12 title">
-                		<div class="col-md-12">
-                        	<div id="graph" class="graph-full">
+                
+              	<div class="row">
+                	<div class="col-md-3 GAcf">
+                    	<div>
+                            <p>Total</p>
+                            <div class="GAJv">
+                            	<?php
+									$drtot = Cvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
+								?>
+                                <h4><?=number_format($drtot->amount,2)?></h4>
+                                <div id="sg-total" class="thumb-graph">
+                                	
+                                </div>
                             </div>
                         </div>
-                	</div>
-                </div>
-              	<div class="row">
-                	<div class="col-md-6 lb">
-                    	<div class="row">
-                        	<div class="col-md-6 GAcf">
-                            	<div>
-                                    <p>Total</p>
-                                    <div class="GAJv">
-                                    	<?php
-											$drtot = Cvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
-										?>
-                                        <h4><?=number_format($drtot->amount,2)?></h4>
-                                        <div id="sg-total" class="thumb-graph">
-                                        	
-                                        </div>
-                                    </div>
+                    </div>
+                    <!--
+                	<div class="col-md-3 GAcf">
+                    	<div>
+                            <p></p>
+                            <div class="GAJv">
+                            	
+                                <h4></h4>
+                                <div id="sg-total" class="thumb-graph">
+                                	
                                 </div>
                             </div>
-                        	<div class="col-md-6 GAcf">
-                            	<div>
-                                    <p></p>
-                                    <div class="GAJv">
-                                    	
-                                        <h4></h4>
-                                        <div id="sg-total" class="thumb-graph">
-                                        	
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 GAcf">
+                    	<div>
+                            <p>Posted</p>
+                            <div class="GAJv">
+                            	<?php
+									$drtotp = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
+								?>
+                                <h4><?=number_format($drtotp->amount,2)?></h4>
+                                <div id="sg-posted" class="thumb-graph">
+                                	
                                 </div>
                             </div>
-                            <div class="col-md-6 GAcf">
-                            	<div>
-                                    <p>Posted</p>
-                                    <div class="GAJv">
-                                    	<?php
-											$drtotp = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
-										?>
-                                        <h4><?=number_format($drtotp->amount,2)?></h4>
-                                        <div id="sg-posted" class="thumb-graph">
-                                        	
-                                        </div>
-                                    </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 GAcf">
+                    	<div>
+                            <p>Unposted</p>
+                            <div class="GAJv">
+                            	<?php
+									$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
+								?>
+                                <h4><?=number_format($drtotu->amount,2)?></h4>
+                                <div id="sg-unposted" class="thumb-graph">
+                                	
                                 </div>
                             </div>
-                            <div class="col-md-6 GAcf">
-                            	<div>
-                                    <p>Unposted</p>
-                                    <div class="GAJv">
-                                    	<?php
-											$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
-										?>
-                                        <h4><?=number_format($drtotu->amount,2)?></h4>
-                                        <div id="sg-unposted" class="thumb-graph">
-                                        	
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                		</div>
-                	</div>
-                    <div class="col-md-6 rb">
-                        <a class="btn btn-primary" href="cv-sched-raw"><span style="color: #fff;" class="glyphicon glyphicon-th-list"></span> View Detailed</a>
-                        </br>
-                        </br>
-                		<?php
-                        $banks = Bank::find_all();
-                        ?>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Days</th><th>Total</th>
+                        </div>
+                    </div>
+                    -->    
+                		
+               
+             		<div class="col-md-12">
+                    	<?php
+    						$banks = Bank::find_all();
+    					?>
+                    	<table class="table table-bordered">
+                        	<thead>
+                            	<tr>
+                            	<?php
+    								echo '<th>Days</th>';
+    								foreach($banks as $bank){
+    									echo '<th title="'.$bank->descriptor.'">'. $bank->code .'</th>';	
+    								}
+									echo '<th>Total</th>';
+    							?>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                    foreach($dr->getDaysInterval() as $date){
-                                        $currdate = $date->format("Y-m-d");
-                                        echo '<tr>';
-                                        echo '<td>'.$date->format("M d").'</td>';
-                                        
-                                        //foreach($banks as $bank){
-                                            $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
-                                            $sql .= "WHERE checkdate = '".$currdate."' ";
-                                            //$sql .= "AND bankacctid = '".$bank->id."'";
-                                            $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-                                            $cvchkdtl = array_shift($cvchkdtl);
-                                            $amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
-                                            echo '<td style="text-align: right;">'.$amt.'</td>';
-                                            
-                                        //}   
-                                        
-                                        echo '</tr>';
-                                    }
-                                ?>
+                            	<?php
+    								foreach($dr->getDaysInterval() as $date){
+    									$currdate = $date->format("Y-m-d");
+    									echo '<tr>';
+    									echo '<td>'.$date->format("M d").'</td>';
+    									$tot = 0;
+    									foreach($banks as $bank){
+    										$sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+    										$sql .= "WHERE checkdate = '".$currdate."' ";
+    										$sql .= "AND bankacctid = '".$bank->id."'";
+    										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+    										$cvchkdtl = array_shift($cvchkdtl);
+    										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
+    										$tot = $tot + $cvchkdtl->amount;
+    										echo '<td style="text-align: right;">'.$amt.'</td>';
+											$tot = ($tot == 0) ? '-':$tot;
+											echo end($banks)==$bank ?  '<td style="text-align: right;">'.number_format($tot,2).'</td>':'';
+    										
+    									}	
+    									
+    									echo '</tr>';
+    								}
+    							?>
                             </tbody>
                         </table>
-                	</div>
-                    
-                </div>
-         		<div>
-                	
+                    </div>
                 </div>      
             </section>
         </div>

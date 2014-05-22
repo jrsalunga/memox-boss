@@ -9,8 +9,8 @@ require_once('../../lib/initialize.php');
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Project Activity Management</title>
-
+<title>MemoXpress - Account Payables (Aged)</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -95,7 +95,10 @@ $(document).ready(function(e) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="../">MFI BOSS</a>
+          <a href="/">
+          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+        	</a>
+           <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
         
         <div class="navbar-collapse collapse">

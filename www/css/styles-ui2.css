@@ -502,6 +502,34 @@ background-repeat: no-repeat;
 	border-color: #d6e9c6;
 }
 
+
+
+.header-logo {
+height: 44px;
+width: 44px;
+margin: 3px 3px 3px 10px;
+float: left;
+}
+
+.navbar-header {
+float: left;
+display: inline-block;
+width: 300px;
+}
+
+
+.navbar-brand {
+float: left;
+height: 50px;
+padding: 15px 0px 15px;
+font-size: 18px;
+line-height: 20px;
+}
+
+
+
+
+
 .apv-status > .btn-group > button:not(:last-child) {
 	
 } 
@@ -651,4 +679,21 @@ background-repeat: no-repeat;
 
 .thumb-graph {
 	height: 50px;	
+}
+
+
+
+
+
+.graph-full {
+	height: 250px;
+}
+
+
+.row > .title {
+	margin-bottom: 20px;
+}
+
+.row > .title > div{
+	border-bottom: 1px solid #ccc;
 }

@@ -1,8 +1,6 @@
 <?php
 require_once('../lib/initialize.php');
 $session->is_logged_in() ? redirect_to("index"): "";
-
-
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -13,8 +11,8 @@ $session->is_logged_in() ? redirect_to("index"): "";
 <meta http-equiv="Cache-Control" content="max-age=3600"/>
 
 
-<title>ModularFusion Inc - Boss Module</title>
-
+<title>MemoXpress - Login</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="css/bootstrap.css">
 <link rel="stylesheet" href="css/styles-ui2.css">
@@ -25,7 +23,7 @@ $session->is_logged_in() ? redirect_to("index"): "";
 	<div class="navbar navbar-default navbar-fixed-top" role="navigation">
         <div class="navbar-header">
             <a href="">
-                <img src="images/mfi-logo.png" class="img-responsive" style="height:44px; width:44px; margin: 3px;">
+                <img src="images/memoxpress.png" class="img-responsive" style="height:44px; width:100px; margin: 3px;">
             </a>
 
             

@@ -10,8 +10,8 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MFI - Check Voucher Scheduling</title>
-
+<title>MemoXpress - Check Voucher Scheduling</title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -234,7 +234,10 @@ $(document).ready(function(e) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="../">MFI BOSS</a>
+          <a href="/">
+          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+        	</a>
+           <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
         
         <div class="navbar-collapse collapse">
@@ -290,27 +293,24 @@ $(document).ready(function(e) {
                 </div>
                 <div class="row">
                 	<div class="col-md-12 datepick pull-right">
-                		<div>
-                        
-                        	<form role="form" class="form-inline pull-right">
-                           		<div class="form-group">
-                                	<label class="sr-only" for="exampleInputEmail2">Email address</label>
-                                    <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
-                                </div>	
-                               	<div class="form-group">
-                                    <label class="sr-only" for="exampleInputPassword2">Password</label>
-                                    <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
-                              	</div>
-              
-  								<button type="submit" class="btn btn-success">Go</button>
-                            </form>
-                        </div>
+                		<form role="form" class="form-inline pull-right">
+                            <div class="form-group">
+                                <label class="sr-only" for="fr">From:</label>
+                                <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
+                            </div>	
+                            <div class="form-group">
+                                <label class="sr-only" for="to">To:</label>
+                                <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
+                            </div>
+          
+                            <button type="submit" class="btn btn-success">Go</button>
+                        </form>
                 	</div>
                 </div>
                 <div class="row">
                 	<div class="col-md-12 title">
                 		<div class="col-md-12">
-                        	<div id="graph">
+                        	<div id="graph" class="graph-full">
                             </div>
                         </div>
                 	</div>

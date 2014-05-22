@@ -30,7 +30,7 @@ class DateRange {
 	
 							
 							
-	function get_current(){
+	public function get_current(){
 		$query_date = 'now';
 		
 		if(!empty($_COOKIE['to'])){
@@ -53,6 +53,16 @@ class DateRange {
        
 
 			
+	}
+	
+	
+	public function getDaysInterval(){
+		$begin = new DateTime($this->fr);
+		$end = new DateTime($this->to);
+		$end = $end->modify('+1 day'); 
+		
+		$interval = new DateInterval('P1D');
+		return $daterange = new DatePeriod($begin, $interval ,$end);
 	}
 								
 	
@@ -84,6 +94,9 @@ class DateRange {
 	*/
 							
 }
+
+
+
 
 function strip_zeros_from_date( $marked_string="" ) {
   // first remove the marked zeros
