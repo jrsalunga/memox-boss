@@ -368,7 +368,9 @@ $(document).ready(function(e) {
                     format: '{value:.,0f}'
                 },
                 showFirstLabel: false
-            }, { // right y axis
+            }, 
+			/*
+			{ // right y axis
                 linkedTo: 0,
                 gridLineWidth: 0,
                 opposite: true,
@@ -382,7 +384,9 @@ $(document).ready(function(e) {
                     format: '{value:.,0f}'
                 },
                 showFirstLabel: false
-            }],
+            }
+			*/
+			],
 
             legend: {
                 align: 'left',
