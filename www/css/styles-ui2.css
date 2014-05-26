@@ -697,3 +697,12 @@ line-height: 20px;
 .row > .title > div{
 	border-bottom: 1px solid #ccc;
 }
+
+
+table.floatThead-table {
+	background-color: #FFF;
+}
+
+table.table th {
+	text-align: center;
+}

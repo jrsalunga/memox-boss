@@ -37,7 +37,7 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <script src="../js/vendors/accounting.js"></script>
 <script src="../js/vendors/jquery.filedrop.js"></script>
 
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.7/jquery.floatThead.min.js"></script>
 
 <script src="../js/vendors/highcharts-4.0.1.min.js"></script>
 <script src="../js/vendors/highcharts.data.js"></script>
@@ -334,8 +334,14 @@ $(document).ready(function(e) {
 			chart: {
                 zoomType: 'x',
                 height: 250,
-                spacingRight: 0
+                spacingRight: 0,
+				marginTop: 35
             },
+			/*
+			colors:[
+                '#48A0C4', '#ACFFD2', '#F29885', '#D53C25', '#FD668B', '#FCB319','#86A033', '#614931', '#00526F', '#594266', '#cb6828', '#aaaaab', '#a89375'
+                ],
+				*/
             title: {
                 text: ''
             },
@@ -387,15 +393,15 @@ $(document).ready(function(e) {
             }
 			*/
 			],
-
+			
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
-                y: 20,
+                y: -10,
                 floating: true,
                 borderWidth: 0
             },
-
+			
             tooltip: {
                 shared: true,
                 crosshairs: true
@@ -424,7 +430,8 @@ $(document).ready(function(e) {
                         }
                     },
                     marker: {
-                        lineWidth: 1
+                        lineWidth: 1,
+						symbol: 'circle'
                     }
                 }
             },
@@ -513,7 +520,12 @@ $(document).ready(function(e) {
 
 	
 	
-
+	$('table.table').floatThead({
+    	scrollingTop: function(){
+				return $(".navbar").height();
+			},
+     	useAbsolutePositioning: false
+  	});
 	
 });
 </script>
@@ -590,9 +602,7 @@ $(document).ready(function(e) {
                 </div>
                 <div class="row">
                 	<div class="col-md-6">
-                        <a class="btn btn-primary" href="cv-sched-raw">
-                            <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span>
-                        </a>
+                        
                     </div>
                 	<div class="col-md-6 datepick">
                         <form role="form" class="form-inline pull-right">
@@ -678,16 +688,21 @@ $(document).ready(function(e) {
                 		</div>
                 	</div>
                     <div class="col-md-6 rb">
-                        <a class="btn btn-primary" href="cv-sched-raw"><span style="color: #fff;" class="glyphicon glyphicon-th-list"></span> View Detailed</a>
-                        </br>
-                        </br>
+                     	<div class="pull-right">
+                        <a class="btn btn-primary" href="cv-sched-raw">
+                        <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span> 
+                        	View Detailed
+                      	</a>
+                        <p></p>
+                       </div>
+                       <div style="clear:both;"></div>
                 		<?php
                         $banks = Bank::find_all();
                         ?>
-                        <table class="table table-bordered">
+                        <table class="table table-hover table-condensed">
                             <thead>
                                 <tr>
-                                    <th>Days</th><th>Total</th>
+                                    <th>DAYS</th><th>TOTAL</th>
                                 </tr>
                             </thead>
                             <tbody>

@@ -37,7 +37,7 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <script src="../js/vendors/accounting.js"></script>
 <script src="../js/vendors/jquery.filedrop.js"></script>
 
-
+<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.7/jquery.floatThead.min.js"></script>
 
 <script src="../js/vendors/highcharts-4.0.1.min.js"></script>
 <script src="../js/vendors/highcharts.data.js"></script>
@@ -511,12 +511,25 @@ $(document).ready(function(e) {
         });
     });
 
+	function pageTop(){
+  		return $(".navbar").height();
+	}
 	
-	
+	$('table.table').floatThead({
+    	scrollingTop: pageTop,
+     	useAbsolutePositioning: false
+  	});
 
 	
 });
 </script>
+<style>
+	table.floatThead-table {
+   
+    background-color: #FFF;
+}
+
+</style>
 </head>
 <body id="app-body" class="state-nav">
 
@@ -590,7 +603,7 @@ $(document).ready(function(e) {
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <a class="btn btn-primary" href="cv-sched"><span style="color: #fff;" class="glyphicon glyphicon-list-alt"></span></a>
+                        
                     </div>
                 	<div class="col-md-6 datepick">
                     	<form role="form" class="form-inline pull-right">
@@ -609,7 +622,7 @@ $(document).ready(function(e) {
                 </div>
                 
               	<div class="row">
-                	<div class="col-md-3 GAcf">
+                	<div class="col-md-3 col-sm-6 GAcf">
                     	<div>
                             <p>Total</p>
                             <div class="GAJv">
@@ -622,6 +635,16 @@ $(document).ready(function(e) {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-md-offset-9">
+                    	<div class="pull-right">
+                    		<a class="btn btn-primary" href="cv-sched">
+                            	<span style="color: #fff;" class="glyphicon glyphicon-list-alt"></span>
+                                Summary
+                         	</a>
+                            <p></p>
+                    	</div>
+                        <div style="clear:both;"></div>
                     </div>
                     <!--
                 	<div class="col-md-3 GAcf">
@@ -671,15 +694,15 @@ $(document).ready(function(e) {
                     	<?php
     						$banks = Bank::find_all();
     					?>
-                    	<table class="table table-bordered">
+                    	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
                             	<?php
-    								echo '<th>Days</th>';
+    								echo '<th>DAYS</th>';
     								foreach($banks as $bank){
     									echo '<th title="'.$bank->descriptor.'">'. $bank->code .'</th>';	
     								}
-									echo '<th>Total</th>';
+									echo '<th>TOTAL</th>';
     							?>
                                 </tr>
                             </thead>

@@ -98,8 +98,12 @@ $(document).ready(function(e) {
 			chart: {
                 zoomType: 'x',
                 height: 250,
-                spacingRight: 0
+                spacingRight: 0,
+				marginTop: 35
             },
+			colors:[
+                '#51ABD2', '#F29885', '#ACFFD2'],
+				
             title: {
                 text: ''
             },
@@ -153,7 +157,7 @@ $(document).ready(function(e) {
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
-                y: 20,
+                y: -10,
                 floating: true,
                 borderWidth: 0
             },
@@ -187,7 +191,8 @@ $(document).ready(function(e) {
                         }
                     },
                     marker: {
-                        lineWidth: 1
+                        lineWidth: 1,
+						symbol: 'circle'
                     }
                 }
             },
