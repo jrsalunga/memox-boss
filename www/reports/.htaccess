@@ -7,7 +7,7 @@ RewriteRule ^apvhdr(\/.*)*$ /reports/apvhdr.php
 RewriteRule ^ap-supplier(\/.*)*$ /reports/ap-supplier.php
 RewriteRule ^ap-project(\/.*)*$ /reports/ap-project.php
 RewriteRule ^cvhdr(\/.*)*$ /reports/cvhdr.php
-#RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched.php
-RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched-memo.php
+RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched.php
+#RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched-memo.php
 RewriteRule ^cv-sched-raw(\/.*)*$ /reports/cv-sched-raw.php
 
