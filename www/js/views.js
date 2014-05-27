@@ -452,7 +452,7 @@ var ReportApvhdr = Backbone.View.extend({
 		})
 
 		
-		this.pie = new vPie({el: "#c-pie",collection: this.apvhdrs, settings: {title: 'Percentage per Supplier'}});
+		this.pie = new vPie({el: "#c-pie",collection: this.apvhdrs, settings: {title: 'Percentage per Account'}});
 		this.apvLine = new vApvLine({el: "#c-line", collection: this.collection});
 		//this.column = new vColumn({el: '#c-column' , collection: this.apvhdrs});
 		//this.apvReports = new ApvReports({el: '#apvhdr-report-list' , collection: this.apvhdrs});

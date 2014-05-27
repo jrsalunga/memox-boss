@@ -148,7 +148,7 @@ $(document).ready(function(e) {
         	<section id="apvhdr-report">
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Account Payables - Supplier</h1>
+                		<h1>Account Payables</h1>
                 	</div>
                 </div>
         		<div class="row">
