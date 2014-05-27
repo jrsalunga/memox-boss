@@ -707,6 +707,11 @@ table.floatThead-table {
 	background-color: #FFF;
 }
 
+table.table {
+	font-size:13px;
+}
+
+
 table.table th {
 	text-align: center;
 }
