@@ -599,7 +599,7 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule by Bank</h1>
+                		<h1>Check Voucher Schedule - Bank</h1>
                 	</div>
                 </div>
                 <div class="row">

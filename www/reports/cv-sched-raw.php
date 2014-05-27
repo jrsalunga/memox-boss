@@ -59,23 +59,33 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 
 function daterange(){
 
-  $( "#fr" ).datepicker({
-      defaultDate: "+1w",
-      dateFormat: 'yy-mm-dd',
-      changeMonth: true,
-      numberOfMonths: 2,
-      onClose: function( selectedDate ) {
-        $( "#to" ).datepicker( "option", "minDate", selectedDate );
-      }
-    });
+  	$( "#fr" ).datepicker({
+		defaultDate: "+1w",
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 2,
+		onClose: function( selectedDate ) {
+			$( "#to" ).datepicker( "option", "minDate", selectedDate );
+		},
+		beforeShow: function() {
+			setTimeout(function(){
+				$('#ui-datepicker-div').css('z-index', 1002);
+			}, 0);
+		}
+	});
     $( "#to" ).datepicker({
-      defaultDate: "+1w",
-      dateFormat: 'yy-mm-dd',
-      changeMonth: true,
-      numberOfMonths: 2,
-      onClose: function( selectedDate ) {
-        $( "#fr" ).datepicker( "option", "maxDate", selectedDate );
-      }
+  		defaultDate: "+1w",
+      	dateFormat: 'yy-mm-dd',
+      	changeMonth: true,
+      	numberOfMonths: 2,
+      	onClose: function( selectedDate ) {
+        	$( "#fr" ).datepicker( "option", "maxDate", selectedDate );
+      	},
+		beforeShow: function() {
+			setTimeout(function(){
+				$('#ui-datepicker-div').css('z-index', 1002);
+			}, 0);
+		}
     });
 }
 
@@ -598,7 +608,7 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule by Bank</h1>
+                		<h1>Check Voucher Schedule - Bank Detailed</h1>
                 	</div>
                 </div>
                 <div class="row">
