@@ -5,6 +5,10 @@ class DateRange {
 	
 	public $fr;
 	public $to;
+	public $week_start;
+	public $week_end;
+	public $month_start;
+	public $month_end;
 	
 	function __construct($fr=NULL, $to=NULL){
 		
@@ -25,6 +29,8 @@ class DateRange {
 		
 		setcookie("to", $this->to, time() + (86400 * 7)); // 86400 = 1 day
 		setcookie("fr", $this->fr, time() + (86400 * 7)); // 86400 = 1 day
+	
+	
 	}
 	
 	
