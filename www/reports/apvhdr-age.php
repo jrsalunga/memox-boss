@@ -147,6 +147,11 @@ $(document).ready(function(e) {
     	</div>
     	<div class="col-sm-10 col-md-10 r-pane pull-right">
         	<section id="apvhdr-report">
+            <div class="row">
+                	<div class="col-md-12 title">
+                		<h1>Account Payables - Aged</h1>
+                	</div>
+                </div>
         	<div class="row">
             	
             	
