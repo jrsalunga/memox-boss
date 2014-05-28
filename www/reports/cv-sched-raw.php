@@ -720,7 +720,7 @@ $(document).ready(function(e) {
                             	<?php
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
-    									echo '<tr>';
+    									echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
     									echo '<td>'.$date->format("M d").'</td>';
     									$tot = 0;
     									foreach($banks as $bank){
