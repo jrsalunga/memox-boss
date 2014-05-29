@@ -712,7 +712,7 @@ $(document).ready(function(e) {
                                     foreach($dr->getDaysInterval() as $date){
                                         $currdate = $date->format("Y-m-d");
                                         echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
-                                        echo '<td>'.$date->format("M d").'</td>';
+                                        echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M d").'</a></td>';
                                         
                                         //foreach($banks as $bank){
                                             $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";

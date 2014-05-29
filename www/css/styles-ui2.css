@@ -685,6 +685,14 @@ line-height: 20px;
 	height: 50px;	
 }
 
+.CAcg{
+	margin: 40px;
+}
+
+.CAcg h4{
+	text-align: right;
+}
+
 
 
 
@@ -714,4 +722,8 @@ table.table {
 
 table.table th {
 	text-align: center;
+}
+
+#graph.graph-chk-day-pie {
+	height: 300px;
 }

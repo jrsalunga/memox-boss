@@ -10,4 +10,5 @@ RewriteRule ^cvhdr(\/.*)*$ /reports/cvhdr.php
 RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched.php
 #RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched-memo.php
 RewriteRule ^cv-sched-raw(\/.*)*$ /reports/cv-sched-raw.php
+RewriteRule ^chk-day(\/.*)*$ /reports/chk-day.php
 

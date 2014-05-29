@@ -2619,6 +2619,9 @@ input[type="button"].btn-block {
 .glyphicon-backward:before {
   content: "\e071";
 }
+.glyphicon-back:before {
+  content: "\f051";
+}
 .glyphicon-play:before {
   content: "\e072";
 }

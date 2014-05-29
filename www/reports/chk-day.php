@@ -1,7 +1,7 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
-$dr = new DateRange($_GET['fr'],$_GET['to']);
+$dr = new DateRange($_GET['fr'],$_GET['to'], false);
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -12,7 +12,6 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 
 <title>MemoXpress - Check Voucher Scheduling</title>
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
-
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
 <!--
@@ -74,10 +73,12 @@ function daterange(){
 
 $(document).ready(function(e) {
 	
+	
 	daterange();
 	
-	$.get('../api/report/cv?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+	$.get('../api/report/chk-day?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
 		//console.log(csv);
+		var total = 0;
 		$('#graph').highcharts({
             data: {
                 csv: csv,
@@ -96,132 +97,65 @@ $(document).ready(function(e) {
                 }
             },
 			chart: {
-                zoomType: 'x',
-                height: 250,
-                spacingRight: 0,
-				marginTop: 35
-            },
-			colors:[
-                '#51ABD2', '#F29885', '#ACFFD2'],
-				
+               	type:'pie',
+			   	marginLeft: 100,
+			   	style: {
+					fontFamily: "Helvetica"
+				},
+				events: {
+                    load: function(event) {
+                        $('.CAcg h4').text(accounting.formatMoney(total,"", 2,","));
+                	}
+               	}
+            },	
             title: {
-                text: ''
+                text: null
             },
-           	subtitle: {
-                text: document.ontouchstart === undefined ?
-                    '' :
-                    'Pinch the chart to zoom in'
-            },
-            xAxis: {
-                type: 'datetime',
-                tickInterval: 7 * 24 * 3600 * 1000, // one week
-                tickWidth: 0,
-                gridLineWidth: 1,
-                labels: {
-                    align: 'left',
-                    x: 3,
-                    y: -3
-                }
-            },
-            yAxis: [{ // left y axis
-				min: 0,
-                title: {
-                    text: null
-                },
-                labels: {
-                    align: 'left',
-                    x: 3,
-                    y: 16,
-                    format: '{value:.,0f}'
-                },
-                showFirstLabel: false
-            },
-			/* 
-			{ // right y axis
-                linkedTo: 0,
-                gridLineWidth: 0,
-                opposite: true,
-                title: {
-                    text: null
-                },
-                labels: {
-                    align: 'right',
-                    x: -3,
-                    y: 16,
-                    format: '{value:.,0f}'
-                },
-                showFirstLabel: false
-            }
-			*/
-			],
-            legend: {
-                align: 'left',
-                verticalAlign: 'top',
-                y: -10,
-                floating: true,
-                borderWidth: 0
-            },
-            tooltip: {
-                shared: true,
-                crosshairs: true
-            },
-			tmp: 0,
-            plotOptions: {
-                series: {
+			plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+					animation: true,
                     cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function (e) {
-								console.log(this.series);
-								
-								console.log(Highcharts.dateFormat('%Y-%m-%d', this.x));
-								/*
-                                hs.htmlExpand(null, {
-                                    pageOrigin: {
-                                        x: e.pageX,
-                                        y: e.pageY
-                                    },
-                                    headingText: this.series.name,
-                                    maincontentText: Highcharts.dateFormat('%A, %b %e, %Y', this.x) +':<br/> '+
-                                        this.y +' visits',
-                                    width: 200
-                                });
-								*/
-                            }
+                    showInLegend: true,
+                    dataLabels: {
+                        enabled: false,                        
+                        formatter: function() {
+                            return this.percentage.toFixed(2) + '%';
                         }
-                    },
-                    marker: {
-                        lineWidth: 1,
-						symbol: 'circle'
-                    }
+                    } 									
                 }
             },
-            series: [
-				{
-					name: 'Unposted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
+            legend: {
+                enabled: true,
+                layout: 'vertical',
+                align: 'right',
+                width: 400,
+                verticalAlign: 'top',
+				borderWidth: 0,
+                useHTML: true,
+				labelFormatter: function() {
+					total += this.y;
+					return '<div style="width:400px"><span style="float: left; width: 100px;">' + this.name + '</span><span style="float: left; width: 170px; text-align: right;">' + accounting.formatMoney(this.y,"", 2,",") + '</span><span style="float: left; width: 100px; text-align: right;">' + this.percentage.toFixed(2) + '%</span></div>';
 				},
-				{
-					name: 'Posted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
+				title: {
+					text: 'Total Amount per Bank',
+					
 				},
-				{
-					type: 'area',
-					name: 'Total',
-					lineWidth: 0,
-					marker: {
-						radius: 0
-					},
-					index: -1,
-					fillOpacity: 0.4
+				itemStyle: {
+					fontWeight: 'normal',
+					fontSize: '14px',
+					lineHeight: '22px'
 				}
-			]
+            },
+			series: [
+				{
+					type: 'pie',
+	
+				}
+			],
+			exporting: {
+				enabled: false
+			}
         });
 		
 	});
@@ -285,10 +219,10 @@ $(document).ready(function(e) {
             <li>
 				<a href="apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
-            <li class="active">
+            <li>
             	<a href="cvhdr">CV Schedule </a>
             <li>
-            <li>
+            <li class="active">
             	<a href="cv-sched">CV Schedule (Bank)</a>
             <li>
 		</ul>
@@ -297,11 +231,19 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule</h1>
+                		<h1>Check Breakdown - Day</h1>
                 	</div>
                 </div>
                 <div class="row">
-                	<div class="col-md-12 datepick pull-right">
+                	<div class="col-md-6">
+                    	
+                        
+                          	<a class="btn btn-default" href="cv-sched-raw"><span class="glyphicon glyphicon-arrow-left"></span></a>
+                          	
+                        
+                       
+                    </div>
+                	<div class="col-md-6 datepick pull-right">
                 		<form role="form" class="form-inline pull-right">
                             <div class="form-group">
                                 <label class="sr-only" for="fr">From:</label>
@@ -317,20 +259,35 @@ $(document).ready(function(e) {
                 	</div>
                 </div>
                 <div class="row">
-                	<div class="col-md-12">
-                		<div class="col-md-12">
-                        	<div id="graph" class="graph-full">
-                            </div>
+                	
+                    <div class="col-md-8">
+                        <div id="graph" class="graph-chk-day-pie">
+                        
                         </div>
-                	</div>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
+                    </div>
+                    <div class="col-md-4">  
+                    	<div class="CAcg">
+                   			<p>Total:</p>
+                        	<h4></h4>
+                        </div>
+                    </div>
+
+                	
+                    <div class="col-md-3 col-sm-6 col-md-offset-9">
+                    	<div class="btn-group pull-right">
+                          	<a class="btn btn-default" href="?fr=<?=$dr->fr_prev_day()?>&to=<?=$dr->to_prev_day()?>"><span class="glyphicon glyphicon-backward"></span></a>
+                          	<a class="btn btn-default" href="?fr=<?=$dr->fr_next_day()?>&to=<?=$dr->to_next_day()?>"><span class="glyphicon glyphicon-forward"></span></a>
+                        </div>
+                        <p></p>
+                    	<p>&nbsp;</p>
+                    </div>
+                    
                     <div class="col-md-12">
                     	<table class="table table-bordered">
                         	<thead>
                             	<tr>
                             	<?php
-    								echo '<th>Days</th><th>Unposted</th><th>Posted</th><th>Total</th>';
+    								echo '<th>Day(s)</th><th>Bank</th><th>Check No</th><th>Check Amount</th>';
     							?>
                                 </tr>
                             </thead>
@@ -339,21 +296,31 @@ $(document).ready(function(e) {
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
     									echo '<tr>';
-    									echo '<td>'.$date->format("M d").'</td>';
-    									$tot = 0;
-    									for($x = 0; $x <= 1; $x++){
-    										$sql = "SELECT SUM(b.amount) as amount FROM cvhdr a, cvchkdtl b ";
-    										$sql .= "WHERE a.id = b.cvhdrid AND b.checkdate = '".$currdate."' ";
-    										$sql .= "AND a.posted = '".$x."'";
-    										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-    										$cvchkdtl = array_shift($cvchkdtl);
-    										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
-											$tot = $tot + $cvchkdtl->amount;
-    										echo '<td style="text-align: right;">'.$amt.'</td>';
-											$tot = ($tot == 0) ? '-':$tot;
-											echo $x==1 ?  '<td style="text-align: right;">'.number_format($tot,2).'</td>':'';
-    										
-    									}	
+    									
+										$sql = "SELECT a.* FROM cvchkdtl a, bank b ";
+    									$sql .= "WHERE a.bankacctid = b.id AND checkdate = '".$currdate."' ";
+										$sql .= "ORDER BY b.code ASC";
+    									$cvchkdtls = Cvchkdtl::find_by_sql($sql); 
+										global $database;
+										$len = count($cvchkdtls);
+										
+										if($len > 0){
+											echo '<td rowspan="'.$len.'">';
+											echo $date->format("M d").'</td>';
+											foreach($cvchkdtls as $cvchkdtl){
+												$code = Bank::row($cvchkdtl->bankacctid,0);
+												echo '<td class="bnk-'.$code.'" title="'.Bank::row($cvchkdtl->bankacctid,1).'">'.$code.'</td>';
+												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->checkno.'</td>';
+												echo '<td class="bnk-'.$code.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
+											}
+										} else {
+											echo '<td>'.$date->format("M d").'</td><td>-</td><td>-</td><td>-</td></tr>';
+										}
+										
+										
+										
+										//echo $database->last_query;
+    									
     									
     									echo '</tr>';
     								}

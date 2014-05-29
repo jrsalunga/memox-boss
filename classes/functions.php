@@ -10,7 +10,7 @@ class DateRange {
 	public $month_start;
 	public $month_end;
 	
-	function __construct($fr=NULL, $to=NULL){
+	function __construct($fr=NULL, $to=NULL, $cookie=true){
 		
 		
 		
@@ -27,8 +27,11 @@ class DateRange {
 			$this->fr = date('Y-m-d', strtotime($fr));
 		}
 		
-		setcookie("to", $this->to, time() + (86400 * 7)); // 86400 = 1 day
-		setcookie("fr", $this->fr, time() + (86400 * 7)); // 86400 = 1 day
+		if($cookie==true){
+			setcookie("to", $this->to, time() + (86400 * 7)); // 86400 = 1 day
+			setcookie("fr", $this->fr, time() + (86400 * 7)); // 86400 = 1 day
+		}
+		
 	
 	
 	}
@@ -69,6 +72,22 @@ class DateRange {
 		
 		$interval = new DateInterval('P1D');
 		return $daterange = new DatePeriod($begin, $interval ,$end);
+	}
+	
+	public function to_next_day(){
+		return date('Y-m-d', strtotime($this->to." +1 day"));
+	}
+	
+	public function to_prev_day(){
+		return date('Y-m-d', strtotime($this->to." -1 day"));
+	}
+	
+	public function fr_next_day(){
+		return date('Y-m-d', strtotime($this->fr." +1 day"));
+	}
+	
+	public function fr_prev_day(){
+		return date('Y-m-d', strtotime($this->fr." -1 day"));
 	}
 								
 	
