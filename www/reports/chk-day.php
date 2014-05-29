@@ -315,7 +315,7 @@ $(document).ready(function(e) {
 												echo '<td class="bnk-'.$code.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
 											}
 										} else {
-											echo '<td>'.$date->format("M d").'</td><td>-</td><td>-</td><td>-</td></tr>';
+											echo '<td>'.$date->format("M d").'</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
 										}
 										
 										
