@@ -287,7 +287,7 @@ $(document).ready(function(e) {
                         	<thead>
                             	<tr>
                             	<?php
-    								echo '<th>Day(s)</th><th>Bank</th><th>Check No</th><th>Check Amount</th>';
+    								echo '<th>Day(s)</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>';
     							?>
                                 </tr>
                             </thead>
@@ -297,10 +297,10 @@ $(document).ready(function(e) {
     									$currdate = $date->format("Y-m-d");
     									echo '<tr>';
     									
-										$sql = "SELECT a.* FROM cvchkdtl a, bank b ";
-    									$sql .= "WHERE a.bankacctid = b.id AND checkdate = '".$currdate."' ";
-										$sql .= "ORDER BY b.code ASC";
-    									$cvchkdtls = Cvchkdtl::find_by_sql($sql); 
+										$sql = "SELECT * FROM vcvchkdtl ";
+    									$sql .= "WHERE checkdate = '".$currdate."' ";
+										$sql .= "ORDER BY bankcode ASC";
+    									$cvchkdtls = vCvchkdtl::find_by_sql($sql); 
 										global $database;
 										$len = count($cvchkdtls);
 										
@@ -311,6 +311,7 @@ $(document).ready(function(e) {
 												$code = Bank::row($cvchkdtl->bankacctid,0);
 												echo '<td class="bnk-'.$code.'" title="'.Bank::row($cvchkdtl->bankacctid,1).'">'.$code.'</td>';
 												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->checkno.'</td>';
+												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->payee.'</td>';
 												echo '<td class="bnk-'.$code.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
 											}
 										} else {
