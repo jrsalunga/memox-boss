@@ -309,7 +309,7 @@ $(document).ready(function(e) {
 											echo $date->format("M d").'</td>';
 											foreach($cvchkdtls as $cvchkdtl){
 												$code = Bank::row($cvchkdtl->bankacctid,0);
-												echo '<td class="bnk-'.$code.'" title="'.Bank::row($cvchkdtl->bankacctid,1).'">'.$code.'</td>';
+												echo '<td class="bnk-'.$code.'" title="'.$cvchkdtl->bank.'">'.$code.'</td>';
 												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->checkno.'</td>';
 												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->payee.'</td>';
 												echo '<td class="bnk-'.$code.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
