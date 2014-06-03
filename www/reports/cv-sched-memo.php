@@ -10,7 +10,7 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Check Voucher Scheduling - Bank</title>
+<title>MFI - Check Voucher Scheduling</title>
 
 
 <link rel="stylesheet" href="../css/bootstrap.css">
@@ -37,7 +37,7 @@ $dr = new DateRange($_GET['fr'],$_GET['to']);
 <script src="../js/vendors/accounting.js"></script>
 <script src="../js/vendors/jquery.filedrop.js"></script>
 
-<script src="../js/vendors/jquery.floatThead-1.2.7.min.js"></script>
+
 
 <script src="../js/vendors/highcharts-4.0.1.min.js"></script>
 <script src="../js/vendors/highcharts.data.js"></script>
@@ -326,7 +326,7 @@ $(document).ready(function(e) {
                     
                     var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
                     if (match) {
-                        //console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]))
+                        console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]))
                         return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
                     }
                 }
@@ -334,16 +334,8 @@ $(document).ready(function(e) {
 			chart: {
                 zoomType: 'x',
                 height: 250,
-                spacingRight: 0,
-				marginTop: 35
+                spacingRight: 0
             },
-			colors: ['#434348', '#7cb5ec', '#90ed7d', '#f7a35c', '#8085e9', 
-   '#f15c80', '#e4d354', '#8085e8', '#8d4653', '#91e8e1'],
-			/*
-			colors:[
-                '#48A0C4', '#ACFFD2', '#F29885', '#D53C25', '#FD668B', '#FCB319','#86A033', '#614931', '#00526F', '#594266', '#cb6828', '#aaaaab', '#a89375'
-                ],
-				*/
             title: {
                 text: ''
             },
@@ -376,9 +368,7 @@ $(document).ready(function(e) {
                     format: '{value:.,0f}'
                 },
                 showFirstLabel: false
-            }, 
-			/*
-			{ // right y axis
+            }, { // right y axis
                 linkedTo: 0,
                 gridLineWidth: 0,
                 opposite: true,
@@ -392,18 +382,16 @@ $(document).ready(function(e) {
                     format: '{value:.,0f}'
                 },
                 showFirstLabel: false
-            }
-			*/
-			],
-			
+            }],
+
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
-                y: -10,
+                y: 20,
                 floating: true,
                 borderWidth: 0
             },
-			
+
             tooltip: {
                 shared: true,
                 crosshairs: true
@@ -432,8 +420,7 @@ $(document).ready(function(e) {
                         }
                     },
                     marker: {
-                        lineWidth: 1,
-						symbol: 'circle'
+                        lineWidth: 1
                     }
                 }
             },
@@ -522,12 +509,7 @@ $(document).ready(function(e) {
 
 	
 	
-	$('table.table').floatThead({
-    	scrollingTop: function(){
-				return $(".navbar").height();
-			},
-     	useAbsolutePositioning: false
-  	});
+
 	
 });
 </script>
@@ -545,10 +527,7 @@ $(document).ready(function(e) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a href="/">
-          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
-        	</a>
-           <a class="navbar-brand" href="/">MemoXpress</a>
+          <a class="navbar-brand" href="../">MFI BOSS</a>
         </div>
         
         <div class="navbar-collapse collapse">
@@ -599,12 +578,14 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule - Bank</h1>
+                		<h1>Check Voucher Schedule by Bank</h1>
                 	</div>
                 </div>
                 <div class="row">
                 	<div class="col-md-6">
-                        
+                        <a class="btn btn-primary" href="cv-sched-raw">
+                            <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span>
+                        </a>
                     </div>
                 	<div class="col-md-6 datepick">
                         <form role="form" class="form-inline pull-right">
@@ -616,7 +597,6 @@ $(document).ready(function(e) {
                                 <label class="sr-only" for="to">To:</label>
                                 <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
                             </div>
-          
                             <button type="submit" class="btn btn-success">Go</button>
                         </form>
                 	</div>
@@ -624,7 +604,7 @@ $(document).ready(function(e) {
                 <div class="row">
                 	<div class="col-md-12 title">
                 		<div class="col-md-12">
-                        	<div id="graph" class="graph-full">
+                        	<div id="graph">
                             </div>
                         </div>
                 	</div>
@@ -690,29 +670,27 @@ $(document).ready(function(e) {
                 		</div>
                 	</div>
                     <div class="col-md-6 rb">
-                     	<div class="pull-right">
                         <a class="btn btn-primary" href="cv-sched-raw">
-                        <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span> 
-                        	View Detailed
-                      	</a>
-                        <p></p>
-                       </div>
-                       <div style="clear:both;"></div>
+                            <span style="color: #fff;" class="glyphicon glyphicon-th-list"></span> 
+                            View Detailed
+                        </a>
+                        </br>
+                        </br>
                 		<?php
                         $banks = Bank::find_all();
                         ?>
-                        <table class="table table-hover">
+                        <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th>DAYS</th><th>TOTAL</th>
+                                    <th>Days</th><th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
                                     foreach($dr->getDaysInterval() as $date){
                                         $currdate = $date->format("Y-m-d");
-                                        echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
-                                        echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M d").'</a></td>';
+                                        echo '<tr>';
+                                        echo '<td>'.$date->format("M d").'</td>';
                                         
                                         //foreach($banks as $bank){
                                             $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";

@@ -11,4 +11,8 @@ RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched.php
 #RewriteRule ^cv-sched(\/.*)*$ /reports/cv-sched-memo.php
 RewriteRule ^cv-sched-raw(\/.*)*$ /reports/cv-sched-raw.php
 RewriteRule ^chk-day(\/.*)*$ /reports/chk-day.php
+RewriteRule ^print-chk-day(\/.*)*$ /reports/print-chk-day.php
+RewriteRule ^accounts-payable-print(\/.*)*$ /reports/accounts-payable-print.php
+RewriteRule ^check-print(\/.*)*$ /reports/check-print.php
+
 

@@ -648,9 +648,9 @@ $(document).ready(function(e) {
                     </div>
                     <div class="col-md-3 col-sm-6 col-md-offset-9">
                     	<div class="pull-right">
-                    		<a class="btn btn-primary" href="cv-sched">
-                            	<span style="color: #fff;" class="glyphicon glyphicon-list-alt"></span>
-                                Summary
+                    		<a class="btn btn-default" href="cv-sched">
+                            	<span class="glyphicon glyphicon-unshare"></span>
+                                Back to Summary
                          	</a>
                             <p></p>
                     	</div>

@@ -5,14 +5,9 @@ class DateRange {
 	
 	public $fr;
 	public $to;
-	public $week_start;
-	public $week_end;
-	public $month_start;
-	public $month_end;
 	
-	function __construct($fr=NULL, $to=NULL, $cookie=true){
-		
-		
+	function __construct($fr=NULL, $to=NULL, $save=true, $max_diff=365){
+	
 		
 		if(is_null($fr) && !is_null($to)){
 			$this->to = date('Y-m-d', strtotime($to));
@@ -23,20 +18,66 @@ class DateRange {
 		} else if(is_null($fr) && is_null($to)){
 			$this->get_current();
 		} else {
-			$this->to = date('Y-m-d', strtotime($to));
-			$this->fr = date('Y-m-d', strtotime($fr));
+
+			 
+			if(strtotime($to) >= strtotime($fr)){
+
+				try {
+				    $f = new DateTime($fr);
+				} catch (Exception $e) {
+				   	$f = new DateTime(date('Y-m-01', strtotime('now')));
+				}
+
+				try{
+					$t = new DateTime($to);
+				} catch (Exception $e) {
+					$t = new DateTime(date('Y-m-t', strtotime($f->format('Y-m-d'))));
+				}
+			
+	            $diff = $f->diff($t);
+	            if($diff->format('%a') > $max_diff){
+	            	//echo 'too long range</br>';
+	            	$this->fr = date('Y-m-01', strtotime($to));	
+	            	$this->to = date('Y-m-t', strtotime($to));
+					
+
+	            } else {
+	            	//echo 'on range</br>';
+	            	$this->fr = $f->format('Y-m-d');
+	            	$this->to = $t->format('Y-m-d');
+	            }
+	           
+	        } else {
+	            //echo 'invalid range</br>';
+	           	$this->fr = date('Y-m-01', strtotime('now'));
+	            $this->to = date('Y-m-t', strtotime($this->fr));
+	        }  
 		}
 		
-		if($cookie==true){
-			setcookie("to", $this->to, time() + (86400 * 7)); // 86400 = 1 day
-			setcookie("fr", $this->fr, time() + (86400 * 7)); // 86400 = 1 day
+		
+		if($save && !headers_sent()){
+			setcookie("to", $this->to, time() + (86400)); // 86400 = 1 day
+			setcookie("fr", $this->fr, time() + (86400)); // 86400 = 1 day
 		}
 		
-	
-	
 	}
 	
-	
+	public function is_valid_date($x){
+		$date_regex = '/^(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])$/';
+
+		if(is_string($x)){
+			if(strlen(strtotime($x)) == 0){
+
+			} else {
+				return $x;
+			}
+
+		} else if(preg_match($date_regex,$x) && strlen($x)==10){
+			return $x;
+		} else {
+			return false;
+		}
+	}
 							
 							
 	public function get_current(){
@@ -46,7 +87,7 @@ class DateRange {
 			$this->to = $_COOKIE['to'];
 		} else {
 			 // Last day of the month.
-       		$this->to = date('Y-m-t', strtotime('now'));
+       		$this->to = date('Y-m-t', strtotime($query_date));
 		}
 		
 		
@@ -55,13 +96,30 @@ class DateRange {
 		} else {
 			  // First day of the month.
         	$this->fr = date('Y-m-01', strtotime($query_date));
+		}		
+	}
+
+	public static function current(){
+		$query_date = 'now';
+
+		$me = new stdClass; 
+		
+		if(!empty($_COOKIE['to'])){
+			$me->to = $_COOKIE['to'];
+		} else {
+			 // Last day of the month.
+       		$me->to = date('Y-m-t', strtotime($query_date));
 		}
 		
 		
-       
-       
+		if(!empty($_COOKIE['fr'])){
+			$me->fr = $_COOKIE['fr'];
+		} else {
+			  // First day of the month.
+        	$me->fr = date('Y-m-01', strtotime($query_date));
+		}
 
-			
+		return $me;		
 	}
 	
 	
@@ -73,50 +131,32 @@ class DateRange {
 		$interval = new DateInterval('P1D');
 		return $daterange = new DatePeriod($begin, $interval ,$end);
 	}
-	
-	public function to_next_day(){
-		return date('Y-m-d', strtotime($this->to." +1 day"));
-	}
-	
-	public function to_prev_day(){
-		return date('Y-m-d', strtotime($this->to." -1 day"));
-	}
-	
-	public function fr_next_day(){
-		return date('Y-m-d', strtotime($this->fr." +1 day"));
-	}
-	
+
+
 	public function fr_prev_day(){
-		return date('Y-m-d', strtotime($this->fr." -1 day"));
+		$fr = new DateTime($this->fr);
+		$fr->modify('-1 day'); 
+		return $fr->format("Y-m-d");
 	}
-								
-	
-	/*							
-	$fr = $r->get('fr');
-    $to = $r->get('to');
 
-
-    if(!empty($to) && !empty($fr)){
-        
-        if(strtotime($to) >= strtotime($fr)){
-            //return 'correct range';
-        } else {
-            return 'invalid range';
-        }   
-    } else {
-        $query_date = 'now';
-        // First day of the month.
-        $fr = date('Y-m-01', strtotime($query_date));
-        // Last day of the month.
-        $to = date('Y-m-t', strtotime('now'));
-        
-        // Minus 15 days from now
-        //$fr = date('Y-m-d', strtotime('-14 day'));
-        //$to = date('Y-m-d', strtotime('now'));
-    }
-								
+	public function fr_next_day(){
+		$fr = new DateTime($this->fr);
+		$fr->modify('+1 day'); 
+		return $fr->format("Y-m-d");
 	}
-	*/
+
+	public function to_prev_day(){
+		$to = new DateTime($this->to);
+		$to->modify('-1 day'); 
+		return $to->format("Y-m-d");
+	}
+
+	public function to_next_day(){
+		$to = new DateTime($this->to);
+		$to->modify('+1 day'); 
+		return $to->format("Y-m-d");
+	}
+							
 							
 }
 

@@ -466,13 +466,14 @@ background-repeat: no-repeat;
     padding-right: 15px;
 }
 
-.btn .glyphicon{
+.btn.hoverd .glyphicon{
 	color: #ccc;
 }
 
-.btn:hover .glyphicon{
+.btn.hoverd:hover .glyphicon{
 	color: #333;
 }
+
 
 #total-list .pct {
 	color: #aaa;
@@ -716,7 +717,7 @@ table.floatThead-table {
 }
 
 table.table {
-	font-size:13px;
+	/* font-size:13px; */
 }
 
 

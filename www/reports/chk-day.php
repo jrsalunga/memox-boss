@@ -1,7 +1,19 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
-$dr = new DateRange($_GET['fr'],$_GET['to'], false);
+if(isset($_GET['ref'])){
+	setcookie("ref", $_SERVER['HTTP_REFERER'] , time() + (3600)); // 1hr
+}
+
+if(isset($_GET['fr']) && isset($_GET['to'])){
+	$dr = new DateRange($_GET['fr'],$_GET['to'], false);
+} else {
+	$dr = new DateRange(NULL,NULL,false);	
+}
+	
+
+$uri = explode('?',$_SERVER['REQUEST_URI']);
+$qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -10,7 +22,7 @@ $dr = new DateRange($_GET['fr'],$_GET['to'], false);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Check Voucher Scheduling</title>
+<title>MemoXpress - Check Breakdown</title>
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -76,7 +88,7 @@ $(document).ready(function(e) {
 	
 	daterange();
 	
-	$.get('../api/report/chk-day?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+	$.get('../api/report/chk-day<?=$qs?>', function (csv) {
 		//console.log(csv);
 		var total = 0;
 		$('#graph').highcharts({
@@ -231,17 +243,14 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Breakdown - Day</h1>
+                		<h1>Check Breakdown</h1>
                 	</div>
                 </div>
                 <div class="row">
                 	<div class="col-md-6">
-                    	
-                        
-                          	<a class="btn btn-default" href="cv-sched-raw"><span class="glyphicon glyphicon-arrow-left"></span></a>
-                          	
-                        
-                       
+                        <a type="button" class="btn btn-default" href="<?=(isset($_COOKIE['ref']) && !empty( $_COOKIE['ref'])) ? $_COOKIE['ref']:'cv-sched-raw'; ?>">
+                            <span class="glyphicon glyphicon-unshare"></span>
+                        </a>
                     </div>
                 	<div class="col-md-6 datepick pull-right">
                 		<form role="form" class="form-inline pull-right">
@@ -273,22 +282,28 @@ $(document).ready(function(e) {
                     </div>
 
                 	
-                    <div class="col-md-3 col-sm-6 col-md-offset-9">
-                    	<div class="btn-group pull-right">
-                          	<a class="btn btn-default" href="?fr=<?=$dr->fr_prev_day()?>&to=<?=$dr->to_prev_day()?>"><span class="glyphicon glyphicon-backward"></span></a>
-                          	<a class="btn btn-default" href="?fr=<?=$dr->fr_next_day()?>&to=<?=$dr->to_next_day()?>"><span class="glyphicon glyphicon-forward"></span></a>
+                   <div class="col-md-5">  
+                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
+                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
+                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
+                    </div>
+                    <div class="col-md-3 col-sm-6 col-md-offset-4">
+                        <div class="btn-group pull-right">
+                            <a class="btn btn-default" href="?fr=<?=$dr->fr_prev_day()?>&to=<?=$dr->to_prev_day()?>"><span class="glyphicon glyphicon-backward"></span></a>
+                            <a class="btn btn-default" href="?fr=<?=$dr->fr_next_day()?>&to=<?=$dr->to_next_day()?>"><span class="glyphicon glyphicon-forward"></span></a>
                         </div>
-                        <p></p>
-                    	<p>&nbsp;</p>
+                        
+                        <a class="btn btn-default" href="print-chk-day<?=$qs?>&ref=print"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
+                
+                        
                     </div>
                     
                     <div class="col-md-12">
+                        <br/>
                     	<table class="table table-bordered">
                         	<thead>
                             	<tr>
-                            	<?php
-    								echo '<th>Day(s)</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>';
-    							?>
+                                <th>Day(s)</th><th>CV Ref No</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -299,23 +314,32 @@ $(document).ready(function(e) {
     									
 										$sql = "SELECT * FROM vcvchkdtl ";
     									$sql .= "WHERE checkdate = '".$currdate."' ";
-										$sql .= "ORDER BY bankcode ASC";
-    									$cvchkdtls = vCvchkdtl::find_by_sql($sql); 
-										global $database;
+										if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
+											$sql .= "AND posted = '".$_GET['posted']."' ";
+										} 
+										$sql .= "ORDER BY bankcode ASC, payee";
+    									$cvchkdtls = vCvchkdtl::find_by_sql($sql);
 										$len = count($cvchkdtls);
 										
 										if($len > 0){
 											echo '<td rowspan="'.$len.'">';
-											echo $date->format("M d").'</td>';
+											echo $date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td>';
 											foreach($cvchkdtls as $cvchkdtl){
-												//$code = Bank::row($cvchkdtl->bankacctid,0);
-												echo '<td class="bnk-'.$code.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';
-												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->checkno.'</td>';
-												echo '<td class="bnk-'.$code.'" >'.$cvchkdtl->payee.'</td>';
-												echo '<td class="bnk-'.$code.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
+												echo '<td class="bnk-'.$cvchkdtl->bankcode.'">';
+												echo '<a href="/reports/check-print/'.$cvchkdtl->cvhdrid.'" target="_blank">'.$cvchkdtl->refno.'</td>';
+												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';	
+												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno;
+												if($cvchkdtl->posted==1){
+													echo '<span class="glyphicon glyphicon-ok-circle pull-right" style="color:#5cb85c;" title="posted"></span>';
+												} else {
+													echo '<span class="glyphicon glyphicon-remove-circle pull-right" style="color:#f0ad4e;line-height: 1.3;" title="unposted"></span>';
+												}
+												echo '</td>';
+												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
+												echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
 											}
 										} else {
-											echo '<td>'.$date->format("M d").'</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+											echo '<td>'.$date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
 										}
 										
 										
