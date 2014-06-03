@@ -79,7 +79,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     	<div id="header-wrap">
         	
         	<h2>MemoXpress</h2>
-            <p>Pacific Center Bldg, Quintin Paredes, Manila</p>
+            <p>Pacific Center Bldg, Quintin Paredes St., Manila</p>
             <h1 class="reportLabel">Check Voucher</h1>
         </div>		
     </div>

@@ -6,7 +6,7 @@ ini_set('display_errors','On');
 $cleanUrl->setParts('apvhdrid');
 
 #echo $apvhdrid;
-$apvhdr = Apvhdr::find_by_id($apvhdrid);
+$apvhdr = vApvhdr::find_by_id($apvhdrid);
 //echo var_dump($apvhdr);
 
 
@@ -77,7 +77,7 @@ $apvhdr = Apvhdr::find_by_id($apvhdrid);
     	<div id="header-wrap">
         	
         	<h2>MemoXpress</h2>
-            <p>Pacific Center Bldg, Quintin Paredes, Manila</p>
+            <p>Pacific Center Bldg, Quintin Paredes St., Manila</p>
             <h1 class="reportLabel">Accounts Payable Voucher</h1>
         </div>		
     </div>
@@ -88,7 +88,7 @@ $apvhdr = Apvhdr::find_by_id($apvhdrid);
                 <?php
 					#$location = Location::find_by_id($apvhdr->locationid);
 				?>
-                <div><?=$location->code?></div>
+                <div></div>
                 
                 
                 </div>
@@ -100,6 +100,9 @@ $apvhdr = Apvhdr::find_by_id($apvhdrid);
                         </tr>
                         <tr>
                         	<td>Date</td><td><?=short_date($apvhdr->date)?></td>
+                        </tr>
+                        <tr>
+                        	<td>Due</td><td><?=short_date($apvhdr->due)?></td>
                         </tr>
                         <tr>
                         	<td>Supplier</td><td><?=Supplier::row($apvhdr->supplierid,1)?></td>
@@ -134,11 +137,11 @@ $apvhdr = Apvhdr::find_by_id($apvhdrid);
 					foreach($items as $item){
 						$item_code = Account::row($item->accountid,0);
 						$item_descriptor = Account::row($item->accountid,1);
-						$prj = Project::row($item->projectid,0);
-						$p = $item->type == 1 ? '('.$prj.')' : '';
+						//$prj = Project::row($item->projectid,0);
+						//$p = $item->type == 1 ? '('.$prj.')' : '';
 						
 						echo "<tr>";
-						echo "<td>". $item_code ."</td><td colspan='2'>". uc_first($item_descriptor) .' <em>'. $p ."</em></td><td>". number_format($item->amount,2) ."</td>";
+						echo "<td>". $item_code ."</td><td colspan='2'>". uc_first($item_descriptor)."</em></td><td>". number_format($item->amount,2) ."</td>";
 						echo "</tr>";
 					}
 					

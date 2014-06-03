@@ -6,27 +6,19 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class Apvdtl extends DatabaseObject{
 	
 	protected static $table_name="apvdtl";
-	protected static $db_fields = array('id', 'apvhdrid' ,'itemid' ,'qty' ,'unitcost' ,'amount');
+	protected static $db_fields = array('id', 'apvhdrid' ,'accountid' ,'type' ,'projectid' ,'amount' );
 	
 	/*
 	* Database related fields
 	*/
 	public $id;
 	public $apvhdrid;
-	public $itemid;
-	public $qty;
-	public $unitcost;
+	public $projectid;
+	public $accountid;
 	public $amount;
-	
-	
-	function __contruct(){
-		$this->amount = number_format($this->amount	,2);
-	}
-	
+	public $type;
 	
 
-	
-	
-	
+
 }
 

@@ -22,8 +22,8 @@ class vApvhdr extends DatabaseObject{
 	public $totamount;
 	public $balance;
 	public $posted;
-	
-	
+	public $totcredit;
+	public $totdebit;
 	public $notes;
 	public $cancelled;
 	public $printctr;
