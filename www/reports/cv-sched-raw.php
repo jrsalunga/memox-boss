@@ -612,7 +612,10 @@ $(document).ready(function(e) {
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        
+                        <a class="btn btn-default" href="cv-sched">
+                          	<span class="glyphicon glyphicon-unshare"></span>
+                           	Back to Summary
+                       	</a>
                     </div>
                 	<div class="col-md-6 datepick">
                     	<form role="form" class="form-inline pull-right">
@@ -647,11 +650,8 @@ $(document).ready(function(e) {
                     </div>
                     <div class="col-md-3 col-sm-6 col-md-offset-9">
                     	<div class="pull-right">
-                    		<a class="btn btn-default" href="cv-sched">
-                            	<span class="glyphicon glyphicon-unshare"></span>
-                                Back to Summary
-                         	</a>
-                            <p></p>
+                    		<a class="btn btn-default" href="print-cv-sched-raw"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
+                            
                     	</div>
                         <div style="clear:both;"></div>
                     </div>
@@ -703,6 +703,7 @@ $(document).ready(function(e) {
                     	<?php
     						$banks = Bank::find_all();
     					?>
+                        <br>
                     	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
