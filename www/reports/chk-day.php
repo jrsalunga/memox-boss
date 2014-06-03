@@ -1,9 +1,6 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
-if(isset($_GET['ref'])){
-	setcookie("ref", $_SERVER['HTTP_REFERER'] , time() + (3600)); // 1hr
-}
 
 if(isset($_GET['fr']) && isset($_GET['to'])){
 	$dr = new DateRange($_GET['fr'],$_GET['to'], false);
@@ -249,7 +246,7 @@ $(document).ready(function(e) {
                 </div>
                 <div class="row">
                 	<div class="col-md-6">
-                        <a type="button" class="btn btn-default" href="<?=(isset($_COOKIE['ref']) && !empty( $_COOKIE['ref'])) ? $_COOKIE['ref']:'cv-sched-raw'; ?>">
+                        <a type="button" class="btn btn-default" href="<?=isset($_GET['ref']) ? $_GET['ref']:'cv-sched-raw'; ?>">
                             <span class="glyphicon glyphicon-unshare"></span>
                         </a>
                     </div>

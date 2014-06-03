@@ -11,7 +11,7 @@ defined('DS') ? null : define('DS', DIRECTORY_SEPARATOR);
 defined('ROOT') ? null : define('ROOT', dirname(dirname(__FILE__)));
 defined('TEMPLATE_PATH') ? null : define('TEMPLATE_PATH',ROOT.DS.'templates');
 
-defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', true);
+defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', false);
 defined('SERVER_LIVE') ? null : define('SERVER_LIVE', false);
 
 
