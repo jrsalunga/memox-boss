@@ -69,7 +69,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 
 
 <div id="page-wrap">
-	<div class="isposted" style="visibility: <?=$apvhdr->posted==1?"visible":"hidden"?>">
+	<div class="isposted" style="visibility: <?=$cvhdr->posted==1?"visible":"hidden"?>">
     	<h1>Posted</h1>
     </div>
     <div id="header">

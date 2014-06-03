@@ -83,6 +83,31 @@ function daterange(){
 
 $(document).ready(function(e) {
 	
+	$("td").hover(function() {
+	
+	  $el = $(this);
+	  
+	  $el.parent().addClass("hover");
+	
+	  if ($el.parent().has('td[rowspan]').length == 0)
+		
+		$el
+		  .parent()
+		  .prevAll('tr:has(td[rowspan]):first')
+		  .find('td[rowspan]')
+		  .addClass("hover");
+	
+	}, function() { 
+		  
+	  $el
+		.parent()
+		.removeClass("hover")
+		.prevAll('tr:has(td[rowspan]):first')
+		.find('td[rowspan]')
+		.removeClass("hover");
+	
+	});
+	
 	
 	daterange();
 	
@@ -173,6 +198,11 @@ $(document).ready(function(e) {
 	
 });
 </script>
+<style>
+td.hover {
+	background-color:#f5f5f5;
+}
+</style>
 </head>
 <body id="app-body" class="state-nav">
 
@@ -298,7 +328,7 @@ $(document).ready(function(e) {
                     
                     <div class="col-md-12">
                         <br/>
-                    	<table class="table table-bordered">
+                    	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
                                 <th>Day(s)</th><th>CV Ref No</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>
