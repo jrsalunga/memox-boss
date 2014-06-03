@@ -141,13 +141,13 @@ $app->run();
 
 
 function getCVSched(){
-   
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
 
-
-    $fr = $r->get('fr');
-    $to = $r->get('to');
+    
+    $fr =  $database->escape_value($r->get('fr'));
+    $to =  $database->escape_value($r->get('to'));
 
 
     if(!empty($to) && !empty($fr)){
@@ -220,13 +220,13 @@ function getCVSched(){
 
 
 function getReportCV(){
-   
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
 
 
-    $fr = $r->get('fr');
-    $to = $r->get('to');
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
 
 
     if(!empty($to) && !empty($fr)){
@@ -296,11 +296,13 @@ function getReportCV(){
 
 
 function getReportBankTotal(){
-
+    
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-
-    $range = new DateRange($r->get('fr'),$r->get('to'));
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    $range = new DateRange($fr,$to);
 
     echo 'Days,Total';
     echo PHP_EOL;
@@ -344,12 +346,14 @@ function getReportBankByStatus($status){
 
     }
 
-
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
 
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
 
-    $range = new DateRange($r->get('fr'),$r->get('to'));
+    $range = new DateRange($fr,$to);
 
     echo 'Days,Total';
     echo PHP_EOL;
@@ -385,8 +389,10 @@ function getReportBankByStatus($status){
 function getChkDay(){
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-
-    $range = new DateRange($r->get('fr'),$r->get('to'));
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    $range = new DateRange($fr,$to);
 
     $arr = array();
     $p = $r->get('posted');
