@@ -2,12 +2,14 @@
 include_once('../../lib/initialize.php');
 include_once('../../classes/class.cleanurl.php');
 #error_reporting(E_ALL);
-ini_set('display_errors','Off');
+ini_set('display_errors','On');
 $cleanUrl->setParts('cvhdrid');
 
 #echo $apvhdrid;
 $cvhdr = vCvhdr::find_by_id($cvhdrid);
-
+//global $database;
+//echo $database->last_query;
+//echo var_dump($cvhdr);
 
 
 ?>
@@ -72,12 +74,12 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     </div>
     <div id="header">
     	<div id="main-logo">
-            <img src="<?=$relativeslash?>../images/mfi-logo.jpg" />
+            <img src="<?=$relativeslash?>../images/memoxpress.png" />
         </div>
     	<div id="header-wrap">
         	
-        	<h2>ModularFusion Inc</h2>
-            <p>1763 Paz M. Guanzon Street, Paco, 1007 Manila</p>
+        	<h2>MemoXpress</h2>
+            <p>Pacific Center Bldg, Quintin Paredes, Manila</p>
             <h1 class="reportLabel">Check Voucher</h1>
         </div>		
     </div>
@@ -88,7 +90,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
                 <?php
 					#$location = Location::find_by_id($apvhdr->locationid);
 				?>
-                <div><?=$location->code?></div>
+                <div></div>
                 
                 
                 </div>

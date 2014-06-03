@@ -11,7 +11,7 @@ defined('DS') ? null : define('DS', DIRECTORY_SEPARATOR);
 defined('ROOT') ? null : define('ROOT', dirname(dirname(__FILE__)));
 defined('TEMPLATE_PATH') ? null : define('TEMPLATE_PATH',ROOT.DS.'templates');
 
-defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', false);
+defined('DEVELOPMENT_ENVIRONMENT') ? null : define('DEVELOPMENT_ENVIRONMENT', true);
 defined('SERVER_LIVE') ? null : define('SERVER_LIVE', false);
 
 
@@ -64,11 +64,17 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.salesman.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apvhdr.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.apvdtl.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.bank.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvapvdtl.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvchkdtl.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.cvhdr.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.supplier.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.account.php');
+
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvhdr.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvdtl.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvchkdtl.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvhdr.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.vproject.php');
 
