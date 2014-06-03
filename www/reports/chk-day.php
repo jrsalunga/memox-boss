@@ -14,6 +14,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 $uri = explode('?',$_SERVER['REQUEST_URI']);
 $qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
+
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
