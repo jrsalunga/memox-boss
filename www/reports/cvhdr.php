@@ -1,7 +1,11 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
-$dr = new DateRange($_GET['fr'],$_GET['to']);
+if(isset($_GET['fr']) && isset($_GET['to'])){
+	$dr = new DateRange($_GET['fr'],$_GET['to']);
+} else {
+	$dr = new DateRange(NULL,NULL,false);	
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -326,12 +330,10 @@ $(document).ready(function(e) {
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <div class="col-md-12">
-                    	<table class="table table-bordered">
+                    	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
-                            	<?php
-    								echo '<th>Days</th><th>Unposted</th><th>Posted</th><th>Total</th>';
-    							?>
+                            	<th>Days</th><th>Unposted</th><th>Posted</th><th>Total</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -339,19 +341,38 @@ $(document).ready(function(e) {
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
     									echo '<tr>';
-    									echo '<td>'.$date->format("M d").'</td>';
+    									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cvhdr">'.$date->format("M d").'</a></td>';
     									$tot = 0;
+										$tot_check = 0;
     									for($x = 0; $x <= 1; $x++){
-    										$sql = "SELECT SUM(b.amount) as amount FROM cvhdr a, cvchkdtl b ";
+    										$sql = "SELECT SUM(b.amount) as amount, COUNT(b.amount) as checkno FROM cvhdr a, cvchkdtl b ";
     										$sql .= "WHERE a.id = b.cvhdrid AND b.checkdate = '".$currdate."' ";
     										$sql .= "AND a.posted = '".$x."'";
     										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
     										$cvchkdtl = array_shift($cvchkdtl);
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
 											$tot = $tot + $cvchkdtl->amount;
-    										echo '<td style="text-align: right;">'.$amt.'</td>';
+    										echo '<td style="text-align: right;">';
+											if($cvchkdtl->checkno > 0){
+												echo '<span class="pull-left" title="'.$cvchkdtl->checkno.' check(s)">';
+												echo '<a href="chk-day?fr='.$currdate.'&to='.$currdate.'&posted='.$x.'&ref=cvhdr" style="color: #5cb85c; text-decoration: none;">';
+												echo $cvchkdtl->checkno .' <span class="glyphicon glyphicon-money"></span></a></span>';
+												
+											}	
+											echo $amt.'</td>';
 											$tot = ($tot == 0) ? '-':$tot;
-											echo $x==1 ?  '<td style="text-align: right;">'.number_format($tot,2).'</td>':'';
+											$tot_check = $tot_check + $cvchkdtl->checkno;
+											if($x==1){
+												echo '<td style="text-align: right;">';
+												if($tot_check > 0){
+													echo '<span class="pull-left" title="'.$tot_check.' check(s)">';
+													echo '<a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cvhdr" style="color: #5cb85c; text-decoration: none;">';
+													echo $tot_check .' <span class="glyphicon glyphicon-money"></span></a></span>';
+												}	
+												echo $tot!='-' ? number_format($tot,2).'</td>': '-</td>';
+											} else {
+													
+											}
     										
     									}	
     									

@@ -1,7 +1,11 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
-$dr = new DateRange($_GET['fr'],$_GET['to']);
+if(isset($_GET['fr']) && isset($_GET['to'])){
+	$dr = new DateRange($_GET['fr'],$_GET['to']);
+} else {
+	$dr = new DateRange(NULL,NULL,false);	
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -97,11 +101,6 @@ $(document).ready(function(e) {
 	
 	daterange();
 	
-	//$.getJSON('../api/cv-sched?fr=<?=$dr->fr?>&to=<?=$_GET['to']?>', function (csv) {
-		
-		
-		
-    //});
 	
 	
 	$.get('../api/report/bank/total?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
@@ -733,10 +732,15 @@ $(document).ready(function(e) {
     										$tot = $tot + $cvchkdtl->amount;
     										echo '<td style="text-align: right;">'.$amt.'</td>';
 											$tot = ($tot == 0) ? '-':$tot;
-											echo end($banks)==$bank ?  '<td style="text-align: right;">'.number_format($tot,2).'</td>':'';
+											if(end($banks)==$bank){
+												if($tot=='-'){
+													echo '<td style="text-align: right;">-</td>';
+												} else {
+													echo '<td style="text-align: right;">'.number_format($tot,2).'</td>';
+												}	
+											}
     										
-    									}	
-    									
+    									}
     									echo '</tr>';
     								}
     							?>

@@ -337,7 +337,9 @@ function getReportBankTotal(){
 
 
 function getReportBankByStatus($status){
-
+    //global $database;
+   // $fr = $database->escape_value($r->get('fr'));
+    //$to = $database->escape_value($r->get('to'));
     if($status=='posted'){
         $s = 1;
     } else if($status=='unposted'){
@@ -346,14 +348,12 @@ function getReportBankByStatus($status){
 
     }
 
-    global $database;
-    $fr = $database->escape_value($r->get('fr'));
-    $to = $database->escape_value($r->get('to'));
+    
 
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
 
-    $range = new DateRange($fr,$to);
+    $range = new DateRange($r->get('fr'),$r->get('to'));
 
     echo 'Days,Total';
     echo PHP_EOL;
