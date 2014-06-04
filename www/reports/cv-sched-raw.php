@@ -6,6 +6,8 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 } else {
 	$dr = new DateRange(NULL,NULL,false);	
 }
+$uri = explode('?',$_SERVER['REQUEST_URI']);
+$qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -695,7 +697,7 @@ $(document).ready(function(e) {
                     </div>
                     <div class="col-md-2">
                     	<div class="pull-right">
-                    		<a class="btn btn-default" href="print-cv-sched-raw"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>                     
+                    		<a class="btn btn-default" href="print-cv-sched-raw<?=$qs?>"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>                     
                     	</div>     
                     </div>	
              		<div class="col-md-12">

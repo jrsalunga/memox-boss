@@ -275,7 +275,17 @@ td.hover {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Breakdown</h1>
+                		<h1>Check Breakdown
+                        <?php
+                        if(isset($_GET['posted']) && $_GET['posted']=='0'){
+                            echo ' (Unposted)';
+                        } else if(isset($_GET['posted']) && $_GET['posted']=='1'){
+                            echo ' (Posted)';
+                        } else {
+
+                        }
+                        ?>
+                        </h1>
                 	</div>
                 </div>
                 <div class="row">
@@ -315,9 +325,9 @@ td.hover {
 
                 	
                    <div class="col-md-5">  
-                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
-                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
-                        <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
+                        <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
                     </div>
                     <div class="col-md-3 col-sm-6 col-md-offset-4">
                         <div class="btn-group pull-right">

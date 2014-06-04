@@ -149,11 +149,11 @@ table {
                     <span class="glyphicon glyphicon-print"></span>
                     Print
                 </button>
-                <!--
+                
                 <div class="btn-group">
-                	<a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
-                    <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
-                    <a class="btn btn-default" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
+                	<a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
+                    <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
+                    <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
             	</div>
                 <div class="btn-group">
                     <a class="btn btn-default" title="previous date range" href="?fr=<?=$dr->fr_prev_day()?>&to=<?=$dr->to_prev_day()?>">
@@ -163,7 +163,7 @@ table {
                     	 Next <span class="glyphicon glyphicon-forward"></span>
                  	</a>
                 </div>
-                -->
+                
             </div>
         </div>
         <!--
@@ -197,55 +197,68 @@ table {
 	
 </div>
 <div class="prn-header">
-	<h1>Check Voucher Schedule - Bank</h1>
+	<h1>Check Voucher Schedule - Bank Detailed
+    <?php
+    if(isset($_GET['posted']) && $_GET['posted']=='0'){
+        echo ' (Unposted)';
+    } else if(isset($_GET['posted']) && $_GET['posted']=='1'){
+        echo ' (Posted)';
+    } else {
+
+    }
+    ?>
+    </h1>
 </div>
 <div class="prn-body">
 	<?php
-    						$banks = Bank::find_all();
-    					?>
-                    	<table class="table table-bordered table-hover">
-                        	<thead>
-                            	<tr>
-                            	<?php
-    								echo '<th>DAYS</th>';
-    								foreach($banks as $bank){
-    									echo '<th title="'.$bank->descriptor.'">'. $bank->code .'</th>';	
-    								}
-									echo '<th>TOTAL</th>';
-    							?>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            	<?php
-    								foreach($dr->getDaysInterval() as $date){
-    									$currdate = $date->format("Y-m-d");
-    									echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
-    									echo '<td>'.$date->format("M j, Y").'</td>';
-    									$tot = 0;
-    									foreach($banks as $bank){
-    										$sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
-    										$sql .= "WHERE checkdate = '".$currdate."' ";
-    										$sql .= "AND bankacctid = '".$bank->id."'";
-    										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-    										$cvchkdtl = array_shift($cvchkdtl);
-    										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
-    										$tot = $tot + $cvchkdtl->amount;
-    										echo '<td style="text-align: right;">'.$amt.'</td>';
-											$tot = ($tot == 0) ? '-':$tot;
-											if(end($banks)==$bank){
-												if($tot=='-'){
-													echo '<td style="text-align: right;">-</td>';
-												} else {
-													echo '<td style="text-align: right;">'.number_format($tot,2).'</td>';
-												}	
-											}
-    										
-    									}
-    									echo '</tr>';
-    								}
-    							?>
-                            </tbody>
-                        </table>
+    	$banks = Bank::find_all();
+    ?>
+    <table class="table table-bordered table-hover">
+    	<thead>
+        	<tr>
+        	<?php
+    			echo '<th>DAYS</th>';
+    			foreach($banks as $bank){
+    				echo '<th title="'.$bank->descriptor.'">'. $bank->code .'</th>';	
+    			}
+    			echo '<th>TOTAL</th>';
+    		?>
+            </tr>
+        </thead>
+        <tbody>
+        	<?php
+    			foreach($dr->getDaysInterval() as $date){
+    				$currdate = $date->format("Y-m-d");
+    				echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
+    				echo '<td>'.$date->format("M j, Y").'</td>';
+    				$tot = 0;
+    				foreach($banks as $bank){
+    					$sql = "SELECT SUM(amount) as amount FROM vcvchkdtl ";
+    					$sql .= "WHERE checkdate = '".$currdate."' ";
+                        if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
+                            $sql .= "AND posted = '".$_GET['posted']."' ";
+                        } 
+    					$sql .= "AND bankid = '".$bank->id."'";
+    					$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
+    					$cvchkdtl = array_shift($cvchkdtl);
+    					$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
+    					$tot = $tot + $cvchkdtl->amount;
+    					echo '<td style="text-align: right;">'.$amt.'</td>';
+    					$tot = ($tot == 0) ? '-':$tot;
+    					if(end($banks)==$bank){
+    						if($tot=='-'){
+    							echo '<td style="text-align: right;">-</td>';
+    						} else {
+    							echo '<td style="text-align: right;">'.number_format($tot,2).'</td>';
+    						}	
+    					}
+    					
+    				}
+    				echo '</tr>';
+    			}
+    		?>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>
