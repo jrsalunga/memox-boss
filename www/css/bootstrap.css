@@ -3000,6 +3000,14 @@ input[type="button"].btn-block {
 .glyphicon-tree-deciduous:before {
   content: "\e200";
 }
+.glyphicon-posted:before {
+	color: #5cb85c;
+	content: "\e089";
+}
+.glyphicon-unposted:before {
+	color: #f0ad4e;
+	content: "\e088";
+}
 .glyphicon-unshare:before {
 	font-family: 'Glyphicons Regular';
   	content: "\e222";
