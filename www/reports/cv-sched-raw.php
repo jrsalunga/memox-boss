@@ -648,7 +648,7 @@ $(document).ready(function(e) {
                     		<a class="btn btn-default" href="print-cv-sched-raw"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
                             
                     	</div>
-                        <div style="clear:both;"></div>
+                        
                     </div>
                     <!--
                 	<div class="col-md-3 GAcf">
