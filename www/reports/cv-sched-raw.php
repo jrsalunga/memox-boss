@@ -643,13 +643,7 @@ $(document).ready(function(e) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 col-sm-6 col-md-offset-9">
-                    	<div class="pull-right">
-                    		<a class="btn btn-default" href="print-cv-sched-raw"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
-                            
-                    	</div>
-                        
-                    </div>
+                    
                     <!--
                 	<div class="col-md-3 GAcf">
                     	<div>
@@ -658,6 +652,21 @@ $(document).ready(function(e) {
                             	
                                 <h4></h4>
                                 <div id="sg-total" class="thumb-graph">
+                                	
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    -->  
+                    <div class="col-md-3 GAcf">
+                    	<div>
+                            <p>Unposted</p>
+                            <div class="GAJv">
+                            	<?php
+									$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
+								?>
+                                <h4><?=number_format($drtotu->amount,2)?></h4>
+                                <div id="sg-unposted" class="thumb-graph">
                                 	
                                 </div>
                             </div>
@@ -677,23 +686,18 @@ $(document).ready(function(e) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-3 GAcf">
-                    	<div>
-                            <p>Unposted</p>
-                            <div class="GAJv">
-                            	<?php
-									$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
-								?>
-                                <h4><?=number_format($drtotu->amount,2)?></h4>
-                                <div id="sg-unposted" class="thumb-graph">
-                                	
-                                </div>
-                            </div>
-                        </div>
+                    
+                      
+                	<div class="col-md-10">
+                        <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" <?=!isset($_GET['posted'])?'active':''?> href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
                     </div>
-                    -->    
-                		
-               
+                    <div class="col-md-2">
+                    	<div class="pull-right">
+                    		<a class="btn btn-default" href="print-cv-sched-raw"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>                     
+                    	</div>     
+                    </div>	
              		<div class="col-md-12">
                     	<?php
     						$banks = Bank::find_all();
@@ -719,10 +723,15 @@ $(document).ready(function(e) {
     									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M d").'</a></td>';
     									$tot = 0;
     									foreach($banks as $bank){
-    										$sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+    										$sql = "SELECT SUM(amount) as amount FROM vcvchkdtl ";
     										$sql .= "WHERE checkdate = '".$currdate."' ";
-    										$sql .= "AND bankacctid = '".$bank->id."'";
-    										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+                                            if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
+                                                $sql .= "AND posted = '".$_GET['posted']."' ";
+                                            } 
+    										$sql .= "AND bankid = '".$bank->id."'";
+    										$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
+                                            //global $database;
+                                            //echo $database->last_query.'<br>';
     										$cvchkdtl = array_shift($cvchkdtl);
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
     										$tot = $tot + $cvchkdtl->amount;
