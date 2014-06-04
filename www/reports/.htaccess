@@ -15,5 +15,6 @@ RewriteRule ^print-chk-day(\/.*)*$ /reports/print-chk-day.php
 RewriteRule ^accounts-payable-print(\/.*)*$ /reports/accounts-payable-print.php
 RewriteRule ^check-print(\/.*)*$ /reports/check-print.php
 RewriteRule ^print-cv-sched-raw(\/.*)*$ /reports/print-cv-sched-raw.php
+RewriteRule ^print-cvhdr(\/.*)*$ /reports/print-cvhdr.php
 
 

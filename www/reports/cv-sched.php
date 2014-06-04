@@ -362,7 +362,6 @@ $(document).ready(function(e) {
                     y: 15
                 }
             },
-
             yAxis: [{ // left y axis
 				min: 0,
                 title: {
@@ -394,7 +393,6 @@ $(document).ready(function(e) {
             }
 			*/
 			],
-			
             legend: {
                 align: 'left',
                 verticalAlign: 'top',
@@ -402,12 +400,10 @@ $(document).ready(function(e) {
                 floating: true,
                 borderWidth: 0
             },
-			
             tooltip: {
                 shared: true,
                 crosshairs: true
             },
-
             plotOptions: {
                 series: {
                     cursor: 'pointer',
@@ -522,7 +518,7 @@ $(document).ready(function(e) {
 	
 	
 	$("table.table").fixMe({
-        container: '.navbar'
+        container: '.gutter'
     });
 	
 });

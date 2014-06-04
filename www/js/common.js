@@ -2432,6 +2432,7 @@ $.fn.fixMe = function(option) {
                     }
                 },
                 "box-shadow":"0 8px 5px -10px #999",
+                "-webkit-box-shadow":"0 10px 30px -9px #999",
                 "z-index":1
             }).insertBefore($this);
             resizeFixed();
@@ -2461,7 +2462,37 @@ $.fn.fixMe = function(option) {
 };
 
 
+function daterange(){
 
+  	$( "#fr" ).datepicker({
+		defaultDate: "+1w",
+		dateFormat: 'yy-mm-dd',
+		changeMonth: true,
+		numberOfMonths: 2,
+		onClose: function( selectedDate ) {
+			$( "#to" ).datepicker( "option", "minDate", selectedDate );
+		},
+		beforeShow: function() {
+			setTimeout(function(){
+				$('#ui-datepicker-div').css('z-index', 1002);
+			}, 0);
+		}
+	});
+    $( "#to" ).datepicker({
+  		defaultDate: "+1w",
+      	dateFormat: 'yy-mm-dd',
+      	changeMonth: true,
+      	numberOfMonths: 2,
+      	onClose: function( selectedDate ) {
+        	$( "#fr" ).datepicker( "option", "maxDate", selectedDate );
+      	},
+		beforeShow: function() {
+			setTimeout(function(){
+				$('#ui-datepicker-div').css('z-index', 1002);
+			}, 0);
+		}
+    });
+}
 
 
 

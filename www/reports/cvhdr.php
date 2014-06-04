@@ -87,9 +87,7 @@ $(document).ready(function(e) {
                 csv: csv,
                 // Parse the American date format used by Google
                 parseDate: function (s) {  
-					//console.log(s)   
-					//var match = false;
-                    //var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
+					
 					var match = s.match(/^([0-9]{1,4})\-([0-9]{1,2})\-([0-9]{1,2})$/);
                     if (match) {
                         console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]));
@@ -124,7 +122,7 @@ $(document).ready(function(e) {
                 labels: {
                     align: 'left',
                     x: 3,
-                    y: -3
+                    y: 15
                 }
             },
             yAxis: [{ // left y axis
@@ -169,7 +167,6 @@ $(document).ready(function(e) {
                 shared: true,
                 crosshairs: true
             },
-			tmp: 0,
             plotOptions: {
                 series: {
                     cursor: 'pointer',
@@ -307,7 +304,10 @@ $(document).ready(function(e) {
                 	</div>
                 </div>
                 <div class="row">
-                	<div class="col-md-12 datepick pull-right">
+                    <div class="col-md-6">
+                        
+                    </div>
+                	<div class="col-md-6 datepick pull-right">
                 		<form role="form" class="form-inline pull-right">
                             <div class="form-group">
                                 <label class="sr-only" for="fr">From:</label>
@@ -323,15 +323,22 @@ $(document).ready(function(e) {
                 	</div>
                 </div>
                 <div class="row">
-                	<div class="col-md-12">
+                	<div class="col-md-12 title">
                 		<div class="col-md-12">
                         	<div id="graph" class="graph-full">
                             </div>
                         </div>
                 	</div>
-                    <p>&nbsp;</p>
-                    <p>&nbsp;</p>
+                    <div class="col-md-3 col-sm-6 col-md-offset-9">
+                        <div class="pull-right">
+                            <a class="btn btn-default" href="print-cvhdr">
+                            <span class="glyphicon glyphicon-print"></span>
+                            Printer Friendly
+                            </a>
+                        </div>
+                    </div>
                     <div class="col-md-12">
+                        <br>
                     	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
@@ -343,7 +350,7 @@ $(document).ready(function(e) {
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
     									echo '<tr>';
-    									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cvhdr">'.$date->format("M d").'</a></td>';
+    									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cvhdr">'.$date->format("M j, Y").'</a></td>';
     									$tot = 0;
 										$tot_check = 0;
     									for($x = 0; $x <= 1; $x++){

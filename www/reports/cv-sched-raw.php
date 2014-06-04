@@ -529,13 +529,6 @@ $(document).ready(function(e) {
 	
 });
 </script>
-<style>
-	table.floatThead-table {
-   
-    background-color: #FFF;
-}
-
-</style>
 </head>
 <body id="app-body" class="state-nav">
 
