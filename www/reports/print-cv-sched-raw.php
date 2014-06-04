@@ -21,7 +21,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 <script src="../js/vendors/jquery-1.10.1.min.js"></script>
 <script src="../js/vendors/jquery-ui-1.10.3.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.7/jquery.floatThead.min.js"></script>
+<script src="../js/common.js"></script>
 <script type="application/javascript">
 function daterange(){
 
@@ -54,20 +54,18 @@ function daterange(){
 		}
     });
 }
+
+
+
     
 $(document).ready(function(e) {
 	
 	daterange();
-	
-    function pageTop(){
-  		return $(".gutter").height();
-	}
-	/*
-	$('table.table').floatThead({
-    	scrollingTop: pageTop,
-     	useAbsolutePositioning: false
-  	});
-	*/
+
+    $("table.table").fixMe({
+        container: '.gutter'
+    });
+
 });
 </script>    
 <style>
@@ -76,6 +74,7 @@ $(document).ready(function(e) {
 	padding: 0;
 	margin: 0
 }
+
 
 
 .prn-body,

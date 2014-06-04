@@ -195,6 +195,10 @@ $(document).ready(function(e) {
 		
 	});
 
+    $("table.table").fixMe({
+        container: '.navbar'
+    });
+
 	
 });
 </script>

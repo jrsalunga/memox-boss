@@ -2405,6 +2405,63 @@ function postCancelledTable(id){
 
 
 
+$.fn.fixMe = function(option) {
+    return this.each(function() {
+        
+        var $this = $(this),
+        $t_fixed;
+        
+        function init() {
+            $this.wrap('<div/>');
+            $t_fixed = $this.clone();
+            $t_fixed.find("tbody").remove().end().css({
+                "top": function(){
+                	return $(option.container).height() || 0;
+                },
+                "position":"fixed",
+                "width":function(){
+                    return $this.css('width');
+                },
+                "display":"none",
+                "border":"none",
+                "background-color": function(){
+                    if($this.css('background-color')=='transparent' || $this.css('background-color')=='rgba(0, 0, 0, 0)'){
+                        return '#fff';
+                    } else {
+                        return $this.css('background-color');
+                    }
+                },
+                "box-shadow":"0 8px 5px -10px #999",
+                "z-index":1
+            }).insertBefore($this);
+            resizeFixed();
+        }
+        
+        function resizeFixed() {
+            $t_fixed.find("th").each(function(index) {
+                $(this).css("width",$this.find("th").eq(index).outerWidth()+"px");
+            });
+        }
+     
+        function scrollFixed() {
+           
+            var offset = $(this).scrollTop() + $(option.container).height(),
+            tableOffsetTop = $this.offset().top,
+            tableOffsetBottom = tableOffsetTop + $this.height() - $this.find("thead").height();
+            if(offset < tableOffsetTop || offset > tableOffsetBottom)
+                $t_fixed.hide();
+            else if(offset >= tableOffsetTop && offset <= tableOffsetBottom && $t_fixed.is(":hidden"))
+                $t_fixed.show();
+        }
+        
+        $(window).resize(resizeFixed);
+        $(window).scroll(scrollFixed);
+        init();
+    });
+};
+
+
+
 
 
 

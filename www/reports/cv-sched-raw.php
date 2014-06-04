@@ -41,7 +41,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <script src="../js/vendors/accounting.js"></script>
 <script src="../js/vendors/jquery.filedrop.js"></script>
 
-<script src="//cdnjs.cloudflare.com/ajax/libs/floatthead/1.2.7/jquery.floatThead.min.js"></script>
+
 
 <script src="../js/vendors/highcharts-4.0.1.min.js"></script>
 <script src="../js/vendors/highcharts.data.js"></script>
@@ -520,14 +520,9 @@ $(document).ready(function(e) {
         });
     });
 
-	function pageTop(){
-  		return $(".navbar").height();
-	}
-	
-	$('table.table').floatThead({
-    	scrollingTop: pageTop,
-     	useAbsolutePositioning: false
-  	});
+	$("table.table").fixMe({
+        container: '.navbar'
+    });
 
 	
 });
