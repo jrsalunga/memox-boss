@@ -1,6 +1,7 @@
 <?php
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
+sanitize($_GET);
 if(isset($_GET['fr']) && isset($_GET['to'])){
 	$dr = new DateRange($_GET['fr'],$_GET['to'], false);
 } else {

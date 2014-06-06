@@ -3,7 +3,7 @@ require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 
 $cleanUrl->setParts('type');
-
+sanitize($_GET);
 $q = $_GET['q'];
 
 if(empty($q)){

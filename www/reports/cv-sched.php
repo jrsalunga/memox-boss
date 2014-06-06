@@ -16,7 +16,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MemoXpress - Check Voucher Scheduling - Bank</title>
-
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">

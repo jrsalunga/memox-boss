@@ -2,9 +2,10 @@
 require_once('../../lib/initialize.php');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 if(isset($_GET['fr']) && isset($_GET['to'])){
-	$dr = new DateRange($_GET['fr'],$_GET['to']);
+    sanitize($_GET);
+    $dr = new DateRange($_GET['fr'],$_GET['to']);
 } else {
-	$dr = new DateRange(NULL,NULL,false);	
+    $dr = new DateRange(NULL,NULL,false);   
 }
 ?>
 <!DOCTYPE HTML>
