@@ -157,9 +157,57 @@ class DatabaseObject {
 	  foreach($this->attributes() as $key => $value){
 		  if(isset($value) && $value!=NULL) {
 	    	$clean_attributes[$key] = $database->escape_value($value);
+	    	//echo $value .' - ';
+	    	//$clean_attributes[$key] = $this->sanitize($value);
+	    	//echo $clean_attributes[$key] .'<br>';
 		  }
 	  }
 	  return $clean_attributes;
+	}
+
+	public function cleanInput($input) {
+ 
+	  $search = array(
+	    '@<script[^>]*?>.*?</script>@si',   // Strip out javascript
+	    '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
+	    '@<style[^>]*?>.*?</style>@siU',    // Strip style tags properly
+	    '@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments
+	  );
+	 
+	    //$output = preg_replace($search, '', $input);
+	 	foreach ($search as $src) {
+	 		if(preg_match($src, $input, $matches)){
+	  			//echo 'Match: '.$src.' = '.$input.'<br>';
+	  		}
+	  		//echo $matches[1].'<br>';
+	 	}
+	  	
+
+	  	$output = preg_replace_callback($search, function($matches){
+	  		sanitize_log(getenv('COMPUTERNAME'), 'input = '. $matches[0]);
+	  	}, $input);
+	    return $output;
+	}
+
+
+	
+
+
+	public function sanitize($input) {
+
+		    if (is_array($input)) {
+	        foreach($input as $var=>$val) {
+	            $output[$var] = $this->sanitize($val);
+	        }
+	    }
+	    else {
+	        if (get_magic_quotes_gpc()) {
+	            $input = stripslashes($input);
+	        }
+	        $input  = $this->cleanInput($input);
+	        $output = mysql_real_escape_string($input);
+	    }
+	    return $output;
 	}
 	
 	

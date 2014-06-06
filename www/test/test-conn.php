@@ -1,3 +1,5 @@
+
+
 <?php
 include_once('../../lib/initialize.php');
 
@@ -10,8 +12,32 @@ include_once('../../lib/initialize.php');
 #echo str_pad($refno, 10, "0", STR_PAD_LEFT);
 
 
-$usr = User::auth('jrsalunga', 'p@55w0rd');
+$usr = new  User;
 
-echo $usr->code;
+$usr->code = "<script>alert('code')</script>sad";
+$usr->descriptor = "anything' OR 'x'='x";
+//$usr->descriptor = "touch /home/guestbook/uploads/$tempfile";
+
+echo $usr->save() ? 'saved!':mysql_error();
+
+$x = "<script>alert('me')</script>";
+
 
 ?>
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>test</title>
+	<link rel="stylesheet" href="">
+
+	
+	<?php 
+	echo $x;
+	?>
+</head>
+<body>
+	
+</body>
+</html>

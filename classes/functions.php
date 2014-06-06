@@ -161,7 +161,46 @@ class DateRange {
 }
 
 
+function cleanInput($input) {
+ 
+  $search = array(
+    '@<script[^>]*?>.*?</script>@si',   // Strip out javascript
+    '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
+    '@<style[^>]*?>.*?</style>@siU',    // Strip style tags properly
+    '@<![\s\S]*?--[ \t\n\r]*>@'         // Strip multi-line comments
+  );
+ 
+    //$output = preg_replace($search, '', $input);
+ 	foreach ($search as $src) {
+ 		if(preg_match($src, $input, $matches)){
+  			//echo 'Match: '.$src.' = '.$input.'<br>';
+  		}
+  		//echo $matches[1].'<br>';
+ 	}
+  	
 
+  	$output = preg_replace_callback($search, function($matches){
+  		sanitize_log(getenv('COMPUTERNAME'), 'input = '. $matches[0]);
+  	}, $input);
+    return $output;
+}
+
+
+function sanitize($input) {
+	
+	if (is_array($input)) {
+        foreach($input as $var=>$val) {
+            $output[$var] = sanitize($val);
+        }
+    } else {
+        if (get_magic_quotes_gpc()) {
+            $input = stripslashes($input);
+        }
+        $input  = cleanInput($input);
+        $output = mysql_real_escape_string($input);
+    }
+    return $output;
+}
 
 function strip_zeros_from_date( $marked_string="" ) {
   // first remove the marked zeros
@@ -202,6 +241,24 @@ function include_template($template="") {
 
 function log_action($action, $message="") {
 	$logfile = ROOT.DS.'logs'.DS.'log.txt';
+	$new = file_exists($logfile) ? false : true;
+  if($handle = fopen($logfile, 'a')) { // append
+    $timestamp = strftime("%Y-%m-%d %H:%M:%S", time());
+	#$timestamp = strftime("%Y-%m-%d %H:%M:%S", time()+(28800));
+	$ip = $_SERVER['REMOTE_ADDR'];
+	$brw = $_SERVER['HTTP_USER_AGENT'];
+		$content = "{$timestamp} | {$ip} | {$action}: {$message} \t\t\t {$brw}\n";
+    fwrite($handle, $content);
+    fclose($handle);
+    if($new) { chmod($logfile, 0755); }
+  } else {
+    echo "Could not open log file for writing.";
+  }
+}
+
+
+function sanitize_log($action, $message="") {
+	$logfile = ROOT.DS.'logs'.DS.'sanitize.txt';
 	$new = file_exists($logfile) ? false : true;
   if($handle = fopen($logfile, 'a')) { // append
     $timestamp = strftime("%Y-%m-%d %H:%M:%S", time());

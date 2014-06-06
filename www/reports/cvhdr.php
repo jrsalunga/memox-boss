@@ -349,7 +349,7 @@ $(document).ready(function(e) {
                             	<?php
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
-    									echo '<tr>';
+    									echo $currdate==date('Y-m-d', strtotime('now'))?'<tr class="success">':'<tr>';
     									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cvhdr">'.$date->format("M j, Y").'</a></td>';
     									$tot = 0;
 										$tot_check = 0;
