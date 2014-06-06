@@ -519,7 +519,7 @@ $(document).ready(function(e) {
 	
 	
 	$("table.table").fixMe({
-        container: '.gutter'
+        container: '.navbar'
     });
 	
 });
