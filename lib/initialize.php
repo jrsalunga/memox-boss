@@ -29,7 +29,6 @@ function setReporting() {
 }
 
 
-
 /*
 function __autoload($className) {
 	if (file_exists(ROOT . DS . 'classes'. DS . 'model' . DS . strtolower($className) . '.class.php')) {
