@@ -42,6 +42,29 @@ class Cvchkdtl extends DatabaseObject{
 		
 	}
 	
+	
+	public static function bank_total_by_date_range($bankid, $fr, $to){
+		$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(amount) as amount FROM cvchkdtl WHERE bankacctid = '".$bankid."' AND checkdate BETWEEN '".$fr."' AND '".$to."'";
+		$result_array = static::find_by_sql($sql);
+		
+		return !empty($result_array) ? array_shift($result_array) : false;
+		
+	}
+	
+	
+	public static function bank_total_status_by_date_range($bankid, $fr, $to, $s){
+		$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(b.amount) as amount FROM cvhdr a, cvchkdtl b ";
+		$sql .= "WHERE a.id = b.cvhdrid AND b.bankacctid = '".$bankid."' AND a.posted = '".$s."' AND b.checkdate BETWEEN '".$fr."' AND '".$to."'";
+		$result_array = static::find_by_sql($sql);
+		
+		return !empty($result_array) ? array_shift($result_array) : false;
+		
+	}
+	
 
 
 }

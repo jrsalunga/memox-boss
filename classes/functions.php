@@ -329,4 +329,48 @@ function uuid_isset($val) {
 
 
 
+
+function hrefer($dr){
+	if(isset($_GET['bankid']) && is_uuid($_GET['bankid'])){
+		echo '?fr='.$dr->fr.'&to='.$dr->to.'&bankid='.$_GET['bankid'];	
+	} else {
+		echo '?fr='.$dr->fr.'&to='.$dr->to;	
+	}
+}
+
+function hrefer_prev($dr){
+	if(isset($_GET['bankid']) && is_uuid($_GET['bankid'])){
+		if(isset($_GET['posted']) && ($_GET['posted']==0 || $_GET['posted']==1)){
+			echo '?fr='.$dr->fr_prev_day().'&to='.$dr->to_prev_day().'&bankid='.$_GET['bankid'].'&posted='.$_GET['posted'];
+		} else {
+			echo '?fr='.$dr->fr_prev_day().'&to='.$dr->to_prev_day().'&bankid='.$_GET['bankid'];	
+		}
+	} else {
+		if(isset($_GET['posted']) && ($_GET['posted']==0 || $_GET['posted']==1)){
+			echo '?fr='.$dr->fr_prev_day().'&to='.$dr->to_prev_day().'&posted='.$_GET['posted'];
+		} else {
+			echo '?fr='.$dr->fr_prev_day().'&to='.$dr->to_prev_day();
+		}
+	}
+}
+
+
+function hrefer_next($dr){
+	if(isset($_GET['bankid']) && is_uuid($_GET['bankid'])){
+		if(isset($_GET['posted']) && ($_GET['posted']==0 || $_GET['posted']==1)){
+			echo '?fr='.$dr->fr_next_day().'&to='.$dr->to_next_day().'&bankid='.$_GET['bankid'].'&posted='.$_GET['posted'];
+		} else {
+			echo '?fr='.$dr->fr_next_day().'&to='.$dr->to_next_day().'&bankid='.$_GET['bankid'];	
+		}
+	} else {
+		if(isset($_GET['posted']) && ($_GET['posted']==0 || $_GET['posted']==1)){
+			echo '?fr='.$dr->fr_next_day().'&to='.$dr->to_next_day().'&posted='.$_GET['posted'];
+		} else {
+			echo '?fr='.$dr->fr_next_day().'&to='.$dr->to_next_day();
+		}
+	}
+}
+
+
+
 ?>

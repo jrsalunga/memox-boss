@@ -1,14 +1,26 @@
 <?php
 require_once('../../lib/initialize.php');
+ini_set('display_errors','On');
 !$session->is_logged_in() ? redirect_to("../login"): "";
+include_once('../../classes/class.cleanurl.php');
+$cleanUrl->setParts('bankid');
 if(isset($_GET['fr']) && isset($_GET['to'])){
     sanitize($_GET);
     $dr = new DateRange($_GET['fr'],$_GET['to']);
 } else {
-    $dr = new DateRange(NULL,NULL,false);   
+    $dr = new DateRange(NULL,NULL);   
 }
 $uri = explode('?',$_SERVER['REQUEST_URI']);
 $qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
+
+
+$bank = Bank::find_by_id($bankid);
+if(!empty($bank)){
+		
+} else {
+	redirect_to("/reports/cv-sched-raw");
+	exit();
+}
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -18,37 +30,43 @@ $qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>MemoXpress - Check Voucher Scheduling</title>
-<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
+<link rel="shortcut icon" type="image/x-icon" href="/images/memoxpress-favicon.jpg" />
 
-<link rel="stylesheet" href="../css/bootstrap.css">
-<link rel="stylesheet" href="../css/styles-ui2.css">
+<link rel="stylesheet" href="/css/bootstrap.css">
+<link rel="stylesheet" href="/css/styles-ui2.css">
 <!--
 <link rel="stylesheet" href="css/main-ui.css">
 <link rel="stylesheet" href="css/styles-ui.css">
 -->
 
-<script src="../js/vendors/jquery-1.10.1.min.js"></script>
-<script src="../js/vendors/jquery-ui-1.10.3.js"></script>
+<script src="/js/vendors/jquery-1.10.1.min.js"></script>
+<script src="/js/vendors/jquery-ui-1.10.3.js"></script>
 <!--
 <script src="../js/vendors/jquery-ui-1.10.3.js"></script>
 <script src="../js/vendors/jquery-1.9.1.js"></script>
 <script src="js/vendors/underscore-min.js"></script>
 <script src="js/vendors/backbone-min.js"></script>
--->
 <script src="../js/vendors/underscore-min.js"></script>
 <script src="../js/vendors/backbone-min.js"></script>
 <script src="../js/vendors/bootstrap.min.js"></script>
 <script src="../js/vendors/backbone-validation-min.js"></script>
 <script src="../js/vendors/jquery.cookie-1.4.js"></script>
-<script src="../js/vendors/moment.2.1.0-min.js"></script>
-<script src="../js/vendors/accounting.js"></script>
-<script src="../js/vendors/jquery.filedrop.js"></script>
+<script src="/js/vendors/backbone-validation-min.js"></script>
+<script src="/js/vendors/jquery.cookie-1.4.js"></script>
+-->
+<script src="/js/vendors/bootstrap.min.js"></script>
+<script src="/js/vendors/moment.2.1.0-min.js"></script>
+<script src="/js/vendors/accounting.js"></script>
+<script src="/js/vendors/jquery.filedrop.js"></script>
+<script src="/js/vendors/underscore-min.js"></script>
+<script src="/js/vendors/backbone-min.js"></script>
 
 
 
-<script src="../js/vendors/highcharts-4.0.1.min.js"></script>
-<script src="../js/vendors/highcharts.data.js"></script>
-<script src="../js/vendors/highcharts.exporting-4.0.1.js"></script>
+
+<script src="/js/vendors/highcharts-4.0.1.min.js"></script>
+<script src="/js/vendors/highcharts.data.js"></script>
+<script src="/js/vendors/highcharts.exporting-4.0.1.js"></script>
 
 <!-- Additional files for the Highslide popup effect -->
 <!--
@@ -56,10 +74,10 @@ $qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
 <script type="text/javascript" src="http://www.highcharts.com/media/com_demo/highslide.config.js" charset="utf-8"></script>
 <link rel="stylesheet" type="text/css" href="http://www.highcharts.com/media/com_demo/highslide.css" />
 -->
-<script src="../js/common.js"></script>
-<script src="../js/highcharts.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/highcharts.js"></script>
 
-<script src="../js/app.js"></script>
+<script src="/js/app.js"></script>
 
 
 <script>
@@ -106,7 +124,7 @@ $(document).ready(function(e) {
 	
 	
 	
-	$.get('../api/report/bank/total?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+	$.get('/api/report/cv-bank/<?=$bankid?>/total?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
 		//console.log(csv);
 		//var totalOption = {
 		$('#sg-total').highcharts({
@@ -179,8 +197,8 @@ $(document).ready(function(e) {
 	
 	
 	
-	$.get('../api/report/bank/status/posted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+	$.get('/api/report/cv-bank/<?=$bankid?>/status/posted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+		
 		//var totalOption = {
 		$('#sg-posted').highcharts({
 			data: {
@@ -252,8 +270,8 @@ $(document).ready(function(e) {
 	
 	
 	
-	$.get('../api/report/bank/status/unposted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+	$.get('/api/report/cv-bank/<?=$bankid?>/status/unposted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+		
 		//var totalOption = {
 		$('#sg-unposted').highcharts({
 			data: {
@@ -326,9 +344,9 @@ $(document).ready(function(e) {
 	
 	
 	
-	//$.getJSON('http://www.highcharts.com/samples/data/jsonp.php?filename=analytics.csv&callback=?', function (csv) {
-	$.get('../api/cv-sched?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-        //console.log(csv);
+	/*
+	$.get('/api/cv-sched?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+       
         $('#graph').highcharts({
 
             data: {
@@ -381,7 +399,7 @@ $(document).ready(function(e) {
                 },
                 showFirstLabel: false
             }, 
-			/*
+			
 			{ // right y axis
                 linkedTo: 0,
                 gridLineWidth: 0,
@@ -397,7 +415,7 @@ $(document).ready(function(e) {
                 },
                 showFirstLabel: false
             }
-			*/
+			
 			],
 
             legend: {
@@ -420,7 +438,7 @@ $(document).ready(function(e) {
                         events: {
                             click: function (e) {
 								console.log(Highcharts.dateFormat('%Y-%m-%d', this.x));
-								/*
+								
                                 hs.htmlExpand(null, {
                                     pageOrigin: {
                                         x: e.pageX,
@@ -431,7 +449,7 @@ $(document).ready(function(e) {
                                         this.y +' visits',
                                     width: 200
                                 });
-								*/
+								
                             }
                         }
                     },
@@ -522,6 +540,7 @@ $(document).ready(function(e) {
 			]
         });
     });
+	*/
 
 	$("table.table").fixMe({
         container: '.navbar'
@@ -545,7 +564,7 @@ $(document).ready(function(e) {
             <span class="icon-bar"></span>
           </button>
           <a href="/">
-          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+          		<img src="/images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
         	</a>
            <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
@@ -581,16 +600,16 @@ $(document).ready(function(e) {
 		<div class="col-sm-2 col-md-2 l-pane">
     	<ul class="nav nav-pills nav-stacked">
             <li>
-                <a href="apvhdr">Accounts Payable</a>
+                <a href="/reports/apvhdr">Accounts Payable</a>
             </li>
             <li>
-				<a href="apvhdr-age">Accounts Payable (Aged)</a>
+				<a href="/reports/apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
             <li>
-            	<a href="cvhdr">CV Schedule </a>
+            	<a href="/reports/cvhdr">CV Schedule </a>
             <li>
             <li class="active">
-            	<a href="cv-sched">CV Schedule (Bank)</a>
+            	<a href="/reports/cv-sched">CV Schedule (Bank)</a>
             <li>
 		</ul>
     	</div>
@@ -598,18 +617,18 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule - Bank Detailed</h1>
+                		<h1>Check Voucher Schedule - <?=$bank->descriptor?></h1>
                 	</div>
                 </div>
                 <div class="row">
                     <div class="col-md-6">
-                        <a class="btn btn-default" href="cv-sched">
+                        <a class="btn btn-default" href="/reports/cv-sched-raw">
                           	<span class="glyphicon glyphicon-unshare"></span>
-                           	Back to Summary
+                           	Back to Bank Detailed
                        	</a>
                     </div>
                 	<div class="col-md-6 datepick">
-                    	<form role="form" class="form-inline pull-right">
+                    	<form role="form" class="form-inline pull-right" action="/reports/cv-bank/<?=$bankid?>/">
                        		<div class="form-group">
                             	<label class="sr-only" for="fr">From:</label>
                                 <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
@@ -630,7 +649,7 @@ $(document).ready(function(e) {
                             <p>Total</p>
                             <div class="GAJv">
                             	<?php
-									$drtot = Cvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
+									$drtot = Cvchkdtl::bank_total_by_date_range($bank->id, $dr->fr, $dr->to); 									
 								?>
                                 <h4><?=number_format($drtot->amount,2)?></h4>
                                 <div id="sg-total" class="thumb-graph">
@@ -659,7 +678,7 @@ $(document).ready(function(e) {
                             <p>Unposted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
+									$drtotu = Cvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 0); 									
 								?>
                                 <h4><?=number_format($drtotu->amount,2)?></h4>
                                 <div id="sg-unposted" class="thumb-graph">
@@ -673,7 +692,7 @@ $(document).ready(function(e) {
                             <p>Posted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotp = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
+									$drtotp = Cvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 1); 									
 								?>
                                 <h4><?=number_format($drtotp->amount,2)?></h4>
                                 <div id="sg-posted" class="thumb-graph">
@@ -685,29 +704,25 @@ $(document).ready(function(e) {
                     
                       
                 	<div class="col-md-10">
-                        <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
-                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
-                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" <?=!isset($_GET['posted'])?'active':''?> href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
-
-                        <?php
+						<?php
                             $banks = Bank::find_all();
                         ?>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-default" title="Filtered By">
+                            <button type="button" class="btn btn-default" title="Filtered By: <?=$bank->descriptor?>">
                             	<span class="glyphicon glyphicon glyphicon-filter"></span> 
-                                All Bank
-                         	</button>
+								<?=$bank->code?>
+                          	</button>
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
                                 <span class="caret"></span>
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
                             <ul class="dropdown-menu" role="menu">
-                                <li class="active"><a href="#">All Bank</a></li>
+                                <li><a href="/reports/cv-bank">All Bank</a></li>
                                 <li class="divider"></li>
                                 <?php
-                                foreach($banks as $bank){
-                                    echo '<li>';    
-                                    echo '<a href="/reports/cv-bank/'.$bank->id.'">'.$bank->code.'</a>';
+                                foreach($banks as $bnk){
+                                    echo $bankid==$bnk->id ? '<li class="active">':'<li>';    
+                                    echo '<a href="/reports/cv-bank/'.$bnk->id.'">'.$bnk->code.'</a>';
                                     echo '</li>';
                                 }
                                 ?>
@@ -716,7 +731,7 @@ $(document).ready(function(e) {
                     </div>
                     <div class="col-md-2">
                     	<div class="pull-right">
-                    		<a class="btn btn-default" href="print-cv-sched-raw<?=$qs?>"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>                     
+                    		<a class="btn btn-default" href="/reports/print-cv-bank/<?=$bankid?>/<?=$qs?>"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>                     
                     	</div>     
                     </div>	
              		<div class="col-md-12">
@@ -725,13 +740,8 @@ $(document).ready(function(e) {
                     	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
-                            	<?php
-    								echo '<th>DAYS</th>';
-    								foreach($banks as $bank){
-    									echo '<th title="'.$bank->descriptor.'">'. $bank->code .'</th>';	
-    								}
-									echo '<th>TOTAL</th>';
-    							?>
+                            		<th>DAYS</th><th>UNPOSTED</th><th>POSTED</th><th>TOTAL</th>
+    							
                                 </tr>
                             </thead>
                             <tbody>
@@ -739,29 +749,40 @@ $(document).ready(function(e) {
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
     									echo $currdate == date('Y-m-d', strtotime('now')) ? '<tr class="success">':'<tr>';
-    									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M d").'</a></td>';
+    									echo '<td><a href="/reports/chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M j, Y").'</a></td>';
     									$tot = 0;
-    									foreach($banks as $bank){
-    										$sql = "SELECT SUM(amount) as amount FROM vcvchkdtl ";
+										$tot_check = 0;
+    									for($x = 0; $x <= 1; $x++){
+    										$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM vcvchkdtl ";
     										$sql .= "WHERE checkdate = '".$currdate."' ";
-                                            if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
-                                                $sql .= "AND posted = '".$_GET['posted']."' ";
-                                            } 
-    										$sql .= "AND bankid = '".$bank->id."'";
+                                         	$sql .= "AND posted = '".$x."' ";
+    										$sql .= "AND bankid = '".$bankid."'";
     										$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
                                             //global $database;
                                             //echo $database->last_query.'<br>';
     										$cvchkdtl = array_shift($cvchkdtl);
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
     										$tot = $tot + $cvchkdtl->amount;
-    										echo '<td style="text-align: right;">'.$amt.'</td>';
+    										echo '<td style="text-align: right;">';
+											if($cvchkdtl->checkno > 0){
+												echo '<span class="pull-left" title="'.$cvchkdtl->checkno.' check(s)">';
+												echo '<a href="/reports/chk-day?fr='.$currdate.'&to='.$currdate.'&posted='.$x.'&bankid='.$bank->id.'&ref=cv-bank" style="color: #5cb85c; text-decoration: none;">';
+												echo $cvchkdtl->checkno .' <span class="glyphicon glyphicon-money"></span></a></span>';
+												
+											}	
+											echo $amt.'</td>';
 											$tot = ($tot == 0) ? '-':$tot;
-											if(end($banks)==$bank){
-												if($tot=='-'){
-													echo '<td style="text-align: right;">-</td>';
-												} else {
-													echo '<td style="text-align: right;">'.number_format($tot,2).'</td>';
+											$tot_check = $tot_check + $cvchkdtl->checkno;
+											if($x==1){
+												echo '<td style="text-align: right;">';
+												if($tot_check > 0){
+													echo '<span class="pull-left" title="'.$tot_check.' check(s)">';
+													echo '<a href="/reports/chk-day?fr='.$currdate.'&to='.$currdate.'&bankid='.$bank->id.'&ref=cv-bank" style="color: #5cb85c; text-decoration: none;">';
+													echo $tot_check .' <span class="glyphicon glyphicon-money"></span></a></span>';
 												}	
+												echo $tot!='-' ? number_format($tot,2).'</td>': '-</td>';
+											} else {
+													
 											}
     										
     									}

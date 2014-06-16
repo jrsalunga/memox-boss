@@ -1,5 +1,6 @@
 <?php
 require_once('../../lib/initialize.php');
+ini_set('display_errors','On');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 
 if(isset($_GET['fr']) && isset($_GET['to'])){
@@ -291,7 +292,17 @@ td.hover {
                 </div>
                 <div class="row">
                 	<div class="col-md-6">
-                        <a type="button" class="btn btn-default" href="<?=isset($_GET['ref']) ? $_GET['ref']:'cv-sched-raw'; ?>">
+                        <a type="button" class="btn btn-default" href="<?php
+                        	if(isset($_GET['ref'])){
+								if($_GET['ref']=='cv-bank' && is_uuid($_GET['bankid'])){
+									echo $_GET['ref'].'/'.$_GET['bankid'];
+								} else {
+									echo $_GET['ref'];
+								}		
+							} else {
+								echo 'cv-sched-raw'; 
+							}
+						?>">
                             <span class="glyphicon glyphicon-unshare"></span>
                         </a>
                     </div>
@@ -325,15 +336,27 @@ td.hover {
                     </div>
 
                 	
-                   <div class="col-md-5">  
-                        <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
-                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
-                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
+                   <div class="col-md-9">  
+                   		<?php
+							// functions href moved to functions.php
+						?>
+                        <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="<?=hrefer($dr)?>"><span class="glyphicon glyphicon-floppy"></span> All</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==0)?'active':''?>" href="<?=hrefer($dr)?>&posted=0"><span class="glyphicon glyphicon-floppy-remove"></span> Unposted</a>
+                        <a class="btn btn-default <?=(isset($_GET['posted']) && $_GET['posted']==1)?'active':''?>" href="<?=hrefer($dr)?>&posted=1"><span class="glyphicon glyphicon-floppy-saved"></span> Posted</a>
+                    
+                    	<?php
+							if(isset($_GET['bankid']) && is_uuid($_GET['bankid'])){
+						?>	
+							<span title="filtered by: <?=Bank::row($_GET['bankid'], 1)?>"><span class="glyphicon glyphicon glyphicon-filter"></span>  <?=Bank::row($_GET['bankid'], 0);?></span>
+                        <?php
+							}
+						?>
+                    	
                     </div>
-                    <div class="col-md-3 col-sm-6 col-md-offset-4">
+                    <div class="col-md-3">
                         <div class="btn-group pull-right">
-                            <a class="btn btn-default" href="?fr=<?=$dr->fr_prev_day()?>&to=<?=$dr->to_prev_day()?>"><span class="glyphicon glyphicon-backward"></span></a>
-                            <a class="btn btn-default" href="?fr=<?=$dr->fr_next_day()?>&to=<?=$dr->to_next_day()?>"><span class="glyphicon glyphicon-forward"></span></a>
+                            <a class="btn btn-default" href="<?=hrefer_prev($dr)?>"><span class="glyphicon glyphicon-backward"></span></a>
+                            <a class="btn btn-default" href="<?=hrefer_next($dr)?>"><span class="glyphicon glyphicon-forward"></span></a>
                         </div>
                         
                         <a class="btn btn-default" href="print-chk-day<?=$qs?>&ref=print"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
@@ -359,6 +382,9 @@ td.hover {
     									$sql .= "WHERE checkdate = '".$currdate."' ";
 										if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
 											$sql .= "AND posted = '".$_GET['posted']."' ";
+										} 
+										if(isset($_GET['bankid']) && is_uuid($_GET['bankid'])){
+											$sql .= "AND bankid = '".$_GET['bankid']."' ";
 										} 
 										$sql .= "ORDER BY bankcode ASC, payee";
     									$cvchkdtls = vCvchkdtl::find_by_sql($sql);

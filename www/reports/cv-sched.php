@@ -697,7 +697,9 @@ $(document).ready(function(e) {
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>DAYS</th><th>TOTAL</th>
+                                    <th>DAYS</th>
+                                    <th style="text-align: right;">TOTAL CHECK</th>
+                                    <th style="text-align: right;">TOTAL</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -708,13 +710,20 @@ $(document).ready(function(e) {
                                         echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cv-sched">'.$date->format("M j, Y").'</a></td>';
                                         
                                         //foreach($banks as $bank){
-                                            $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+                                            $sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM cvchkdtl ";
                                             $sql .= "WHERE checkdate = '".$currdate."' ";
                                             //$sql .= "AND bankacctid = '".$bank->id."'";
                                             $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
                                             $cvchkdtl = array_shift($cvchkdtl);
                                             $amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
-                                            echo '<td style="text-align: right;">'.$amt.'</td>';
+                                            echo '<td style="text-align: right;" >';
+                                            if($cvchkdtl->checkno > 0){
+                                                echo '<a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cv-sched" style="color: #5cb85c; text-decoration: none;">';
+                                                echo $cvchkdtl->checkno. ' <span class="glyphicon glyphicon-money"></span></a>';
+                                            } else {
+                                                echo '-';
+                                            }
+                                            echo '</td><td style="text-align: right;">'.$amt.'</td>';
                                             
                                         //}   
                                         
