@@ -740,7 +740,7 @@ $(document).ready(function(e) {
                     	<table class="table table-bordered table-hover">
                         	<thead>
                             	<tr>
-                            		<th>DAYS</th><th>UNPOSTED</th><th>POSTED</th><th>TOTAL</th>
+                            		<th>Days</th><th>Unposted</th><th>Posted</th><th>Total</th>
     							
                                 </tr>
                             </thead>
