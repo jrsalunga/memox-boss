@@ -124,6 +124,9 @@ body {
 table {
 	font-size: 12px;
 }
+table.table[style*="fixed"] {
+	display:none;
+} 
 </style>
 </head>
 <body>

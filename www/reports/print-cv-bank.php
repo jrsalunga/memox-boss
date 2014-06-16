@@ -79,6 +79,7 @@ $(document).ready(function(e) {
 	
 	daterange();
 
+
     $("table.table").fixMe({
         container: '.gutter'
     });
@@ -86,15 +87,16 @@ $(document).ready(function(e) {
 });
 </script>    
 <style>
+table.table[style*="fixed"] {
+	display:none;
+}
 
 * {
 	padding: 0;
 	margin: 0
 }
 
-table.table[style] {
-	
-} 
+
 
 .prn-body,
 .prn-header {
@@ -147,7 +149,7 @@ table {
 	vertical-align: top;
 	border-top: 1px solid #ddd;
 }
-table.table
+ 
 </style>
 </head>
 <body>
@@ -155,7 +157,7 @@ table.table
 	<div class="row">
         <div class="col-md-7">
             <div class="btn-grp">
-            	<a type="button" class="btn btn-default" href="cv-sched-raw">
+            	<a type="button" class="btn btn-default" href="/reports/cv-bank/<?=$bank->id?>">
                     <span class="glyphicon glyphicon-unshare"></span>
                     Back
                 </a>
@@ -218,7 +220,7 @@ table.table
 	
 </div>
 <div class="prn-header">
-	<h1>Check Voucher Schedule - Bank Detailed</h1>
+	<h1>Check Voucher Schedule - <?=Bank::row($bank->id,1)?></h1>
 </div>
 <div class="prn-body">
     <table class="table table-bordered table-hover">
