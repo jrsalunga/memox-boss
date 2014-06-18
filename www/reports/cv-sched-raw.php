@@ -530,6 +530,11 @@ $(document).ready(function(e) {
 	
 });
 </script>
+<style>
+table.table tbody td {
+	font-size: 13px;
+}
+</style>
 </head>
 <body id="app-body" class="state-nav">
 

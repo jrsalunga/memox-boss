@@ -89,8 +89,7 @@ table.floatThead-table {
     background-color: #FFF;
 }
 
-table.table td {
-	font-size: 12px;
+.table td {
 	/*white-space:nowrap;*/
 }
 </style>
