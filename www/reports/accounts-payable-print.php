@@ -2,12 +2,14 @@
 include_once('../../lib/initialize.php');
 include_once('../../classes/class.cleanurl.php');
 #error_reporting(E_ALL);
-ini_set('display_errors','Off');
+ini_set('display_errors','On');
 $cleanUrl->setParts('apvhdrid');
 
-#echo $apvhdrid;
+//echo $apvhdrid;
 $apvhdr = vApvhdr::find_by_id($apvhdrid);
-//echo var_dump($apvhdr);
+//global $database;
+//echo $database->last_query;
+//echo var_dump($cvhdr);
 
 
 ?>

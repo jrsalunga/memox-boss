@@ -13,8 +13,8 @@ $vMaterial = "SELECT a.code, a.descriptor, a.typeid, c.descriptor as type, a.mat
 FROM material a, matcat b, material_type c
 WHERE a.matcatid = b.id AND a.typeid = c.code";
 
-$vApvhdr = "SELECT a.refno, a.valuedate as date,
-DATE_ADD(a.valuedate, INTERVAL a.terms DAY) AS due,
+$vApvhdr = "SELECT a.refno, a.date,
+DATE_ADD(a.date, INTERVAL a.terms DAY) AS due,
 b.descriptor as supplier, a.supprefno, a.porefno, a.terms, a.totamount, a.balance, a.posted, a.notes, a.supplierid, b.code as suppliercode, a.cancelled, a.printctr, a.totline, a.id
 FROM apvhdr a
 LEFT JOIN supplier b
@@ -48,6 +48,60 @@ LEFT JOIN supplier c
 ON b.supplierid = c.id
 LEFT JOIN bank d
 ON d.id = a.bankacctid";
+
+
+
+$vxCvchkdtl = "SELECT a.checkno, a.checkdate, a.amount, a.id,
+b.refno AS cvrefno, b.date AS cvdate, b.payee AS cvpayee, b.notes AS cvnotes, b.posted AS cvposted, b.cancelled AS cvcancelled, b.id AS cvhdrid,
+c.amount AS cvapvdtlamt, c.id as cvapvdtlid,
+d.refno AS aprefno, d.date AS apdate, DATE_ADD(d.date, INTERVAL d.terms DAY) AS apdue, d.porefno AS apporefno, d.terms AS apterms, d.totamount AS aptotamount, d.balance AS apbalance, d.notes AS apnotes, d.posted AS apposted, d.cancelled AS apcancelled, d.id AS apvhdrid,
+e.amount AS apvdtlamt, e.id AS apvdtlid,
+f.code AS accountcode, f.descriptor AS account, f.id AS accountid,
+g.code AS acctcatcode, g.descriptor AS acctcat, g.id AS acctcatid,
+h.code AS bankcode, h.descriptor AS bank, h.acctno AS bankacctno, h.id AS bankid,
+i.code AS suppliercode, i.descriptor AS supplier, i.terms AS supplierterms, i.balance AS supplierbalance, i.id AS supplierid
+FROM cvchkdtl a
+LEFT JOIN cvhdr b
+ON b.id = a.cvhdrid
+LEFT JOIN cvapvdtl c
+ON c.cvhdrid = b.id
+LEFT JOIN apvhdr d
+ON d.id = c.apvhdrid
+LEFT JOIN apvdtl e
+ON e.apvhdrid = d.id
+LEFT JOIN account f
+ON f.id = e.accountid
+LEFT JOIN acctcat g
+ON g.id = f.acctcatid
+LEFT JOIN bank h
+ON h.id = a.bankacctid
+LEFT JOIN supplier i
+ON i.id = d.supplierid
+GROUP BY a.id
+ORDER BY a.checkdate DESC";
+
+
+$vcCvchdtl = "SELECT a.checkno, a.checkdate, a.amount, a.id,
+b.id AS cvhdrid, c.id as cvapvdtlid, d.id AS apvhdrid, e.id AS apvdtlid, f.id AS accountid, g.id AS acctcatid, h.id AS bankid, i.id AS supplierid
+FROM cvchkdtl a
+LEFT JOIN cvhdr b
+ON b.id = a.cvhdrid
+LEFT JOIN cvapvdtl c
+ON c.cvhdrid = b.id
+LEFT JOIN apvhdr d
+ON d.id = c.apvhdrid
+LEFT JOIN apvdtl e
+ON e.apvhdrid = d.id
+LEFT JOIN account f
+ON f.id = e.accountid
+LEFT JOIN acctcat g
+ON g.id = f.acctcatid
+LEFT JOIN bank h
+ON h.id = a.bankacctid
+LEFT JOIN supplier i
+ON i.id = d.supplierid
+GROUP BY a.id
+ORDER BY a.checkdate DESC";
 
 
 ?>
