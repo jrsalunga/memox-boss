@@ -35,7 +35,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     margin-top: 20px;
     margin-bottom: 30px;
     
-    height: 1046px;
+    min-height: 1046px;
     
     
     -webkit-box-shadow:rgba(0, 0, 0, 0.496094) 0 0 10px;
@@ -59,7 +59,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     height: 1046px;
 	*/
 /*	border: 1px solid #F00; */
-    height: 1054px;
+    min-height: 1054px;
 }
 </style>
 

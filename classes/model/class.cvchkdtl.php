@@ -20,6 +20,16 @@ class Cvchkdtl extends DatabaseObject{
 	public $amount;
 	
 	
+	public static function find_all_by_field_id($field=0,$id=0) {
+		if(!is_uuid($id) && $id==NULL) {
+			return false;
+		} else {
+   			$result_array = static::find_by_sql("SELECT * FROM ".static::$table_name." WHERE {$field}id='{$id}' ORDER BY checkdate DESC");
+			return !empty($result_array) ? $result_array : false;
+		}
+  	}
+	
+	
 	public static function total_by_date_range($fr, $to){
 		$range = new DateRange($fr, $to);
 		
