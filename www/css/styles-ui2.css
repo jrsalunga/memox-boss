@@ -750,3 +750,9 @@ table.table th {
 .fixedme-hide {
 	display: none;
 }
+
+@media print {
+.fixedme-show {
+	display: none;
+}
+}

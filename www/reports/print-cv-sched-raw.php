@@ -129,9 +129,6 @@ table {
 	vertical-align: top;
 	border-top: 1px solid #ddd;
 }
-table.table[style*="fixed"] {
-	display:none;
-} 
 </style>
 </head>
 <body>
