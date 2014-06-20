@@ -728,3 +728,25 @@ table.table th {
 #graph.graph-chk-day-pie {
 	height: 300px;
 }
+
+
+
+
+
+
+.fixedme {
+	position: fixed;
+	display: none;
+	border: none;
+	box-shadow: 0 8px 5px -10px #999;
+	-webkit-box-shadow: 0 10px 30px -9px #999;
+   	z-index: 1;	
+}
+
+.fixedme-show {
+	display: table;
+}
+
+.fixedme-hide {
+	display: none;
+}

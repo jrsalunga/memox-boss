@@ -6,8 +6,8 @@ $(document).ready(function() {
 	//ComputeItemAmount();
   	
 	//$('.table-model input[type=checkbox]').css('border','1px red solid').val(1);
-	//$('.header-logo').attr('src','/images/mfi-logo.png');
-	//$('.navbar-brand').text('Modularfusion Inc');
+	$('.header-logo').attr('src','/images/mfi-logo.png');
+	$('.navbar-brand').text('Modularfusion Inc');
 	
 	
 	
@@ -2414,6 +2414,22 @@ $.fn.fixMe = function(option) {
         function init() {
             $this.wrap('<div/>');
             $t_fixed = $this.clone();
+            $t_fixed.find("tbody").remove().end().addClass("fixedme").css({
+                "top": function(){
+                	return $(option.container).height() || 0;
+                },
+                "width":function(){
+                    return $this.css('width');
+                },
+                "background-color": function(){
+                    if($this.css('background-color')=='transparent' || $this.css('background-color')=='rgba(0, 0, 0, 0)'){
+                        return '#fff';
+                    } else {
+                        return $this.css('background-color');
+                    }
+                }
+            }).insertBefore($this);
+            /*
             $t_fixed.find("tbody").remove().end().css({
                 "top": function(){
                 	return $(option.container).height() || 0;
@@ -2435,6 +2451,7 @@ $.fn.fixMe = function(option) {
                 "-webkit-box-shadow":"0 10px 30px -9px #999",
                 "z-index":1
             }).insertBefore($this);
+*/
             resizeFixed();
         }
         
@@ -2450,9 +2467,11 @@ $.fn.fixMe = function(option) {
             tableOffsetTop = $this.offset().top,
             tableOffsetBottom = tableOffsetTop + $this.height() - $this.find("thead").height();
             if(offset < tableOffsetTop || offset > tableOffsetBottom)
-                $t_fixed.hide();
+                //$t_fixed.hide();
+            	$t_fixed.removeClass('fixedme-show').addClass('fixedme-hide');
             else if(offset >= tableOffsetTop && offset <= tableOffsetBottom && $t_fixed.is(":hidden"))
-                $t_fixed.show();
+                //$t_fixed.show();
+            	$t_fixed.removeClass('fixedme-hide').addClass('fixedme-show');
         }
         
         $(window).resize(resizeFixed);
