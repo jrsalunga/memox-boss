@@ -77,7 +77,7 @@ var ApvDtl = Backbone.View.extend({
 
 	},
 	render: function(){
-		console.log(this);
+		//console.log(this);
 		this.$el.html(this.template(this.model.toJSON()));
 		this.$el.attr("data-posted", this.model.get('posted'));
 		return this;
@@ -117,7 +117,7 @@ var ApvDtls = Backbone.View.extend({
 		this.collection.each(this.addOne, this);
 	},
 	cleanUp: function(){
-		console.log('this trigger clean_up');
+		//console.log('this trigger clean_up');
 		this.trigger('clean_up');
 	}
 });
@@ -147,7 +147,7 @@ var ApvhdrDetail = Backbone.View.extend({
           	+'</div></div>');
 	},
 	render: function(){
-		console.log(this.apvDtls);
+		//console.log(this.apvDtls);
 		this.model.set({guid: this.uid()}, {silent: true});
 
 		this.$el.html(this.template(this.model.toJSON()));
@@ -309,7 +309,7 @@ var ApvhdrDetails = Backbone.View.extend({
 			  .map(function(sums){ return sums.name + ' is ' + sums.amount; })
 			  .first()
 			  .value();
-		console.log(high);
+		//console.log(high);
 
 		sums.sort(function (a, b) {
 		    if (a.name > b.name)

@@ -1,5 +1,6 @@
 <?php
 require_once('../../lib/initialize.php');
+ini_set('display_errors','On');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 if(isset($_GET['fr']) && isset($_GET['to'])){
     sanitize($_GET);
@@ -47,7 +48,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <script src="../js/vendors/highcharts.exporting-4.0.1.js"></script>
 
 <script src="../js/common.js"></script>
-
+<script src="../js/highcharts.js"></script>
 <script src="../js/app.js"></script>
 
 
@@ -88,10 +89,11 @@ $(document).ready(function(e) {
                 csv: csv,
                 // Parse the American date format used by Google
                 parseDate: function (s) {  
-					
+					//console.log(s);
 					var match = s.match(/^([0-9]{1,4})\-([0-9]{1,2})\-([0-9]{1,2})$/);
+					//console.log(match);
                     if (match) {
-                        console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]));
+                        //console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]));
                         return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
                     } else {
 						//console.log(s);

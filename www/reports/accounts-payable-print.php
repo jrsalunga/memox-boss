@@ -18,9 +18,10 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 <head>
 <meta charset="utf-8">
 <title>Accounts Payable : <?=$apvhdr->refno?></title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
-<link rel="stylesheet" href="../css/print.css">
-<link rel="stylesheet" href="<?=$relativeslash?>../css/print.css">
+<link rel="stylesheet" href="/css/print.css">
+
 
 
 <style media="screen">

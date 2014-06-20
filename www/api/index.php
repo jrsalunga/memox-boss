@@ -131,6 +131,8 @@ $app->get('/report/bank/status/:status', 'getReportBankByStatus');
 $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
 $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 
+$app->get('/report/ap-vs-cv', 'getApVsCv');
+
 
 
  /*****************************  Run App **************************/
@@ -139,6 +141,70 @@ $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 $app->get('/r/apvdue', 'apvGetDue');
 
 $app->run();
+
+
+function getApVsCv(){
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    $range = new DateRange($fr,$to);
+
+    echo 'Days,AP Unposted,AP Posted,AP Total,Check Unposted,Check Posted,Check Total';
+    echo PHP_EOL;
+
+    $begin = new DateTime($range->fr);
+    $end = new DateTime($range->to);
+    $end = $end->modify('+1 day'); 
+    
+    $interval = new DateInterval('P1D');
+    $daterange = new DatePeriod($begin, $interval ,$end);
+    
+    
+    foreach($daterange as $date){
+        $currdate = $date->format("Y-m-d");
+
+
+        $tot = 0;
+        echo $currdate.',';
+        for($ctr=0; $ctr <= 1; $ctr++) {
+            //echo $ctr.',';
+
+            $sql = "SELECT SUM(totamount) AS totamount FROM vapvhdr ";
+            $sql .= "WHERE due = '".$currdate."' AND posted = ". $ctr;
+            $vapvhdr = vApvhdr::find_by_sql($sql); 
+            $vapvhdr = array_shift($vapvhdr);
+            echo empty($vapvhdr->totamount) ? '0.00': $vapvhdr->totamount;
+            //echo $ctr==1 ? '':',';
+            $tot = $tot + $vapvhdr->totamount;
+            echo $ctr==1 ? ','.$tot : ',';
+            //echo ',';
+        }
+        echo ',';
+
+
+
+        $tot2 = 0;
+        for($ctr=0; $ctr <= 1; $ctr++) {
+            //echo $ctr.',';
+
+            $sql = "SELECT SUM(amount) AS amount FROM vcvchkdtl ";
+            $sql .= "WHERE checkdate = '".$currdate."' AND posted = ". $ctr;
+            $vcvchkdtl = vCvchkdtl::find_by_sql($sql); 
+            $vcvchkdtl = array_shift($vcvchkdtl);
+            echo empty($vcvchkdtl->amount) ? '0.00': $vcvchkdtl->amount;
+            //echo $ctr==1 ? '':',';
+            $tot2 = $tot2 + $vcvchkdtl->amount;
+            echo $ctr==1 ? ','.$tot2 : ',';
+            //echo ',';
+        }
+        //echo '0.00';
+
+        echo PHP_EOL;
+    }
+
+}
 
 
 function getCVSched(){

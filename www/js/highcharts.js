@@ -460,7 +460,7 @@ var vApvLine = Backbone.View.extend({
          	}
          }
 
-		
+		console.log(dts);
 		this.allData.push(dts);
 	},
 	loadPosted: function(hdate){

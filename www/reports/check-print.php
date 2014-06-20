@@ -18,9 +18,10 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 <head>
 <meta charset="utf-8">
 <title>Check Voucher : <?=$cvhdr->refno?></title>
+<link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
-<link rel="stylesheet" href="../css/print.css">
-<link rel="stylesheet" href="<?=$relativeslash?>../css/print.css">
+<link rel="stylesheet" href="/css/print.css">
+
 
 
 <style media="screen">
