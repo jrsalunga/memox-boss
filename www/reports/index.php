@@ -139,7 +139,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                                         echo '<a href="/reports/accounts-payable-print/'.$curr_apvhdr->id.'" target="_blank" class="list-group-item">';
                                         echo '<p class="list-group-item-text">'.$curr_apvhdr->refno.'</p>';
                                         echo '<h4 class="list-group-item-heading">'.$curr_apvhdr->supplier.'</h4>';
-                                        echo '<p class="list-group-item-text"><span class="pull-right">'.number_format($curr_apvhdr->totamount,2).'</span></p>';
+                                        echo '<p class="list-group-item-text"><span class="pull-right"><strong>'.number_format($curr_apvhdr->totamount,2).'</strong></span></p>';
 										echo '<div style="clear:both;"></div>';
                                         echo '</a>';
                                     }
@@ -154,7 +154,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                     <div class="col-md-6">
                     	<div class="panel panel-default">
                          	<div class="panel-heading">
-                            	<h3 class="panel-title">Checks for today</h3>
+                            	<h3 class="panel-title">Checks dated today</h3>
                           	</div>
                           	<div class="panel-body">
                             	<div class="list-group">
@@ -167,7 +167,8 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                                         echo '<p class="list-group-item-text">'.$curr_vcvchkdtl->checkno;
 										echo '<span class="pull-right">'.date('F j, Y', strtotime($curr_vcvchkdtl->cvhdrdate)).'</span></p>';
                                         echo '<h4 class="list-group-item-heading">'.$curr_vcvchkdtl->supplier.'</h4>';
-                                        echo '<p class="list-group-item-text"><span class="pull-right">'.number_format($curr_vcvchkdtl->amount,2).'</span></p>';
+                                        echo '<p class="list-group-item-text">'. $curr_vcvchkdtl->bankcode;
+										echo '<span class="pull-right"><strong>'.number_format($curr_vcvchkdtl->amount,2).'</strong></span></p>';
                                         echo '<div style="clear:both;"></div>';
 										echo '</a>';
 									}

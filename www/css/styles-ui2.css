@@ -628,6 +628,20 @@ line-height: 20px;
 }
 
 
+.panel-body .list-group-item {
+	border: none;
+}
+
+.panel-body .list-group-item:not(:first-child) {
+	border-top: 1px solid #DDDDDD;
+}
+
+.panel-body .list-group {
+    margin-bottom: 0px;
+
+}
+
+
 
 
 
