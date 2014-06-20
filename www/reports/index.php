@@ -132,7 +132,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                           	<div class="panel-body">
                             	<div class="list-group">
 								<?php
-                                    $sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."';";
+                                    $sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
                                     $curr_apvhdrs = vApvhdr::find_by_sql($sql);
                                     foreach($curr_apvhdrs as $curr_apvhdr){
                                         //echo .'<br>';
@@ -159,7 +159,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                           	<div class="panel-body">
                             	<div class="list-group">
                 				<?php
-									$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."';";
+									$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
 									$curr_vcvchkdtls = vCvchkdtl::find_by_sql($sql);
 									foreach($curr_vcvchkdtls as $curr_vcvchkdtl){
 										//echo $curr_vcvchkdtl->checkno.'<br>';
