@@ -1,6 +1,6 @@
 <?php
 require_once('../../lib/initialize.php');
-ini_set('display_errors','Off');
+ini_set('display_errors','On');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 if(isset($_GET['fr']) && isset($_GET['to'])){
     sanitize($_GET);
@@ -125,15 +125,30 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                         </div>
                 	</div>
                     <div class="col-md-6">
+                    	<?php
+							$sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
+                          	$curr_apvhdrs = vApvhdr::find_by_sql($sql);
+						?>
                     	<div class="panel panel-default">
                          	<div class="panel-heading">
-                            	<h3 class="panel-title">Account Payables due today</h3>
+                            	<h3 class="panel-title">
+                                <span class="badge"><?=count($curr_apvhdrs)?></span>
+                                	Account Payables due today
+                                    <span class="pull-right">
+                                    <?php
+										$sa = 0;
+                               			foreach($curr_apvhdrs as $curr_apvhdr){ 
+											$sa = $sa + $curr_apvhdr->totamount;
+										}
+										echo number_format($sa,2);
+									?>
+                                    </span>
+                             	</h3>
                           	</div>
                           	<div class="panel-body">
                             	<div class="list-group">
 								<?php
-                                    $sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
-                                    $curr_apvhdrs = vApvhdr::find_by_sql($sql);
+                                    
                                     foreach($curr_apvhdrs as $curr_apvhdr){
                                         //echo .'<br>';
                                         echo '<a href="/reports/accounts-payable-print/'.$curr_apvhdr->id.'" target="_blank" class="list-group-item">';
@@ -152,15 +167,30 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                         
                 	</div>
                     <div class="col-md-6">
+						<?php
+                        	$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
+							$curr_vcvchkdtls = vCvchkdtl::find_by_sql($sql);
+                        ?>
                     	<div class="panel panel-default">
                          	<div class="panel-heading">
-                            	<h3 class="panel-title">Checks dated today</h3>
+                            	<h3 class="panel-title">
+                                <span class="badge"><?=count($curr_vcvchkdtls)?></span>
+                                	Checks dated today
+                                    <span class="pull-right">
+                                    <?php
+										$sc = 0;
+                               			foreach($curr_vcvchkdtls as $curr_vcvchkdtl){ 
+											$sc = $sc + $curr_vcvchkdtl->amount;
+										}
+										echo number_format($sc,2);
+									?>
+                                    </span>
+                             	</h3>
                           	</div>
+                
                           	<div class="panel-body">
                             	<div class="list-group">
                 				<?php
-									$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
-									$curr_vcvchkdtls = vCvchkdtl::find_by_sql($sql);
 									foreach($curr_vcvchkdtls as $curr_vcvchkdtl){
 										//echo $curr_vcvchkdtl->checkno.'<br>';
 										echo '<a href="/reports/check-print/'.$curr_vcvchkdtl->cvhdrid.'" target="_blank" class="list-group-item">';
@@ -277,7 +307,13 @@ $(document).ready(function(e) {
                     align: 'center',
                     x: 3,
                     y: 15
-                }
+                },
+				plotLines: [{ // mark the weekend
+				color: 'green',
+				width: 1,
+				value: window.datenow,
+				zIndex: 3
+				}]
             },
             yAxis: [{ // left y axis
 					min: 0,

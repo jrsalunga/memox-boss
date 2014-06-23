@@ -126,7 +126,13 @@ $(document).ready(function(e) {
                     align: 'left',
                     x: 3,
                     y: 15
-                }
+                },
+				plotLines: [{ // mark the weekend
+					color: 'green',
+					width: 1,
+					value: window.datenow,
+					zIndex: 3
+				}]
             },
             yAxis: [{ // left y axis
 				min: 0,

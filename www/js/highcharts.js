@@ -2,33 +2,14 @@ var newDay = new Date();
 var yeartoday = newDay.getUTCFullYear();
 var monthtoday = newDay.getUTCMonth();
 var dayofmonthtoday = newDay.getUTCDate();
-var now = Date.UTC(yeartoday, monthtoday, dayofmonthtoday);
+window.datenow = Date.UTC(yeartoday, monthtoday, dayofmonthtoday);
 
 Highcharts.setOptions({
     chart: {
         style: {
             fontFamily: "Helvetica"
         }
-    },
-    xAxis: {        
-		plotLines: [{ // mark the weekend
-        color: 'green',
-        width: 1,
-        value: now,
-        zIndex: 3,
-        events: {
-            click: function(e) {
-                
-            },
-            mouseover: function(e) {
-                
-            },
-            mouseout: function(e) {
-               
-            }
-        	}
-    	}]
-	}
+    }
 });
 
 var hcvPie = Backbone.View.extend({
