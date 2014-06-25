@@ -219,7 +219,7 @@ table {
 	
 </div>
 <div class="prn-header">
-	<h1>Check Voucher Schedule - <?=Bank::row($bank->id,1)?></h1>
+	<h1>Check Schedule - <?=Bank::row($bank->id,1)?></h1>
 </div>
 <div class="prn-body">
     <table class="table table-bordered table-hover">

@@ -15,7 +15,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
-<title>Check Voucher Schedule</title>
+<title>MemoXpress - Check Schedule by Status (Print)</title>
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -166,7 +166,7 @@ table.table[style*="fixed"] {
 	
 </div>
 <div class="prn-header">
-	<h1>Check Voucher Schedule - Status</h1>
+	<h1>Check Schedule - Status</h1>
 </div>
 <div class="prn-body">
 	<?php

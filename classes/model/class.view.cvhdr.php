@@ -31,8 +31,20 @@ class vCvhdr extends DatabaseObject{
 	
 	
 	
-	
-	
+	public static function status_with_supplier($posted=NULL){
+		if($posted===TRUE || $posted==1){
+			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
+			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
+			
+		} else if($posted===FALSE || $posted==0){
+			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
+			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
+		} else {
+			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
+			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
+		}
+	}
+		
 	
 	
 	

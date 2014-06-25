@@ -15,7 +15,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Check Voucher Scheduling - Bank</title>
+<title>MemoXpress - Check Scheduling by Bank</title>
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
@@ -598,7 +598,7 @@ $(document).ready(function(e) {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule - Bank</h1>
+                		<h1>Check Schedule - Bank</h1>
                 	</div>
                 </div>
                 <div class="row">

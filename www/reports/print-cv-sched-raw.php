@@ -15,7 +15,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
-<title>Check Voucher Schedule - Bank</title>
+<title>MemoXpress - Check Schedule - Bank Detailed (Print)</title>
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
@@ -198,7 +198,7 @@ table {
 	
 </div>
 <div class="prn-header">
-	<h1>Check Voucher Schedule - Bank Detailed
+	<h1>Check Schedule - Bank Detailed
     <?php
     if(isset($_GET['posted']) && $_GET['posted']=='0'){
         echo ' (Unposted)';

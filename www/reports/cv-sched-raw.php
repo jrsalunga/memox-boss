@@ -17,7 +17,7 @@ $qs = !empty($uri[1]) ? '?'.$uri[1] : '?fr='.$dr->fr.'&to='.$dr->to;
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Check Voucher Scheduling</title>
+<title>MemoXpress - Check Scheduling by Bank (Detailed)</title>
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
@@ -603,7 +603,7 @@ table.table tbody td {
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher Schedule - Bank Detailed</h1>
+                		<h1>Check Schedule - Bank Detailed</h1>
                 	</div>
                 </div>
                 <div class="row">
