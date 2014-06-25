@@ -3008,6 +3008,12 @@ input[type="button"].btn-block {
 	color: #f0ad4e;
 	content: "\e088";
 }
+.glyphicon-posted-bw:before {
+	content: "\e089";
+}
+.glyphicon-unposted-bw:before {
+	content: "\e088";
+}
 .glyphicon-unshare:before {
 	font-family: 'Glyphicons Regular';
   	content: "\e222";
