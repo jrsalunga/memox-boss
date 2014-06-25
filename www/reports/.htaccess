@@ -18,5 +18,6 @@ RewriteRule ^print-cv-sched-raw(\/.*)*$ /reports/print-cv-sched-raw.php
 RewriteRule ^print-cvhdr(\/.*)*$ /reports/print-cvhdr.php
 RewriteRule ^cv-bank(\/.*)*$ /reports/cv-bank.php
 RewriteRule ^print-cv-bank(\/.*)*$ /reports/print-cv-bank.php
+RewriteRule ^cvhdr-supplier(\/.*)*$ /reports/cvhdr-supplier.php
 
 

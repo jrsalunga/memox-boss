@@ -6,7 +6,7 @@ class DateRange {
 	public $fr;
 	public $to;
 	
-	function __construct($fr=NULL, $to=NULL, $save=true, $max_diff=365){
+	function __construct($fr=NULL, $to=NULL, $save=true, $max_diff=365, $path="/reports/"){
 	
 		
 		if(is_null($fr) && !is_null($to)){
@@ -56,8 +56,8 @@ class DateRange {
 		
 		
 		if($save && !headers_sent()){
-			setcookie("to", $this->to, time() + (86400)); // 86400 = 1 day
-			setcookie("fr", $this->fr, time() + (86400)); // 86400 = 1 day
+			setcookie("to", $this->to, time() + (86400), $path); // 86400 = 1 day
+			setcookie("fr", $this->fr, time() + (86400), $path); // 86400 = 1 day
 		}
 		
 	}

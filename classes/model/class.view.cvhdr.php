@@ -31,18 +31,19 @@ class vCvhdr extends DatabaseObject{
 	
 	
 	
-	public static function status_with_supplier($posted=NULL){
-		if($posted===TRUE || $posted==1){
-			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
-			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
-			
-		} else if($posted===FALSE || $posted==0){
-			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
-			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
+	public static function status_with_supplier($fr, $to, $posted=NULL){
+		if(isset($posted) && !is_null($posted)){
+			$sql = "SELECT supplier, supplierid, SUM(totchkamt) as totchkamt, COUNT(refno) as printctr FROM vcvhdr WHERE posted = ".$posted;
+			$sql .= " AND date BETWEEN '".$fr."' AND '".$to."' GROUP BY supplier";
 		} else {
-			$sql = "SELECT b.descriptor, SUM(a.totchkamt) as totchkamt FROM cvhdr a ";
-			$slq .= "INNER JOIN supplier b ON a.supplierid = b.id GROUP BY b.descriptor";
+			$sql = "SELECT supplier, supplierid, SUM(totchkamt) as totchkamt, COUNT(refno) as printctr FROM vcvhdr ";
+			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' GROUP BY supplier";
 		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+		
+		
 	}
 		
 	

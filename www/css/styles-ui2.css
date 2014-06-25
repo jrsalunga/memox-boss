@@ -549,28 +549,33 @@ line-height: 20px;
 }
 
 
-#project-list .panel-title {
+#cvhdr-list .panel-title {
     font-size: 14px;
 }
 
-#project-list a:hover {
+#cvhdr-list a:hover {
     text-decoration: none;
 }
 
 
-#project-list > .panel > .panel-heading > .panel-title,
-#project-list > .panel > .panel-heading > .panel-title > a.collapsed,
-#project-list > .panel > .panel-heading > .panel-title > a.collapsed + .tot {
+#cvhdr-list > .panel > .panel-heading > .panel-title,
+#cvhdr-list > .panel > .panel-heading > .panel-title > a.collapsed,
+#cvhdr-list > .panel > .panel-heading > .panel-title > a.collapsed + .tot {
 	font-weight:bold;
 	/*color: #2f6f9f;*/
 	color: #555;
 }
 
-#project-list > .panel > .panel-heading > .panel-title > a,
-#project-list > .panel > .panel-heading > .panel-title > a + .tot,
-#project-list > .panel > .panel-heading > .panel-title > a:hover,
-#project-list > .panel > .panel-heading > .panel-title > a:hover + .tot {
+#cvhdr-list > .panel > .panel-heading > .panel-title > a,
+#cvhdr-list > .panel > .panel-heading > .panel-title > a + .tot,
+#cvhdr-list > .panel > .panel-heading > .panel-title > a:hover,
+#cvhdr-list > .panel > .panel-heading > .panel-title > a:hover + .tot {
 	color: #2f6f9f;
+}
+
+#cvhdr-list > .panel > .panel-heading > .panel-title .badge {
+	background-color: #bbb;
+	font-size: 11px;
 }
 
 
