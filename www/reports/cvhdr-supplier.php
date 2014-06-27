@@ -292,7 +292,7 @@ $(document).ready(function(e) {
 				
 				drilldownSeries.push({
 					id: 'others',
-					name: 'Total Amount',
+					name: 'Others',
 					data: []	
 				});
 				/*
@@ -349,7 +349,7 @@ $(document).ready(function(e) {
                     }
                 },
                 tooltip: {
-                    pointFormat: '{series.name}: <b>  {point.amount} </b> ({point.percentage:.2f}%)'
+                    pointFormat: 'Total Amount: <b>  {point.amount} </b> ({point.percentage:.2f}%)'
                 },
                 plotOptions: {
                     series: {
@@ -362,7 +362,7 @@ $(document).ready(function(e) {
                     }
                 },
                 series: [{
-                    name: 'Total Amount',
+                    name: 'Main',
                     colorByPoint: true,
                     data: suppliersData
                 }],

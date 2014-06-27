@@ -62,7 +62,7 @@ class vCvhdr extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 	}
 	
-	public static function group_by_supplier($fr, $to){
+	public static function group_by_supplier($fr, $to, $posted){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
 			$sql = "SELECT b.code as suppliercode, b.descriptor as supplier, a.supplierid, SUM(a.totchkamt) as totchkamt, ";
 			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM vcvhdr ";
@@ -70,8 +70,13 @@ class vCvhdr extends DatabaseObject{
 			$sql .= "FROM cvhdr a ";
 			$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";
 			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' ";
+			if($posted!="" && ($posted=="1" || $posted=="0")){
+            	$sql .= "AND posted = '".$posted."' ";
+        	}
 			$sql .= "GROUP BY b.descriptor ";
-			$sql .= "ORDER BY totchkamt DESC ";	
+			$sql .= "ORDER BY totchkamt DESC ";
+			
+			//echo $sql;	
 			
 			$result_array = static::find_by_sql($sql);
 			return !empty($result_array) ? $result_array : false;

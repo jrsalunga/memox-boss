@@ -614,18 +614,17 @@ function getCvhdrSupplier(){
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
     $data = $database->escape_value($r->get('data'));
+    $posted = $database->escape_value($r->get('posted'));
     $range = new DateRange($fr,$to,false);
 
 
-    $cvhdrs = vCvhdr::group_by_supplier($fr,$to);
+    $cvhdrs = vCvhdr::group_by_supplier($fr,$to,$posted);
 
     if(!empty($data) && $data=='json') {
         echo json_encode($cvhdrs);
     } else {
         echo 'Suppliercode,Supplier,Amount,Pecentage';
         echo PHP_EOL;
-
-        
         foreach ($cvhdrs as $cvhdr) {
             echo $cvhdr->suppliercode.',';
             echo $cvhdr->supplier.',';
