@@ -240,7 +240,29 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 <script>
 
 
+getOtherPercent = function(list, pct){
+	var othersPct = _.reduce(list, function(memo, el){ 
+		if(parseInt(el.percentage) < pct){
+			return memo + parseFloat(el.percentage);
+		} else {
+			return memo;	
+		}
+	}, 0);
+	
+	return othersPct;
+}
 
+getOthersAmt = function(list, pct){
+	var othersAmt = _.reduce(list, function(memo, el){ 
+					if(parseInt(el.percentage) < pct){
+			return memo + parseFloat(el.totchkamt);
+		} else {
+			return memo;	
+		}
+	}, 0);
+	return othersAmt;
+}
+				
 
 $(document).ready(function(e) {
 	
@@ -248,29 +270,37 @@ $(document).ready(function(e) {
 	
 	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
 		 
-		 var maxlen = 10,
-		 	minpct = 5,
+		 var minlen = 15,
+		 	maxlen = 100,
+		 	minpct = 1,
+			maxpct = 2,
 		 	suppliersData = [],
 			drilldownSeries = [];
 		 
-		 
+		
 		//console.log(cvhdrs.length); 
 		if(cvhdrs.length > maxlen){
-			alert('cvhdrs.length > maxlen');
+			alert('over maxlen!');
+			
+		} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {
+			console.log('mid len');
+			
+			console.log(cvhdrs.length);
+			console.log(cvhdrs.length/minlen);
+			
+			
+			
 		} else {
+			console.log('below minlen');
 			// check if there is CVHDR that % less than minpct
-			var othersPct = _.reduce(cvhdrs, function(memo, cvhdr){ 
-				if(parseInt(cvhdr.percentage) < minpct){
-					return memo + parseFloat(cvhdr.percentage);
-				} else {
-					return memo;	
-				}
-			}, 0);
+		
+			var othersPct = getOtherPercent(cvhdrs, minpct);
 			
 			// check if 
 			if(othersPct > 0){
 				//console.log('yes! '+ othersPct +' > 0');
-				
+				var othersAmt = getOthersAmt(cvhdrs, minpct);
+				/*
 				var othersAmt = _.reduce(cvhdrs, function(memo, cvhdr){ 
 					if(parseInt(cvhdr.percentage) < minpct){
 						return memo + parseFloat(cvhdr.totchkamt);
@@ -278,6 +308,7 @@ $(document).ready(function(e) {
 						return memo;	
 					}
 				}, 0);
+				*/
 				//console.log('others totchkamt: '+ othersAmt);
 				
 				suppliersData.push({
