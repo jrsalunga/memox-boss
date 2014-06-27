@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vCvhdr extends DatabaseObject{
 	
 	protected static $table_name="vcvhdr";
-	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'payee' ,'totapvamt' ,'totchkamt' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totapvline' ,'totchkline');
+	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'payee' ,'totapvamt' ,'totchkamt' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totapvline' ,'totchkline', 'percentage', 'suppliercode');
 	
 	/*
 	* Database related fields
@@ -26,12 +26,14 @@ class vCvhdr extends DatabaseObject{
 	public $printctr;
 	public $totapvline;
 	public $totchkline;
+	
+	public $suppliercode;
+	public $percentage;
 
-
 	
 	
 	
-	public static function status_with_supplier($fr, $to, $posted=NULL){
+	public static function status_with_group_supplier($fr, $to, $posted=NULL){
 		if(isset($posted) && !is_null($posted)){
 			$sql = "SELECT supplier, supplierid, SUM(totchkamt) as totchkamt, COUNT(refno) as printctr FROM vcvhdr WHERE posted = ".$posted;
 			$sql .= " AND date BETWEEN '".$fr."' AND '".$to."' GROUP BY supplier";
@@ -42,8 +44,41 @@ class vCvhdr extends DatabaseObject{
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? $result_array : false;
+	}
+	
+	public static function status_with_supplier($supplierid, $fr, $to, $posted=NULL){
+		if(isset($supplierid) && is_uuid($supplierid) && isset($posted) && !is_null($posted)){
+			$sql = "SELECT * FROM vcvhdr WHERE posted = ".$posted;
+			$sql .= " AND date BETWEEN '".$fr."' AND '".$to."' AND supplierid = '".$supplierid."' ORDER BY date DESC, refno DESC";
+		} else if(isset($supplierid) && is_uuid($supplierid) && (!isset($posted) || is_null($posted))){
+			$sql = "SELECT * FROM vcvhdr ";
+			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' AND supplierid = '".$supplierid."' ORDER BY date DESC, refno DESC";
+		} else {
+			return false;
+			exit;	
+		}
 		
-		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
+	public static function group_by_supplier($fr, $to){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+			$sql = "SELECT b.code as suppliercode, b.descriptor as supplier, a.supplierid, SUM(a.totchkamt) as totchkamt, ";
+			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM vcvhdr ";
+			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."')) * 100,10) as percentage ";
+			$sql .= "FROM cvhdr a ";
+			$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";
+			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "GROUP BY b.descriptor ";
+			$sql .= "ORDER BY totchkamt DESC ";	
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? $result_array : false;
+			
+		} else {
+			return false;	
+		}
 	}
 		
 	

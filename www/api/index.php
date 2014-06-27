@@ -132,6 +132,7 @@ $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
 $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 
 $app->get('/report/ap-vs-cv', 'getApVsCv');
+$app->get('/report/cvhdr-supplier', 'getCvhdrSupplier');
 
 
 
@@ -142,6 +143,8 @@ $app->get('/r/apvdue', 'apvGetDue');
 
 $app->run();
 
+
+// ctrl k + ctrl 1 = fold 1st level
 
 function getApVsCv(){
     $app = \Slim\Slim::getInstance();
@@ -369,7 +372,7 @@ function getReportBankTotal(){
     global $database;
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
-    $range = new DateRange($fr,$to);
+    $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
     echo PHP_EOL;
@@ -409,7 +412,7 @@ function getCVBankTotal($bankid){
     global $database;
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
-    $range = new DateRange($fr,$to);
+    $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
     echo PHP_EOL;
@@ -459,7 +462,7 @@ function getCVBankByStatus($bankid, $status){
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
 
-    $range = new DateRange($r->get('fr'),$r->get('to'));
+    $range = new DateRange($r->get('fr'),$r->get('to'), false);
 
     echo 'Days,Total';
     echo PHP_EOL;
@@ -549,7 +552,7 @@ function getChkDay(){
     global $database;
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
-    $range = new DateRange($fr,$to);
+    $range = new DateRange($fr,$to,false);
 
     $arr = array();
     $p = $r->get('posted');
@@ -586,9 +589,7 @@ function getChkDay(){
             } else {
 
                 $arr[$cvchkdtl->bankcode] =  $cvchkdtl->amount;
-                //array_push($arr, $c);
-
-                
+                //array_push($arr, $c);   
             }
 
             //$x = (array) $cvchkdtl;
@@ -597,18 +598,42 @@ function getChkDay(){
             //echo $cvchkdtl->bankcode.','.$cvchkdtl->amount;
             //echo PHP_EOL;
         }          
-
-        
-
     }
 
     foreach ($arr as $key => $value) {
         echo $key.','.$value;
         echo PHP_EOL;
     };
+}
 
 
-    
+function getCvhdrSupplier(){
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    $data = $database->escape_value($r->get('data'));
+    $range = new DateRange($fr,$to,false);
+
+
+    $cvhdrs = vCvhdr::group_by_supplier($fr,$to);
+
+    if(!empty($data) && $data=='json') {
+        echo json_encode($cvhdrs);
+    } else {
+        echo 'Suppliercode,Supplier,Amount,Pecentage';
+        echo PHP_EOL;
+
+        
+        foreach ($cvhdrs as $cvhdr) {
+            echo $cvhdr->suppliercode.',';
+            echo $cvhdr->supplier.',';
+            echo $cvhdr->totchkamt.',';
+            echo $cvhdr->percentage.',';
+            echo PHP_EOL;
+        }
+    }
 
 }
 

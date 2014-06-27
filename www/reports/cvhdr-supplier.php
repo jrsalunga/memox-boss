@@ -17,12 +17,13 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 
 if($status=='posted'){
-	$cvhdrs = vCvhdr::status_with_supplier($dr->fr, $dr->to, 1);
+	$posted = 1;
 } else if($status=='unposted'){
-	$cvhdrs = vCvhdr::status_with_supplier($dr->fr, $dr->to, 0);
+	$posted = 0;
 } else {
-	$cvhdrs = vCvhdr::status_with_supplier($dr->fr, $dr->to, NULL);
+	$posted = NULL;
 }
+$cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 //global $database;
 //echo $database->last_query;
 
@@ -145,6 +146,8 @@ if($status=='posted'){
                                 </div>
                             </div>
                         </div>
+                        <div id="graph">
+                        </div>
                 	</div>
                     <div class="col-md-7">
                     	<div id="cvhdr-list" class="panel-group">
@@ -163,7 +166,27 @@ if($status=='posted'){
 										echo '<span class="pull-right tot">'.number_format($cvhdr->totchkamt,2).'</span>';
 										echo '</a></h4></div>';
 										echo '<div id="collapse-'.$cvhdr->supplierid.'" class="panel-collapse collapse">';
-										echo '<div class="panel-body">fdsafafa<br>fdsafafa<br>fdsafafa<br>fdsafafa<br>';
+										echo '<div class="panel-body">';
+										
+										
+										echo '<div><table class="table table-striped apv-list">';
+										//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
+										echo '<tbody>';
+										
+										$chld_cvhdrs = vCvhdr::status_with_supplier($cvhdr->supplierid, $dr->fr, $dr->to, $posted);
+										foreach($chld_cvhdrs as $chld_cvhdr){
+											//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
+											echo '<tr>';
+											//echo '<td>'.$apvdtl1->account .'</td>';
+											echo '<td><a href="/reports/check-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+											echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
+											echo '<td><span class="glyphicon glyphicon-';
+											echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
+											echo '"></span></td>';
+											echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
+											echo '</tr>';
+										}	
+										echo '<tbody></table></div>';
 										echo '</div></div></div>';
 										
 									}
@@ -212,6 +235,7 @@ if($status=='posted'){
 <script src="/js/vendors/highcharts-4.0.1.min.js"></script>
 <script src="/js/vendors/highcharts.data.js"></script>
 <script src="/js/vendors/highcharts.exporting-4.0.1.js"></script>
+<script src="/js/vendors/drilldown.js"></script>
 
 <script src="/js/common.js"></script>
 <script src="/js/highcharts.js"></script>
@@ -226,153 +250,283 @@ if($status=='posted'){
 $(document).ready(function(e) {
 	
 	daterange();
-	/*
-	$.get('../api/report/ap-vs-cv?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
-		$('#graph').highcharts({
-
-            data: {
-                csv: csv,
-                // Parse the American date format used by Google
-                parseDate: function (s) {
-                    
-                    var match = s.match(/^([0-9]{1,2})\/([0-9]{1,2})\/([0-9]{2})$/);
-                    if (match) {
-                        //console.log(Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]))
-                        return Date.UTC(+('20' + match[3]), match[1] - 1, +match[2]);
-                    }
-                }
-            },
-			chart: {
-                zoomType: 'x',
-                height: 250,
-                spacingRight: 0,
-				marginTop: 35
-            },
-			colors: ['#7cb5ec', '#8085e9', '#88e0e3', '#FC9D9A', '#f15c80', '#F9CDAD', '#8085e8', '#8d4653', '#91e8e1'],
-            title: {
-                text: ''
-            },
-           	subtitle: {
-                text: document.ontouchstart === undefined ?
-                    '' :
-                    'Pinch the chart to zoom in'
-            },
-            xAxis: {
-                type: 'datetime',
-                tickInterval: 7 * 24 * 3600 * 1000, // one week
-                tickWidth: 0,
-                gridLineWidth: 1,
-                labels: {
-                    align: 'center',
-                    x: 3,
-                    y: 15
-                },
-				plotLines: [{ // mark the weekend
-				color: 'green',
-				width: 1,
-				value: window.datenow,
-				zIndex: 3
-				}]
-            },
-            yAxis: [{ // left y axis
-					min: 0,
-					title: {
-						text: null
-					},
-					labels: {
-						align: 'left',
-						x: 3,
-						y: 16,
-						format: '{value:.,0f}'
-					},
-					showFirstLabel: false
-            	}
-			],
-            legend: {
-                align: 'left',
-                verticalAlign: 'top',
-                y: -10,
-                floating: true,
-                borderWidth: 0
-            },
-            tooltip: {
-                shared: true,
-                crosshairs: true
-            },
-            plotOptions: {
-                series: {
-                    cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function (e) {
-								console.log(Highcharts.dateFormat('%Y-%m-%d', this.x));
-								
-                            }
-                        }
-                    },
-                    marker: {
-                        lineWidth: 1,
-						symbol: 'circle'
-                    }
-                }
-            },
-
-            series: [
-				{
-					name: 'AP Unposted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
-				},
-				{
-					name: 'AP Posted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
-				},
-				{
-					type: 'area',
-					name: 'AP Total',
-					lineWidth: 0,
-					marker: {
-						radius: 0
-					},
-					index: -1,
-					fillOpacity: 0.4
-				},
-				{
-					name: 'Check Unposted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
-				},
-				{
-					name: 'Check Posted',
-					lineWidth: 3,
-					marker: {
-						radius: 4
-					}
-				},
-				{
-					type: 'area',
-					name: 'Check Total',
-					lineWidth: 0,
-					marker: {
-						radius: 0
-					},
-					index: -1,
-					fillOpacity: 0.4
+	
+	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
+	
+		 _.each(cvhdrs, function (cvhdr, i) {
+			// console.log(cvhdr.suppliercode);
+		 })
+		 
+		 var maxlen = 10,
+		 	minpct = 5,
+		 	suppliersData = [],
+			drilldownSeries = [];
+		 
+		 
+		//console.log(cvhdrs.length); 
+		if(cvhdrs.length > maxlen){
+			alert('cvhdrs.length > maxlen');
+			 
+		} else {
+			
+			// check if there is CVHDR that % less than minpct
+			var othersPct = _.reduce(cvhdrs, function(memo, cvhdr){ 
+				if(parseInt(cvhdr.percentage) < minpct){
+					return memo + parseFloat(cvhdr.percentage);
+				} else {
+					return memo;	
 				}
-			]
-        });
+			}, 0);
+			
+			// check if 
+			if(othersPct > 0){
+				//console.log('yes! '+ othersPct +' > 0');
+				
+				var othersAmt = _.reduce(cvhdrs, function(memo, cvhdr){ 
+					if(parseInt(cvhdr.percentage) < minpct){
+						return memo + parseFloat(cvhdr.totchkamt);
+					} else {
+						return memo;	
+					}
+				}, 0);
+				//console.log('others totchkamt: '+ othersAmt);
+				
+				suppliersData.push(
+					{
+						name: 'Others',
+						amount: accounting.formatMoney(othersAmt,"", 2,","),
+						y: parseFloat(accounting.toFixed(othersPct,2)),
+						supplier: 'other',
+						id: 'othersuid',
+						drilldown: 'others'
+					}
+				);
+				//console.log(drilldownSeries);
+				
+				drilldownSeries.push({
+					id: 'others',
+					name: 'Total Amount',
+					data: []	
+				});
+
+				_.each(cvhdrs, function(cvhdr, memo){
+					if(parseInt(cvhdr.percentage) > minpct){
+						// 
+					} else {
+						var x = {
+							name: cvhdr.suppliercode,
+							amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+							y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+							supplier: cvhdr.supplier,
+							id: cvhdr.supplierid
+						}	
+						drilldownSeries[0].data.push(x);
+					}
+				});
+				
+			}
+			
+			
+			_.each(cvhdrs, function(cvhdr, memo){
+				if(parseInt(cvhdr.percentage) > minpct){
+					var x = {
+						name: cvhdr.suppliercode,
+						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+						supplier: cvhdr.supplier,
+						id: cvhdr.supplierid
+					}	
+					suppliersData.push(x);
+				} else {
+					//return memo;	
+				}
+			});
+			
+			
+		}
+		 
+		//console.log(newCvhdrs);
+		//console.log(sum);
+		//console.log(suppliersData);
 		
+		$('#graph').highcharts({
+                chart: {
+					type: 'pie',
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    height: 300,
+                },
+                title: {
+                    text: 'Cvhdr by Suppler',
+                    //text: this.settings.title,
+                    margin: 2,
+                    style: {
+                        fontSize: '14px'
+                    }
+                },
+                tooltip: {
+                    pointFormat: '{series.name}: <b>  {point.amount} </b> ({point.percentage:.2f}%)'
+                },
+                plotOptions: {
+                    series: {
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            connectorColor: '#ccc',
+                            //format: '{point.code}: {point.percentage:.2f} %'
+                        },
+                    }
+                },
+                series: [{
+                    name: 'Total Amount',
+                    colorByPoint: true,
+                    data: suppliersData
+                }],
+                drilldown: {
+                    series: drilldownSeries
+					/*
+					series: [{
+							id: 'others',
+							name: 'Others',
+							data: [
+								['Bengal', 2],
+								['Persian', 1],
+								['Siberian', 4]
+							]
+						}]
+						*/
+                }
+            });
 		
+	
+	});
+	
+	
+	
+	/*
+	$.get('../api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
+	
+		Highcharts.data({
+        csv: csv,
+        parsed: function (columns) {
+			
+
+            var suppliers = {},
+                suppliersData = [],
+                versions = {},
+                drilldownSeries = [];
+            
+            
+
+            // Parse percentage strings
+           
+           
+            columns[3] = $.map(columns[3], function (value, index) {
+                value = parseFloat(value);
+                
+                return value;
+            });
+            
+
+            $.each(columns[0], function (i, name) {
+                var brand,
+                    version;
+
+                if (i > 0) {
+					
+                    // Remove special edition notes
+                    name = name.split(' -')[0];
+
+                    // Split into brand and version
+                    version = name.match(/([0-9]+[\.0-9x]*)/);
+                    if (version) {
+                        version = version[0];
+                    }
+                    brand = name.replace(version, '');
+
+                    // Create the main data
+                    if (!suppliers[brand]) {
+                        suppliers[brand] = columns[1][i];
+                    } else {
+                        suppliers[brand] += columns[1][i];
+                    }
+
+                    // Create the version data
+                    if (version !== null) {
+                        if (!versions[brand]) {
+                            versions[brand] = [];
+                        }
+                        versions[brand].push(['v' + version, columns[1][i]]);
+                    }
+                }
+                
+            });
+
+            $.each(suppliers, function (name, y) {
+                suppliersData.push({ 
+                    name: name, 
+                    y: y,
+                    drilldown: versions[name] ? name : null
+                });
+            });
+			
+            $.each(versions, function (key, value) {
+                drilldownSeries.push({
+                    name: key,
+                    id: key,
+                    data: value
+                });
+            });
+		
+
+		
+            $('#graph').highcharts({
+                chart: {
+                    plotBackgroundColor: null,
+                    plotBorderWidth: null,
+                    plotShadow: false,
+                    height: 300,
+                },
+                title: {
+                    text: 'Cvhdr by Suppler',
+                    //text: this.settings.title,
+                    margin: 2,
+                    style: {
+                        fontSize: '14px'
+                    }
+                },
+                tooltip: {
+                    //pointFormat: '{series.name}: <b>  {point.amount} </b> ({point.percentage:.2f}%)'
+                },
+                plotOptions: {
+                    pie: {
+                        allowPointSelect: true,
+                        cursor: 'pointer',
+                        dataLabels: {
+                            enabled: true,
+                            color: '#000000',
+                            connectorColor: '#ccc',
+                            //format: '{point.code}: {point.percentage:.2f} %'
+                        },
+                    }
+                },
+                series: [{
+                    name: 'Suppler',
+                    colorByPoint: true,
+                    data: suppliersData
+                }],
+                drilldown: {
+                    series: drilldownSeries
+                }
+            });
+
+
+        }
+		});
 	});
 	*/
+	
 	
 });
 </script>
