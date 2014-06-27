@@ -204,12 +204,7 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 
     </div>
 </div> <!-- /container -->
-    
-    
-    
-    
-    
-    <!--
+<!--
 <link rel="stylesheet" href="css/main-ui.css">
 <link rel="stylesheet" href="css/styles-ui.css">
 -->
@@ -252,10 +247,6 @@ $(document).ready(function(e) {
 	daterange();
 	
 	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
-	
-		 _.each(cvhdrs, function (cvhdr, i) {
-			// console.log(cvhdr.suppliercode);
-		 })
 		 
 		 var maxlen = 10,
 		 	minpct = 5,
@@ -266,9 +257,7 @@ $(document).ready(function(e) {
 		//console.log(cvhdrs.length); 
 		if(cvhdrs.length > maxlen){
 			alert('cvhdrs.length > maxlen');
-			 
 		} else {
-			
 			// check if there is CVHDR that % less than minpct
 			var othersPct = _.reduce(cvhdrs, function(memo, cvhdr){ 
 				if(parseInt(cvhdr.percentage) < minpct){
@@ -291,16 +280,14 @@ $(document).ready(function(e) {
 				}, 0);
 				//console.log('others totchkamt: '+ othersAmt);
 				
-				suppliersData.push(
-					{
-						name: 'Others',
-						amount: accounting.formatMoney(othersAmt,"", 2,","),
-						y: parseFloat(accounting.toFixed(othersPct,2)),
-						supplier: 'other',
-						id: 'othersuid',
-						drilldown: 'others'
-					}
-				);
+				suppliersData.push({
+					name: 'Others',
+					amount: accounting.formatMoney(othersAmt,"", 2,","),
+					y: parseFloat(accounting.toFixed(othersPct,2)),
+					supplier: 'other',
+					id: 'othersuid',
+					drilldown: 'others'
+				});
 				//console.log(drilldownSeries);
 				
 				drilldownSeries.push({
@@ -308,23 +295,16 @@ $(document).ready(function(e) {
 					name: 'Total Amount',
 					data: []	
 				});
-
+				/*
 				_.each(cvhdrs, function(cvhdr, memo){
 					if(parseInt(cvhdr.percentage) > minpct){
 						// 
 					} else {
-						var x = {
-							name: cvhdr.suppliercode,
-							amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
-							y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
-							supplier: cvhdr.supplier,
-							id: cvhdr.supplierid
-						}	
-						drilldownSeries[0].data.push(x);
+						
 					}
 				});
-				
-			}
+				*/
+			} // end: othersPct > 0
 			
 			
 			_.each(cvhdrs, function(cvhdr, memo){
@@ -338,16 +318,19 @@ $(document).ready(function(e) {
 					}	
 					suppliersData.push(x);
 				} else {
-					//return memo;	
+					if(othersPct > 0){
+						var x = {
+							name: cvhdr.suppliercode,
+							amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+							y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+							supplier: cvhdr.supplier,
+							id: cvhdr.supplierid
+						}	
+						drilldownSeries[0].data.push(x);
+					}
 				}
-			});
-			
-			
+			});	
 		}
-		 
-		//console.log(newCvhdrs);
-		//console.log(sum);
-		//console.log(suppliersData);
 		
 		$('#graph').highcharts({
                 chart: {
@@ -385,149 +368,12 @@ $(document).ready(function(e) {
                 }],
                 drilldown: {
                     series: drilldownSeries
-					/*
-					series: [{
-							id: 'others',
-							name: 'Others',
-							data: [
-								['Bengal', 2],
-								['Persian', 1],
-								['Siberian', 4]
-							]
-						}]
-						*/
                 }
-            });
-		
-	
+            });	
 	});
 	
 	
-	
-	/*
-	$.get('../api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-	
-		Highcharts.data({
-        csv: csv,
-        parsed: function (columns) {
-			
 
-            var suppliers = {},
-                suppliersData = [],
-                versions = {},
-                drilldownSeries = [];
-            
-            
-
-            // Parse percentage strings
-           
-           
-            columns[3] = $.map(columns[3], function (value, index) {
-                value = parseFloat(value);
-                
-                return value;
-            });
-            
-
-            $.each(columns[0], function (i, name) {
-                var brand,
-                    version;
-
-                if (i > 0) {
-					
-                    // Remove special edition notes
-                    name = name.split(' -')[0];
-
-                    // Split into brand and version
-                    version = name.match(/([0-9]+[\.0-9x]*)/);
-                    if (version) {
-                        version = version[0];
-                    }
-                    brand = name.replace(version, '');
-
-                    // Create the main data
-                    if (!suppliers[brand]) {
-                        suppliers[brand] = columns[1][i];
-                    } else {
-                        suppliers[brand] += columns[1][i];
-                    }
-
-                    // Create the version data
-                    if (version !== null) {
-                        if (!versions[brand]) {
-                            versions[brand] = [];
-                        }
-                        versions[brand].push(['v' + version, columns[1][i]]);
-                    }
-                }
-                
-            });
-
-            $.each(suppliers, function (name, y) {
-                suppliersData.push({ 
-                    name: name, 
-                    y: y,
-                    drilldown: versions[name] ? name : null
-                });
-            });
-			
-            $.each(versions, function (key, value) {
-                drilldownSeries.push({
-                    name: key,
-                    id: key,
-                    data: value
-                });
-            });
-		
-
-		
-            $('#graph').highcharts({
-                chart: {
-                    plotBackgroundColor: null,
-                    plotBorderWidth: null,
-                    plotShadow: false,
-                    height: 300,
-                },
-                title: {
-                    text: 'Cvhdr by Suppler',
-                    //text: this.settings.title,
-                    margin: 2,
-                    style: {
-                        fontSize: '14px'
-                    }
-                },
-                tooltip: {
-                    //pointFormat: '{series.name}: <b>  {point.amount} </b> ({point.percentage:.2f}%)'
-                },
-                plotOptions: {
-                    pie: {
-                        allowPointSelect: true,
-                        cursor: 'pointer',
-                        dataLabels: {
-                            enabled: true,
-                            color: '#000000',
-                            connectorColor: '#ccc',
-                            //format: '{point.code}: {point.percentage:.2f} %'
-                        },
-                    }
-                },
-                series: [{
-                    name: 'Suppler',
-                    colorByPoint: true,
-                    data: suppliersData
-                }],
-                drilldown: {
-                    series: drilldownSeries
-                }
-            });
-
-
-        }
-		});
-	});
-	*/
-	
-	
 });
 </script>
 
