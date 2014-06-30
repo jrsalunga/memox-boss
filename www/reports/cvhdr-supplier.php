@@ -241,7 +241,7 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 
 
 getOtherPercent = function(list, pct){
-	var othersPct = _.reduce(list, function(memo, el){ 
+	var othersPct = _.reduce(list, function(memo, el){
 		if(parseInt(el.percentage) < pct){
 			return memo + parseFloat(el.percentage);
 		} else {
@@ -254,7 +254,31 @@ getOtherPercent = function(list, pct){
 
 getOthersAmt = function(list, pct){
 	var othersAmt = _.reduce(list, function(memo, el){ 
-					if(parseInt(el.percentage) < pct){
+		if(parseInt(el.percentage) < pct){
+			return memo + parseFloat(el.totchkamt);
+		} else {
+			return memo;	
+		}
+	}, 0);
+	return othersAmt;
+}
+
+getOther2Percent = function(list, pct, index, len){
+	var othersPct = _.reduce(list, function(memo, el, i){
+		//console.log('index:'+ i); 
+		if(parseInt(el.percentage) < pct){
+			return memo + parseFloat(el.percentage);
+		} else {
+			return memo;	
+		}
+	}, 0);
+	
+	return othersPct;
+}
+
+getOthers2Amt = function(list, pct, index, len){
+	var othersAmt = _.reduce(list, function(memo, el){ 
+		if(parseInt(el.percentage) < pct){
 			return memo + parseFloat(el.totchkamt);
 		} else {
 			return memo;	
@@ -270,12 +294,14 @@ $(document).ready(function(e) {
 	
 	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
 		 
-		 var minlen = 15,
+		 var minlen = 5,
 		 	maxlen = 100,
 		 	minpct = 1,
 			maxpct = 2,
 		 	suppliersData = [],
 			drilldownSeries = [];
+			
+			
 		 
 		
 		//console.log(cvhdrs.length); 
@@ -283,10 +309,166 @@ $(document).ready(function(e) {
 			alert('over maxlen!');
 			
 		} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {
-			console.log('mid len');
+			//console.log('mid len');	
+			//console.log(cvhdrs.length);
+			var level = parseInt(cvhdrs.length/minlen);
+			//console.log(level);
 			
-			console.log(cvhdrs.length);
-			console.log(cvhdrs.length/minlen);
+
+			//console.log('othersPct: '+othersPct);
+			if(level > 0){
+				//console.log('yes: othersPct > 0');
+				
+				for(x=0; x<=level; x++){
+					//console.log('level '+x);
+					
+					/*
+					var othersPct = getOther2Percent(cvhdrs, maxpct, x, minlen);
+					var othersAmt = getOthers2Amt(cvhdrs, maxpct);				
+					
+					suppliersData.push({
+						name: 'Others',
+						amount: accounting.formatMoney(othersAmt,"", 2,","),
+						y: parseFloat(accounting.toFixed(othersPct,2)),
+						supplier: 'other',
+						id: 'othersuid',
+						drilldown: 'others'
+					});
+					
+					drilldownSeries.push({
+						id: 'others',
+						name: 'Others',
+						data: []	
+					});
+					*/
+					
+				}
+				
+			}
+			
+			var tot = 0;
+			var totpct = 0;
+			var l = 1;
+			var cv1 = 0;	
+			var arr = [];
+			
+			_.each(cvhdrs, function(cvhdr, idx){
+				if(parseInt(cvhdr.percentage) > maxpct){
+					var x = {
+						name: cvhdr.suppliercode,
+						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+						supplier: cvhdr.supplier,
+						id: cvhdr.supplierid
+					}	
+					suppliersData.push(x);
+					cv1++;
+					
+				} else {	
+					
+					var z = cv1 + (parseInt(minlen) * l);
+					var y = cv1 + parseInt(minlen);
+					
+					//console.log(idx+' y:'+y);
+					if(idx <= y){
+						//console.log('1st level');
+					}
+					
+					
+					
+					//console.log(z);
+					
+					if(idx >= z){
+						//console.log('push:'+tot);
+						//console.log('level:'+l);
+						
+						suppliersData.push({
+						name: 'Others '+ l,
+						amount: accounting.formatMoney(tot,"", 2,","),
+						y: parseFloat(accounting.toFixed(totpct,2)),
+						supplier: 'other'+l,
+						id: 'othersuid'+l,
+						drilldown: 'others'+l
+						});
+						
+						drilldownSeries.push({
+							id: 'others'+l,
+							name: 'Others '+l,
+							data: arr,
+							drilldown: 'others'+l	
+						});
+						
+						//console.log(drilldownSeries);
+						
+						l++;
+						tot = 0;
+						totpct = 0;
+						arr = [];
+					
+                    } 
+
+
+                    
+					
+					
+
+                    tot = tot + parseFloat(cvhdr.totchkamt);
+					totpct = totpct + parseFloat(cvhdr.percentage);
+					
+					
+					arr.push({
+						name: cvhdr.suppliercode,
+						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+						supplier: cvhdr.supplier,
+						id: cvhdr.supplierid
+					})	
+					
+					
+					
+					
+					
+					/*
+					
+					if(idx == z){
+						console.log('last push:'+tot);
+						console.log('level:'+l);
+						console.log('push:'+tot);
+						console.log('level:'+l);
+						
+						arr.push({
+						name: 'Others '+ l,
+						amount: accounting.formatMoney(tot,"", 2,","),
+						y: parseFloat(accounting.toFixed(totpct,2)),
+						supplier: 'other'+l,
+						id: 'othersuid'+l,
+						drilldown: 'others'
+						});
+						
+						drilldownSeries.push({
+							id: 'others'+l,
+							name: 'Others '+l,
+							data: arr,
+							drilldown: 'others'+l	
+						});
+						
+					} 
+                    */
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+					
+				}
+			});	
+			
 			
 			
 			
@@ -362,6 +544,8 @@ $(document).ready(function(e) {
 				}
 			});	
 		}
+		
+		
 		
 		$('#graph').highcharts({
                 chart: {
