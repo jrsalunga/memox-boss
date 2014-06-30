@@ -65,7 +65,7 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
         
         <div class="navbar-collapse collapse">
         	<ul class="nav navbar-nav">
-              <li><a href="">Reports</a></li>
+              <li><a href="/reports/">Reports</a></li>
             </ul>
        		<ul class="nav navbar-nav navbar-right">
             <!--
@@ -294,7 +294,7 @@ $(document).ready(function(e) {
 	
 	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
 		 
-		 var minlen = 5,
+		 var minlen = 10,
 		 	maxlen = 100,
 		 	minpct = 1,
 			maxpct = 2,
@@ -407,6 +407,28 @@ $(document).ready(function(e) {
 					
                     } 
 
+                    console.log(idx+'-'+(cvhdrs.length-1));
+                    if(idx==(cvhdrs.length-1)){
+                        
+
+                        suppliersData.push({
+                        name: 'Others '+ l,
+                        amount: accounting.formatMoney(tot,"", 2,","),
+                        y: parseFloat(accounting.toFixed(totpct,6)),
+                        supplier: 'other'+l,
+                        id: 'othersuid'+l,
+                        drilldown: 'others'+l
+                        });
+                        
+                        drilldownSeries.push({
+                            id: 'others'+l,
+                            name: 'Others '+l,
+                            data: arr,
+                            drilldown: 'others'+l   
+                        });
+
+                    }
+
 
                     
 					
@@ -419,7 +441,7 @@ $(document).ready(function(e) {
 					arr.push({
 						name: cvhdr.suppliercode,
 						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
-						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
+						y: parseFloat(accounting.toFixed(cvhdr.percentage,6)),
 						supplier: cvhdr.supplier,
 						id: cvhdr.supplierid
 					})	
