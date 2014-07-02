@@ -146,6 +146,22 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                                 </div>
                             </div>
                         </div>
+                        <div>
+                            <ul id="total-list" class="list-group">
+                                <li class="list-group-item">
+                                    All:
+                                    <span class="pull-right total-list-a"></span>
+                                </li>
+                                <li class="list-group-item">
+                                    Posted:
+                                    <span class="pull-right total-list-p"></span>
+                                </li>
+                                <li class="list-group-item">
+                                    Unposted:
+                                    <span class="pull-right total-list-u"></span>
+                                </li>
+                            </ul>
+                        </div>
                         <div id="graph">
                         </div>
                 	</div>
@@ -407,7 +423,7 @@ $(document).ready(function(e) {
 					
                     } 
 
-                    console.log(idx+'-'+(cvhdrs.length-1));
+                    
                     if(idx==(cvhdrs.length-1)){
                         
 

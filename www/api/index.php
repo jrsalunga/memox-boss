@@ -619,6 +619,8 @@ function getCvhdrSupplier(){
 
 
     $cvhdrs = vCvhdr::group_by_supplier($fr,$to,$posted);
+    //global $database;
+    //echo $database->last_query;
 
     if(!empty($data) && $data=='json') {
         echo json_encode($cvhdrs);

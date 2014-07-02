@@ -65,13 +65,17 @@ class vCvhdr extends DatabaseObject{
 	public static function group_by_supplier($fr, $to, $posted){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
 			$sql = "SELECT b.code as suppliercode, b.descriptor as supplier, a.supplierid, SUM(a.totchkamt) as totchkamt, ";
-			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM vcvhdr ";
-			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."')) * 100,10) as percentage ";
-			$sql .= "FROM cvhdr a ";
-			$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";
+			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM cvhdr ";
 			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' ";
 			if($posted!="" && ($posted=="1" || $posted=="0")){
             	$sql .= "AND posted = '".$posted."' ";
+        	}
+			$sql .= ")) * 100,10) as percentage ";
+			$sql .= "FROM cvhdr a ";
+			$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";
+			$sql .= "WHERE a.date BETWEEN '".$fr."' AND '".$to."' ";
+			if($posted!="" && ($posted=="1" || $posted=="0")){
+            	$sql .= "AND a.posted = '".$posted."' ";
         	}
 			$sql .= "GROUP BY b.descriptor ";
 			$sql .= "ORDER BY totchkamt DESC ";
