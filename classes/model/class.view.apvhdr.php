@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vApvhdr extends DatabaseObject{
 	
 	protected static $table_name="vapvhdr";
-	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due', 'account', 'accountid' );
+	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due', 'account', 'accountcode', 'accountid', 'percentage' );
 	
 	/*
 	* Database related fields
@@ -32,7 +32,9 @@ class vApvhdr extends DatabaseObject{
 	public $suppliercode;
 	
 	public $account;
+	public $accountcode;
 	public $accountid;
+	public $percentage;
 	
 	
 	
@@ -102,6 +104,60 @@ class vApvhdr extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 	}
 	
+	public static function sum_group_by_account($fr, $to, $posted){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+		
+			$sql = "SELECT SUM(a.totamount) AS totamount, ";
+			$sql .= "TRUNCATE(SUM(a.totamount)";
+			$sql .= "/((SELECT SUM(totamount) ";
+			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
+			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."') ";
+			$sql .= "* .01),5) AS percentage ";
+			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
+			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
+			
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+			return false;
+		}
+		
+		
+	}
+	
+	/** for api **/
+	public static function group_by_account($fr, $to, $posted){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+		
+			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, a.id AS accountid, ";
+			$sql .= "SUM(c.totamount) AS totamount, (SUM(c.totamount)/ ";
+			$sql .= "(SELECT SUM(totamount) FROM vapvhdr ";
+			$sql .= "WHERE due BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND posted = '".$posted."' ";
+			}
+			$sql .= ")) * 100 AS percentage ";
+			$sql .= "FROM account a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.accountid ";
+			$sql .= "INNER JOIN vapvhdr c ON c.id = b.apvhdrid ";
+			$sql .= "AND c.due BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND c.posted = '".$posted."' ";
+			}
+			$sql .= "GROUP BY a.id ORDER BY totamount DESC ";
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? $result_array : false;
+		} else {
+			return false;	
+		}
+	}
 	
 	
 

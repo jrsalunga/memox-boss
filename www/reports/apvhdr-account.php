@@ -153,23 +153,23 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                             <ul id="total-list" class="list-group">
                                 <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">
                                 	<?php
-										$acv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to);
+										$acv = vApvhdr::sum_group_by_account($dr->fr,$dr->to);
 									?>
-                                    All: <span class="pull-right"><?=number_format($acv->totchkamt,2)?></span>
+                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totamount,2)?></span>
                                     <span class="pull-right total-list-a"></span>
                                 </li>
                                 <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">
                                 	<?php
-										$pcv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"1");
+										$pcv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"1");
 									?>
-                                    Posted: <span class="pull-right"><?=number_format($pcv->totchkamt,2)?></span>
+                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totamount,2)?></span>
                                     <span class="pull-right total-list-p"></span>
                                 </li>
                                 <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">
                                 	<?php
-										$ucv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"0");
+										$ucv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"0");
 									?>
-                                    Unposted: <span class="pull-right"><?=number_format($ucv->totchkamt,2)?></span>
+                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totamount,2)?></span>
                                     <span class="pull-right total-list-u"></span>
                                 </li>
                             </ul>
@@ -290,7 +290,7 @@ getOtherPercent = function(list, pct){
 getOthersAmt = function(list, pct){
 	var othersAmt = _.reduce(list, function(memo, el){ 
 		if(parseInt(el.percentage) < pct){
-			return memo + parseFloat(el.totchkamt);
+			return memo + parseFloat(el.totamount);
 		} else {
 			return memo;	
 		}
@@ -327,7 +327,7 @@ $(document).ready(function(e) {
 	
 	daterange();
 	
-	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
+	$.getJSON('/api/report/apvhdr-account?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
 		 
 		 var minlen = 10,
 		 	maxlen = 100,
@@ -390,11 +390,11 @@ $(document).ready(function(e) {
 			_.each(cvhdrs, function(cvhdr, idx){
 				if(parseInt(cvhdr.percentage) > maxpct){
 					var x = {
-						name: cvhdr.suppliercode,
-						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						name: cvhdr.accountcode,
+						amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
 						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
-						supplier: cvhdr.supplier,
-						id: cvhdr.supplierid
+						supplier: cvhdr.account,
+						id: cvhdr.accountid
 					}	
 					suppliersData.push(x);
 					cv1++;
@@ -469,16 +469,16 @@ $(document).ready(function(e) {
 					
 					
 
-                    tot = tot + parseFloat(cvhdr.totchkamt);
+                    tot = tot + parseFloat(cvhdr.totamount);
 					totpct = totpct + parseFloat(cvhdr.percentage);
 					
 					
 					arr.push({
-						name: cvhdr.suppliercode,
-						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						name: cvhdr.accountcode,
+						amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
 						y: parseFloat(accounting.toFixed(cvhdr.percentage,6)),
-						supplier: cvhdr.supplier,
-						id: cvhdr.supplierid
+						supplier: cvhdr.account,
+						id: cvhdr.accountid
 					})	
 					
 					
@@ -580,21 +580,21 @@ $(document).ready(function(e) {
 			_.each(cvhdrs, function(cvhdr, memo){
 				if(parseInt(cvhdr.percentage) > minpct){
 					var x = {
-						name: cvhdr.suppliercode,
-						amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+						name: cvhdr.accountcode,
+						amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
 						y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
-						supplier: cvhdr.supplier,
-						id: cvhdr.supplierid
+						supplier: cvhdr.account,
+						id: cvhdr.accountid
 					}	
 					suppliersData.push(x);
 				} else {
 					if(othersPct > 0){
 						var x = {
-							name: cvhdr.suppliercode,
-							amount: accounting.formatMoney(cvhdr.totchkamt,"", 2,","),
+							name: cvhdr.accountcode,
+							amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
 							y: parseFloat(accounting.toFixed(cvhdr.percentage,2)),
-							supplier: cvhdr.supplier,
-							id: cvhdr.supplierid
+							supplier: cvhdr.account,
+							id: cvhdr.accountid
 						}	
 						drilldownSeries[0].data.push(x);
 					}
