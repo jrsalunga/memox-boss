@@ -90,6 +90,27 @@ class vCvhdr extends DatabaseObject{
 		}
 	}
 		
+	public static function sum_group_by_supplier($fr, $to, $posted){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+		
+			$sql = "SELECT SUM(a.totchkamt) as totchkamt, ";
+			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM cvhdr ";
+			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."')) * 100,5) as percentage ";
+			$sql .= "FROM cvhdr a ";
+			$sql .= "WHERE a.date BETWEEN '".$fr."' AND '".$to."' ";
+			if($posted!="" && ($posted=="1" || $posted=="0")){
+            	$sql .= "AND a.posted = '".$posted."' ";
+        	}
+			
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+			return false;
+		}
+		
+		
+	}
 	
 	
 	

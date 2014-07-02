@@ -148,16 +148,25 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                         </div>
                         <div>
                             <ul id="total-list" class="list-group">
-                                <li class="list-group-item">
-                                    All:
+                                <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">
+                                	<?php
+										$acv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to);
+									?>
+                                    All: <span class="pull-right"><?=number_format($acv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-a"></span>
                                 </li>
-                                <li class="list-group-item">
-                                    Posted:
+                                <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">
+                                	<?php
+										$pcv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"1");
+									?>
+                                    Posted: <span class="pull-right"><?=number_format($pcv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-p"></span>
                                 </li>
-                                <li class="list-group-item">
-                                    Unposted:
+                                <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">
+                                	<?php
+										$ucv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"0");
+									?>
+                                    Unposted: <span class="pull-right"><?=number_format($ucv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-u"></span>
                                 </li>
                             </ul>
@@ -594,7 +603,8 @@ $(document).ready(function(e) {
                     height: 300,
                 },
                 title: {
-                    text: 'Cvhdr by Suppler',
+					text: null,
+                    //text: 'Cvhdr by Suppler',
                     //text: this.settings.title,
                     margin: 2,
                     style: {
