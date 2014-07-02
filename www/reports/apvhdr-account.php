@@ -23,7 +23,7 @@ if($status=='posted'){
 } else {
 	$posted = NULL;
 }
-$cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
+$apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 //global $database;
 //echo $database->last_query;
 
@@ -35,7 +35,7 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Check Voucher by Supplier</title>
+<title>MemoXpress - Account Payable Voucher by Accounts</title>
 <link rel="shortcut icon" type="image/x-icon" href="/images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="/css/bootstrap.css">
@@ -99,10 +99,10 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
 			<li>
 				<a href="/reports/apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
-            <li>
+            <li class="active">
 				<a href="/reports/apvhdr-account">AP (Accounts)</a>
 			</li>
-            <li class="active">
+            <li>
 				<a href="/reports/cvhdr-supplier">Check Voucher</a>
 			</li>
 			<li>
@@ -117,7 +117,7 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check Voucher - Supplier</h1>
+                		<h1>Account Payable Voucher - Accounts</h1>
                 	</div>
                 </div>
                 <div class="row">
@@ -139,13 +139,13 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                         <div class="form-group apv-status">
                             <div class="btn-group btn-group-justified">
                                 <div class="btn-group">
-                                	<a id="filter-all" class="btn btn-info <?=empty($status)? 'active':''?>" href="/reports/cvhdr-supplier">All</a>
+                                	<a id="filter-all" class="btn btn-info <?=empty($status)? 'active':''?>" href="/reports/apvhdr-account">All</a>
                                 </div>
                                 <div class="btn-group">
-                                	<a id="filter-singles" class="btn btn-info <?=($status=='posted')?'active':''?>" href="/reports/cvhdr-supplier/posted/">Posted</a>
+                                	<a id="filter-singles" class="btn btn-info <?=($status=='posted')?'active':''?>" href="/reports/apvhdr-account/posted/">Posted</a>
                                 </div>
                                 <div class="btn-group">
-                                <a id="filter-hirise" class="btn btn-info <?=($status=='unposted')?'active':''?>" href="/reports/cvhdr-supplier/unposted/">Unposted</a>
+                                <a id="filter-hirise" class="btn btn-info <?=($status=='unposted')?'active':''?>" href="/reports/apvhdr-account/unposted/">Unposted</a>
                                 </div>
                             </div>
                         </div>
@@ -180,42 +180,49 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                     <div class="col-md-7">
                     	<div id="cvhdr-list" class="panel-group">
                         	<?php
-								if(empty($cvhdrs)){
+								if(empty($apvhdrs)){
 									echo 'No records found!';
 								} else {
-									foreach($cvhdrs as $cvhdr){
+									foreach($apvhdrs as $apvhdr){
 										//echo $cvhdr->supplier.' - '.$cvhdr->totchkamt.'<br>';
 										echo '<div class="panel panel-default">';
 										echo '<div class="panel-heading">';
 										echo '<h4 class="panel-title">';
-										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$cvhdr->supplierid.'" class="collapsed">';
-										echo $cvhdr->supplier;
-                                        echo ' <span class="badge">'.$cvhdr->printctr.'</span>';
-										echo '<span class="pull-right tot">'.number_format($cvhdr->totchkamt,2).'</span>';
+										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$apvhdr->accountid.'" class="collapsed">';
+										echo $apvhdr->account;
+										if($apvhdr->printctr>0){
+                                        	echo ' <span class="badge">'.$apvhdr->printctr.'</span>';
+											echo '<span class="pull-right tot">'.number_format($apvhdr->totamount,2).'</span>';
+										}
+										
 										echo '</a></h4></div>';
-										echo '<div id="collapse-'.$cvhdr->supplierid.'" class="panel-collapse collapse">';
-										echo '<div class="panel-body">';
-										
-										
-										echo '<div><table class="table table-striped apv-list">';
-										//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
-										echo '<tbody>';
-										
-										$chld_cvhdrs = vCvhdr::status_with_supplier($cvhdr->supplierid, $dr->fr, $dr->to, $posted);
-										foreach($chld_cvhdrs as $chld_cvhdr){
-											//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
-											echo '<tr>';
-											//echo '<td>'.$apvdtl1->account .'</td>';
-											echo '<td><a href="/reports/check-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
-											echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
-											echo '<td><span class="glyphicon glyphicon-';
-											echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
-											echo '"></span></td>';
-											echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
-											echo '</tr>';
-										}	
-										echo '<tbody></table></div>';
-										echo '</div></div></div>';
+										if($apvhdr->printctr>0){
+											echo '<div id="collapse-'.$apvhdr->accountid.'" class="panel-collapse collapse">';
+											echo '<div class="panel-body">';
+											
+											
+											echo '<div><table class="table table-striped apv-list">';
+											//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
+											echo '<tbody>';
+											
+											$chld_cvhdrs = vApvhdr::status_with_account($apvhdr->accountid, $dr->fr, $dr->to, $posted);
+											foreach($chld_cvhdrs as $chld_cvhdr){
+												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
+												echo '<tr>';
+												echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
+												echo '<td><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+												echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
+												echo '<td><span class="glyphicon glyphicon-';
+												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
+												echo '"></span></td>';
+												echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totamount,2) .'</td>';	
+												echo '</tr>';
+											}	
+											echo '<tbody></table></div>';
+											echo '</div></div>';
+										}
+										echo '</div>';
+									
 										
 									}
 								}

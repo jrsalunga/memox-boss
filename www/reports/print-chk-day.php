@@ -226,15 +226,15 @@ table.table[style*="fixed"] {
                         echo '<td rowspan="'.$len.'">';
                         echo $date->format("M j, Y").'<div>'.$date->format("l").'<div></td>';
                         foreach($cvchkdtls as $cvchkdtl){
-							echo '<td class="bnk-'.$cvchkdtl->bankcode.'">'.$cvchkdtl->refno.'</td>';
-							echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';
-                            echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno;
+							echo '<td class="bnk-'.$cvchkdtl->bankcode.'">'.$cvchkdtl->refno;
 							if($cvchkdtl->posted==1){
-								echo '<span class="glyphicon glyphicon-ok-circle pull-right" style="color:#5cb85c;" title="posted"></span>';
+								echo '<span class="glyphicon glyphicon-posted-bw pull-right" title="posted"></span>';
 							} else {
-								echo '<span class="glyphicon glyphicon-remove-circle pull-right" style="color:#f0ad4e;" title="unposted"></span>';
+								echo '<span class="glyphicon glyphicon-unposted-bw pull-right" style="line-height: 1.3;" title="unposted"></span>';
 							}
 							echo '</td>';
+							echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';
+                            echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
                         }

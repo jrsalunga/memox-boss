@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vApvhdr extends DatabaseObject{
 	
 	protected static $table_name="vapvhdr";
-	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due' );
+	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due', 'account', 'accountid' );
 	
 	/*
 	* Database related fields
@@ -31,6 +31,9 @@ class vApvhdr extends DatabaseObject{
 	public $due;
 	public $suppliercode;
 	
+	public $account;
+	public $accountid;
+	
 	
 	
 	public static function queryReport($to, $from){
@@ -54,6 +57,51 @@ class vApvhdr extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 		
 	}
+	
+	public static function status_with_group_account($fr, $to, $posted=NULL){
+		
+		$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";
+		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
+		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+			$sql .= "AND posted = '".$posted."' ";
+		}
+		$sql .= " )) * 100 AS percentage, ";
+		$sql .= "COUNT(c.refno) AS printctr, a.id AS accountid ";
+		$sql .= "FROM account a LEFT JOIN apvdtl b ON a.id = b.accountid ";
+		$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' ";
+		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+			$sql .= "AND posted = '".$posted."' ";
+		}
+		$sql .= "GROUP BY a.id ORDER BY account ASC";
+		
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
+	
+	public static function status_with_account($accountid, $fr, $to, $posted=NULL){
+		if(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){
+			$sql = "SELECT a.* FROM vapvhdr a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid AND a.posted = '".$posted."' ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
+			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
+		} else if(isset($accountid) && is_uuid($accountid) && (!isset($posted) || is_null($posted))){
+			$sql = "SELECT a.* FROM vapvhdr a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
+			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
+		} else {
+			return false;
+			exit;	
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
 	
 	
 
