@@ -50,13 +50,11 @@ LEFT JOIN bank d
 ON d.id = a.bankacctid";
 
 $vCvapvdtl = "SELECT a.amount, a.id, a.apvhdrid, a.cvhdrid,
-b.refno AS aprefno, b.date AS apdate, b.due AS apdue, b.supplier, b.supplierid, b.supprefno, b.porefno, b.terms, b.totamount, b.notes AS apvnotes, b.posted AS apposted, b.cancelled AS apcancelled,
-c.refno AS cvrefno, c.date AS cvdate, c.totapvamt, c.totchkamt, c.notes AS cvnotes, c.posted AS cvposted, c.cancelled AS cvcancelled
+b.refno, b.date, b.due, b.supplier, b.supplierid, b.supprefno, b.porefno, b.terms, b.totamount, b.notes, b.posted, b.cancelled
 FROM cvapvdtl a
 LEFT JOIN vapvhdr b
 ON a.apvhdrid = b.id
-LEFT JOIN cvhdr c
-ON a.cvhdrid = c.id";
+ORDER BY b.due DESC";
 
 
 

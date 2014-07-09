@@ -194,7 +194,44 @@ table td, table th {
 }
 
 #items.cvchkdtl tr td.total-value {
-    padding: 7px 5px;
+    padding: 10px 5px;
+}
+
+
+
+
+/**************** new items ************/
+.items {
+    margin: 30px 0 0;
+    width: 100%;
+}
+
+.items th{
+   background: #eee;
+}
+
+
+.items td {
+    text-align:right;	
+}
+
+.items td:last-of-type {
+	width: 170px;	
+}
+
+.items tr:not(:last-of-type) td:first-of-type {
+    text-align:left;
+}
+
+.items tr:last-of-type td,
+.items tr:last-of-type td span {
+	padding:7px 5px;
+	font-size:11pt;
+}
+
+.items td.am {
+    text-align: center;
+	
 }
 
 

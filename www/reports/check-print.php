@@ -114,13 +114,14 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
                 </table>
                 <div style="clear:both"></div>
             </div>
-            <table id="items" class="cvapvdtl">
+            <table id="cvapvdtl" class="items">
             	<thead>
                 	<tr>
-                    	<th colspan="2">APV Refno </th>
-                        
-                 
-                        <th colspan="2">Amount</th>
+                    	<th>APV Refno </th>
+                        <th>Due </th>
+                        <th>Supplier Ref # </th>
+                 		<th>PO Ref # </th>
+                        <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -130,41 +131,51 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 					
 					//echo json_encode($database->last_query);
 					$totapvamt = 0;
+					/*
 					foreach($cvapvdtls as $cvapvdtl){
 						//$code = Apvhdr::row($cvapvdtl->apvhdrid,0);
-						
-						
 						echo "<tr>";
 						echo "<td colspan='2'><a style=\"text-decoration: none; color: #000;\" target=\"_blank\" href=\"/reports/accounts-payable-print/". $cvapvdtl->apvhdrid ."\">";
-						echo  $cvapvdtl->aprefno ."</a></td><td colspan='2' style='width: 200px; text-align: right;'>&#8369; ". number_format($cvapvdtl->amount,2) ."</td>";
+						echo  $cvapvdtl->refno ."</a></td><td colspan='2' style='width: 200px; text-align: right;'>&#8369; ". number_format($cvapvdtl->amount,2) ."</td>";
 						echo "</tr>";
-						
 						$totapvamt = $totapvamt + $cvapvdtl->amount;
 					}
-					
+					*/
 					//echo json_encode($items);
 					
-	
-					
+					foreach($cvapvdtls as $cvapvdtl){
+						//$code = Apvhdr::row($cvapvdtl->apvhdrid,0);
+						echo "<tr>";
+						echo "<td><a style=\"text-decoration: none; color: #000;\" target=\"_blank\" href=\"/reports/accounts-payable-print/". $cvapvdtl->apvhdrid ."\">";
+						echo  $cvapvdtl->refno ."</a></td>";
+						echo '<td>'.date('m/d/Y', strtotime($cvapvdtl->due)).'</td>';
+						echo '<td>'.$cvapvdtl->supprefno.'</td>';
+						echo '<td>'.$cvapvdtl->porefno.'</td>';
+						echo "<td>&#8369; ". number_format($cvapvdtl->amount,2) ."</td>";
+						echo "</tr>";
+						$totapvamt = $totapvamt + $cvapvdtl->amount;
+					}
 					?>
-      
                     <tr>
+                    	<!--
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
-                        <td class="total-line" colspan="0">Total APV Amount</td>
+                        <td class="blank" colspan="0"></td>
+                        -->
+                        <td class="total-line" colspan="4">Total APV Amount</td>
                         <td class="total-value">
 						<span
                         <?=($cvhdr->totapvamt!=$totapvamt)?'style="color:red;" title="not balance on the total of individual amount of APVs"':'title="AP total individual amount: '. number_format($totapvamt,2).'"'?>
                         >&#8369;</span>
 						<?=number_format($cvhdr->totapvamt,2)?></td>
                     </tr>
-       
+       				
                 </tbody>
             </table>
             
             
             
-            <table id="items" class="cvchkdtl">
+            <table id="cvchkdtl" class="items">
             	<thead>
                 	<tr>
                     	<th>Bank / Acct No </th>
@@ -181,14 +192,11 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 					
 					$totchkamt = 0;
 					foreach($cvchkdtls as $cvchkdtl){
-						
 						$bank = Bank::find_by_id($cvchkdtl->bankacctid);
 						//echo json_encode($bank);
-						
 						echo "<tr>";
-						echo "<td>". $bank->code .' / '. $bank->acctno ."</td><td>". $cvchkdtl->checkno ."</td><td>". $cvchkdtl->checkdate ."</td><td>&#8369; ". number_format($cvchkdtl->amount,2) ."</td>";
+						echo "<td>". $bank->code .' / '. $bank->acctno ."</td><td>". $cvchkdtl->checkno ."</td><td>". date('m/d/Y', strtotime($cvchkdtl->checkdate)) ."</td><td>&#8369; ". number_format($cvchkdtl->amount,2) ."</td>";
 						echo "</tr>";
-						
 						$totchkamt = $totchkamt + $cvchkdtl->amount;
 					}
 					
@@ -199,9 +207,11 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 					?>
       
                     <tr>
+                    	<!--
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
-                        <td class="total-line" colspan="0">Total Check Amount</td>
+                        -->
+                        <td class="total-line" colspan="3">Total Check Amount</td>
                         <td class="total-value">
                         <span
                         <?=($cvhdr->totchkamt!=$totchkamt)?'style="color:red;" title="not balance on the total of individual amount of CHKs"':'title="CV total individual amount: '. number_format($totchkamt,2).'"'?>
@@ -217,6 +227,11 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     <div id="footer">
     	<div>&nbsp;</div>
     </div>
+    <!--
+    <div style="position:absolute; bottom: 0px;">
+    	test
+    </div>
+    -->
 </div>
 
 </body>
