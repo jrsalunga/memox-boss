@@ -134,7 +134,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                             	<h3 class="panel-title">
                                 <span class="badge"><?=count($curr_apvhdrs)?></span>
                                 	Account Payables due today
-                                    <span class="pull-right">
+                                    <span class="pull-right">&#8369; 
                                     <?php
 										$sa = 0;
                                			foreach($curr_apvhdrs as $curr_apvhdr){ 
@@ -178,7 +178,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                             	<h3 class="panel-title">
                                 <span class="badge"><?=count($curr_vcvchkdtls)?></span>
                                 	Checks dated today
-                                    <span class="pull-right">
+                                    <span class="pull-right">&#8369; 
                                     <?php
 										$sc = 0;
                                			foreach($curr_vcvchkdtls as $curr_vcvchkdtl){ 

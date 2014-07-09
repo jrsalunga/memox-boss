@@ -99,13 +99,13 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 			<li>
 				<a href="/reports/apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
-            <li class="active">
+            <li>
 				<a href="/reports/apvhdr-account">AP (Accounts)</a>
 			</li>
             <li>
 				<a href="/reports/cvhdr-supplier">Check Voucher</a>
 			</li>
-            <li>
+            <li class="active">
 				<a href="/reports/cvhdr-account">CV (Accounts)</a>
 			</li>
 			<li>

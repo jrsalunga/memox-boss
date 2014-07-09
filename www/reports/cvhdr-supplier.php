@@ -105,6 +105,9 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
             <li class="active">
 				<a href="/reports/cvhdr-supplier">Check Voucher</a>
 			</li>
+            <li>
+				<a href="/reports/cvhdr-account">CV (Accounts)</a>
+			</li>
 			<li>
 				<a href="/reports/cvhdr">CV Schedule</a>
 			<li>

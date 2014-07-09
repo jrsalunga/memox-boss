@@ -72,7 +72,11 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.account.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvhdr.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.apvdtl.php');
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvapvdtl.php');
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvchkdtl.php');
+
+require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.x.cvchkdtl.php');
+
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvhdr.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.vproject.php');

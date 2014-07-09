@@ -1,0 +1,1056 @@
+[1mdiff --git a/classes/model/class.view.apvhdr.php b/classes/model/class.view.apvhdr.php[m
+[1mindex 8e8225d..9c2f31a 100644[m
+[1m--- a/classes/model/class.view.apvhdr.php[m
+[1m+++ b/classes/model/class.view.apvhdr.php[m
+[36m@@ -6,7 +6,7 @@[m [mrequire_once(ROOT.DS.'classes'.DS.'database.php');[m
+ class vApvhdr extends DatabaseObject{[m
+ 	[m
+ 	protected static $table_name="vapvhdr";[m
+[31m-	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due' );[m
+[32m+[m	[32mprotected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'suppliercode' ,'supprefno' ,'porefno' ,'terms' ,'totamount' ,'balance' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totline', 'due', 'account', 'accountcode', 'accountid', 'percentage' );[m
+ 	[m
+ 	/*[m
+ 	* Database related fields[m
+[36m@@ -31,6 +31,11 @@[m [mclass vApvhdr extends DatabaseObject{[m
+ 	public $due;[m
+ 	public $suppliercode;[m
+ 	[m
+[32m+[m	[32mpublic $account;[m
+[32m+[m	[32mpublic $accountcode;[m
+[32m+[m	[32mpublic $accountid;[m
+[32m+[m	[32mpublic $percentage;[m
+[32m+[m[41m	[m
+ 	[m
+ 	[m
+ 	public static function queryReport($to, $from){[m
+[36m@@ -55,6 +60,105 @@[m [mclass vApvhdr extends DatabaseObject{[m
+ 		[m
+ 	}[m
+ 	[m
+[32m+[m	[32mpublic static function status_with_group_account($fr, $to, $posted=NULL){[m
+[32m+[m[41m		[m
+[32m+[m		[32m$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";[m
+[32m+[m		[32m$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m		[32mif(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){[m
+[32m+[m			[32m$sql .= "AND posted = '".$posted."' ";[m
+[32m+[m		[32m}[m
+[32m+[m		[32m$sql .= " )) * 100 AS percentage, ";[m
+[32m+[m		[32m$sql .= "COUNT(c.refno) AS printctr, a.id AS accountid ";[m
+[32m+[m		[32m$sql .= "FROM account a LEFT JOIN apvdtl b ON a.id = b.accountid ";[m
+[32m+[m		[32m$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m		[32mif(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){[m
+[32m+[m			[32m$sql .= "AND posted = '".$posted."' ";[m
+[32m+[m		[32m}[m
+[32m+[m		[32m$sql .= "GROUP BY a.id ORDER BY account ASC";[m
+[32m+[m[41m		[m
+[32m+[m[41m		[m
+[32m+[m		[32m$result_array = static::find_by_sql($sql);[m
+[32m+[m		[32mreturn !empty($result_array) ? $result_array : false;[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m	[32mpublic static function status_with_account($accountid, $fr, $to, $posted=NULL){[m
+[32m+[m		[32mif(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){[m
+[32m+[m			[32m$sql = "SELECT a.* FROM vapvhdr a ";[m
+[32m+[m			[32m$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid AND a.posted = '".$posted."' ";[m
+[32m+[m			[32m$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32m$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";[m
+[32m+[m			[32m$sql .= "ORDER BY a.due DESC, a.refno DESC ";[m
+[32m+[m		[32m} else if(isset($accountid) && is_uuid($accountid) && (!isset($posted) || is_null($posted))){[m
+[32m+[m			[32m$sql = "SELECT a.* FROM vapvhdr a ";[m
+[32m+[m			[32m$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid ";[m
+[32m+[m			[32m$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32m$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";[m
+[32m+[m			[32m$sql .= "ORDER BY a.due DESC, a.refno DESC ";[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn false;[m
+[32m+[m			[32mexit;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m[41m		[m
+[32m+[m		[32m$result_array = static::find_by_sql($sql);[m
+[32m+[m		[32mreturn !empty($result_array) ? $result_array : false;[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32mpublic static function sum_group_by_account($fr, $to, $posted){[m
+[32m+[m		[32mif((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){[m
+[32m+[m[41m		[m
+[32m+[m			[32m$sql = "SELECT SUM(a.totamount) AS totamount, ";[m
+[32m+[m			[32m$sql .= "TRUNCATE(SUM(a.totamount)";[m
+[32m+[m			[32m$sql .= "/((SELECT SUM(totamount) ";[m
+[32m+[m			[32m$sql .= "FROM vapvhdr a, apvdtl b, account c ";[m
+[32m+[m			[32m$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";[m
+[32m+[m			[32m$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."') ";[m
+[32m+[m			[32m$sql .= "* .01),5) AS percentage ";[m
+[32m+[m			[32m$sql .= "FROM vapvhdr a, apvdtl b, account c ";[m
+[32m+[m			[32m$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";[m
+[32m+[m			[32m$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32mif(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){[m
+[32m+[m				[32m$sql .= "AND a.posted = '".$posted."' ";[m
+[32m+[m			[32m}[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m			[32m$result_array = static::find_by_sql($sql);[m
+[32m+[m			[32mreturn !empty($result_array) ? array_shift($result_array) : false;[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn false;[m
+[32m+[m		[32m}[m
+[32m+[m[41m		[m
+[32m+[m[41m		[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+[32m+[m	[32m/** for api **/[m
+[32m+[m	[32mpublic static function group_by_account($fr, $to, $posted){[m
+[32m+[m		[32mif((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){[m
+[32m+[m[41m		[m
+[32m+[m			[32m$sql = "SELECT a.code AS accountcode, a.descriptor AS account, a.id AS accountid, ";[m
+[32m+[m			[32m$sql .= "SUM(c.totamount) AS totamount, (SUM(c.totamount)/ ";[m
+[32m+[m			[32m$sql .= "(SELECT SUM(totamount) FROM vapvhdr ";[m
+[32m+[m			[32m$sql .= "WHERE due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32mif(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){[m
+[32m+[m				[32m$sql .= "AND posted = '".$posted."' ";[m
+[32m+[m			[32m}[m
+[32m+[m			[32m$sql .= ")) * 100 AS percentage ";[m
+[32m+[m			[32m$sql .= "FROM account a ";[m
+[32m+[m			[32m$sql .= "INNER JOIN apvdtl b ON a.id = b.accountid ";[m
+[32m+[m			[32m$sql .= "INNER JOIN vapvhdr c ON c.id = b.apvhdrid ";[m
+[32m+[m			[32m$sql .= "AND c.due BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32mif(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){[m
+[32m+[m				[32m$sql .= "AND c.posted = '".$posted."' ";[m
+[32m+[m			[32m}[m
+[32m+[m			[32m$sql .= "GROUP BY a.id ORDER BY totamount DESC ";[m
+[32m+[m[41m			[m
+[32m+[m			[32m$result_array = static::find_by_sql($sql);[m
+[32m+[m			[32mreturn !empty($result_array) ? $result_array : false;[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn false;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m[41m	[m
+ 	[m
+ [m
+ 	[m
+[1mdiff --git a/classes/model/class.view.cvhdr.php b/classes/model/class.view.cvhdr.php[m
+[1mindex ce47af7..04d0206 100644[m
+[1m--- a/classes/model/class.view.cvhdr.php[m
+[1m+++ b/classes/model/class.view.cvhdr.php[m
+[36m@@ -65,14 +65,18 @@[m [mclass vCvhdr extends DatabaseObject{[m
+ 	public static function group_by_supplier($fr, $to, $posted){[m
+ 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){[m
+ 			$sql = "SELECT b.code as suppliercode, b.descriptor as supplier, a.supplierid, SUM(a.totchkamt) as totchkamt, ";[m
+[31m-			$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM vcvhdr ";[m
+[31m-			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."')) * 100,10) as percentage ";[m
+[31m-			$sql .= "FROM cvhdr a ";[m
+[31m-			$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";[m
+[32m+[m			[32m$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM cvhdr ";[m
+ 			$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."' ";[m
+ 			if($posted!="" && ($posted=="1" || $posted=="0")){[m
+             	$sql .= "AND posted = '".$posted."' ";[m
+         	}[m
+[32m+[m			[32m$sql .= ")) * 100,10) as percentage ";[m
+[32m+[m			[32m$sql .= "FROM cvhdr a ";[m
+[32m+[m			[32m$sql .= "INNER JOIN supplier b ON a.supplierid = b.id ";[m
+[32m+[m			[32m$sql .= "WHERE a.date BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32mif($posted!="" && ($posted=="1" || $posted=="0")){[m
+[32m+[m[41m            [m	[32m$sql .= "AND a.posted = '".$posted."' ";[m
+[32m+[m[41m        [m	[32m}[m
+ 			$sql .= "GROUP BY b.descriptor ";[m
+ 			$sql .= "ORDER BY totchkamt DESC ";[m
+ 			[m
+[36m@@ -86,6 +90,27 @@[m [mclass vCvhdr extends DatabaseObject{[m
+ 		}[m
+ 	}[m
+ 		[m
+[32m+[m	[32mpublic static function sum_group_by_supplier($fr, $to, $posted){[m
+[32m+[m		[32mif((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){[m
+[32m+[m[41m		[m
+[32m+[m			[32m$sql = "SELECT SUM(a.totchkamt) as totchkamt, ";[m
+[32m+[m			[32m$sql .= "TRUNCATE((SUM(a.totchkamt) / (SELECT SUM(totchkamt) FROM cvhdr ";[m
+[32m+[m			[32m$sql .= "WHERE date BETWEEN '".$fr."' AND '".$to."')) * 100,5) as percentage ";[m
+[32m+[m			[32m$sql .= "FROM cvhdr a ";[m
+[32m+[m			[32m$sql .= "WHERE a.date BETWEEN '".$fr."' AND '".$to."' ";[m
+[32m+[m			[32mif($posted!="" && ($posted=="1" || $posted=="0")){[m
+[32m+[m[41m            [m	[32m$sql .= "AND a.posted = '".$posted."' ";[m
+[32m+[m[41m        [m	[32m}[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m			[32m$result_array = static::find_by_sql($sql);[m
+[32m+[m			[32mreturn !empty($result_array) ? array_shift($result_array) : false;[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn false;[m
+[32m+[m		[32m}[m
+[32m+[m[41m		[m
+[32m+[m[41m		[m
+[32m+[m	[32m}[m
+ 	[m
+ 	[m
+ 	[m
+[1mdiff --git a/www/api/index.php b/www/api/index.php[m
+[1mindex 6fe5d8d..3a1f8d6 100644[m
+[1m--- a/www/api/index.php[m
+[1m+++ b/www/api/index.php[m
+[36m@@ -133,6 +133,7 @@[m [m$app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');[m
+ [m
+ $app->get('/report/ap-vs-cv', 'getApVsCv');[m
+ $app->get('/report/cvhdr-supplier', 'getCvhdrSupplier');[m
+[32m+[m[32m$app->get('/report/apvhdr-account', 'getApvhdrAccount');[m
+ [m
+ [m
+ [m
+[36m@@ -619,6 +620,8 @@[m [mfunction getCvhdrSupplier(){[m
+ [m
+ [m
+     $cvhdrs = vCvhdr::group_by_supplier($fr,$to,$posted);[m
+[32m+[m[32m    //global $database;[m
+[32m+[m[32m    //echo $database->last_query;[m
+ [m
+     if(!empty($data) && $data=='json') {[m
+         echo json_encode($cvhdrs);[m
+[36m@@ -637,6 +640,38 @@[m [mfunction getCvhdrSupplier(){[m
+ }[m
+ [m
+ [m
+[32m+[m[32mfunction getApvhdrAccount(){[m
+[32m+[m[32m    $app = \Slim\Slim::getInstance();[m
+[32m+[m[32m    $r = $app->request();[m
+[32m+[m[32m    global $database;[m
+[32m+[m[32m    $fr = $database->escape_value($r->get('fr'));[m
+[32m+[m[32m    $to = $database->escape_value($r->get('to'));[m
+[32m+[m[32m    $data = $database->escape_value($r->get('data'));[m
+[32m+[m[32m    $posted = $database->escape_value($r->get('posted'));[m
+[32m+[m[32m    $range = new DateRange($fr,$to,false);[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    $apvhdrs = vApvhdr::group_by_account($fr,$to,$posted);[m
+[32m+[m[32m    //global $database;[m
+[32m+[m[32m    //echo $database->last_query;[m
+[32m+[m
+[32m+[m[32m    if(!empty($data) && $data=='json') {[m
+[32m+[m[32m        echo json_encode($apvhdrs);[m
+[32m+[m[32m    } else {[m
+[32m+[m[32m        echo 'Accountcode,Account,Amount,Pecentage';[m
+[32m+[m[32m        echo PHP_EOL;[m
+[32m+[m[32m        foreach ($apvhdrs as $apvhdr) {[m
+[32m+[m[32m            echo $apvhdr->accountcode.',';[m
+[32m+[m[32m            echo $apvhdr->account.',';[m
+[32m+[m[32m            echo $apvhdr->totamount.',';[m
+[32m+[m[32m            echo $apvhdr->percentage.',';[m
+[32m+[m[32m            echo PHP_EOL;[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+ function getChildTable($child, $parent, $id){[m
+ [m
+     $cTable = ucfirst($child);[m
+[1mdiff --git a/www/js/common.js b/www/js/common.js[m
+[1mindex 1398c4e..49027be 100644[m
+[1m--- a/www/js/common.js[m
+[1m+++ b/www/js/common.js[m
+[36m@@ -6,8 +6,8 @@[m [m$(document).ready(function() {[m
+ 	//ComputeItemAmount();[m
+   	[m
+ 	//$('.table-model input[type=checkbox]').css('border','1px red solid').val(1);[m
+[31m-	//$('.header-logo').attr('src','/images/mfi-logo.png');[m
+[31m-	//$('.navbar-brand').text('Modularfusion Inc');[m
+[32m+[m	[32m$('.header-logo').attr('src','/images/mfi-logo.png');[m
+[32m+[m	[32m$('.navbar-brand').text('Modularfusion Inc');[m
+ 	[m
+ 	[m
+ 	[m
+[1mdiff --git a/www/reports/.htaccess b/www/reports/.htaccess[m
+[1mindex b7121ce..c423b8c 100644[m
+[1m--- a/www/reports/.htaccess[m
+[1m+++ b/www/reports/.htaccess[m
+[36m@@ -19,5 +19,6 @@[m [mRewriteRule ^print-cvhdr(\/.*)*$ /reports/print-cvhdr.php[m
+ RewriteRule ^cv-bank(\/.*)*$ /reports/cv-bank.php[m
+ RewriteRule ^print-cv-bank(\/.*)*$ /reports/print-cv-bank.php[m
+ RewriteRule ^cvhdr-supplier(\/.*)*$ /reports/cvhdr-supplier.php[m
+[32m+[m[32mRewriteRule ^apvhdr-account(\/.*)*$ /reports/apvhdr-account.php[m
+ [m
+ [m
+[1mdiff --git a/www/reports/apvhdr-account.php b/www/reports/apvhdr-account.php[m
+[1mnew file mode 100644[m
+[1mindex 0000000..b0989a7[m
+[1m--- /dev/null[m
+[1m+++ b/www/reports/apvhdr-account.php[m
+[36m@@ -0,0 +1,655 @@[m
+[32m+[m[32m<?php[m
+[32m+[m[32m//setcookie("to", "", time() - 3600); // 86400 = 1 day[m
+[32m+[m[32m//setcookie("fr", "", time() - 3600); // 86400 = 1 day[m
+[32m+[m[32mrequire_once('../../lib/initialize.php');[m
+[32m+[m[32mini_set('display_errors','Off');[m
+[32m+[m[32m!$session->is_logged_in() ? redirect_to("/login"): "";[m
+[32m+[m
+[32m+[m[32m$cleanUrl->setParts('status');[m
+[32m+[m
+[32m+[m[32mif(isset($_GET['fr']) && isset($_GET['to'])){[m
+[32m+[m[32m    sanitize($_GET);[m
+[32m+[m[32m    $dr = new DateRange($_GET['fr'],$_GET['to']);[m
+[32m+[m[32m} else {[m
+[32m+[m[32m    $dr = new DateRange(NULL,NULL,false);[m[41m   [m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32mif($status=='posted'){[m
+[32m+[m	[32m$posted = 1;[m
+[32m+[m[32m} else if($status=='unposted'){[m
+[32m+[m	[32m$posted = 0;[m
+[32m+[m[32m} else {[m
+[32m+[m	[32m$posted = NULL;[m
+[32m+[m[32m}[m
+[32m+[m[32m$apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);[m
+[32m+[m[32m//global $database;[m
+[32m+[m[32m//echo $database->last_query;[m
+[32m+[m
+[32m+[m[32m?>[m
+[32m+[m[32m<!DOCTYPE HTML>[m
+[32m+[m[32m<html lang="en-ph">[m
+[32m+[m[32m<head>[m
+[32m+[m[32m<meta charset="utf-8">[m
+[32m+[m[32m<meta http-equiv="X-UA-Compatible" content="IE=edge">[m
+[32m+[m[32m<meta name="viewport" content="width=device-width, initial-scale=1.0">[m
+[32m+[m
+[32m+[m[32m<title>MemoXpress - Account Payable Voucher by Accounts</title>[m
+[32m+[m[32m<link rel="shortcut icon" type="image/x-icon" href="/images/memoxpress-favicon.jpg" />[m
+[32m+[m
+[32m+[m[32m<link rel="stylesheet" href="/css/bootstrap.css">[m
+[32m+[m[32m<link rel="stylesheet" href="/css/styles-ui2.css">[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m</head>[m
+[32m+[m[32m<body id="app-body" class="state-nav">[m
+[32m+[m
+[32m+[m
+[32m+[m	[32m   <!-- Fixed navbar -->[m
+[32m+[m[32m    <div class="navbar navbar-default navbar-fixed-top" role="navigation">[m
+[32m+[m[32m      <div>[m
+[32m+[m[32m        <div class="navbar-header">[m
+[32m+[m[32m          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">[m
+[32m+[m[32m            <span class="sr-only">Toggle navigation</span>[m
+[32m+[m[32m            <span class="icon-bar"></span>[m
+[32m+[m[32m            <span class="icon-bar"></span>[m
+[32m+[m[32m            <span class="icon-bar"></span>[m
+[32m+[m[32m          </button>[m
+[32m+[m[32m         <a href="/">[m
+[32m+[m[41m          [m		[32m<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">[m
+[32m+[m[41m        [m	[32m</a>[m
+[32m+[m[32m           <a class="navbar-brand" href="/">MemoXpress</a>[m
+[32m+[m[32m        </div>[m
+[32m+[m[41m        [m
+[32m+[m[32m        <div class="navbar-collapse collapse">[m
+[32m+[m[41m        [m	[32m<ul class="nav navbar-nav">[m
+[32m+[m[32m              <li><a href="/reports/">Reports</a></li>[m
+[32m+[m[32m            </ul>[m
+[32m+[m[41m       [m		[32m<ul class="nav navbar-nav navbar-right">[m
+[32m+[m[32m            <!--[m
+[32m+[m[32m                <li><a href="#home">Home</a></li>[m
+[32m+[m[32m                <li><a href="#location/jeff">About</a></li>[m
+[32m+[m[32m            -->[m[41m    [m
+[32m+[m[32m                <li class="dropdown">[m
+[32m+[m[32m                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">[m
+[32m+[m[32m                    <span class="glyphicon glyphicon-cog"></span>[m
+[32m+[m[32m                    <b class="caret"></b>[m
+[32m+[m[32m                    </a>[m
+[32m+[m[32m                        <ul class="dropdown-menu">[m
+[32m+[m[41m                        [m	[32m<li><a href="#settings">Settings</a></li>[m
+[32m+[m[32m                            <li><a href="../logout">Sign Out</a></li>[m
+[32m+[m
+[32m+[m[41m     [m
+[32m+[m[32m                      </ul>[m
+[32m+[m[32m                </li>[m
+[32m+[m[32m            </ul>[m[41m  [m
+[32m+[m[32m        </div><!--/.nav-collapse -->[m
+[32m+[m[32m      </div>[m
+[32m+[m[32m    </div>[m
+[32m+[m
+[32m+[m[32m    <div>[m
+[32m+[m[32m    <div class="stage">[m
+[32m+[m		[32m<div class="col-sm-2 col-md-2 l-pane">[m
+[32m+[m[41m    [m	[32m<ul class="nav nav-pills nav-stacked">[m
+[32m+[m[32m            <li>[m
+[32m+[m				[32m<a href="/reports/apvhdr">Accounts Payable</a>[m
+[32m+[m			[32m</li>[m
+[32m+[m			[32m<li>[m
+[32m+[m				[32m<a href="/reports/apvhdr-age">Accounts Payable (Aged)</a>[m
+[32m+[m			[32m</li>[m
+[32m+[m[32m            <li class="active">[m
+[32m+[m				[32m<a href="/reports/apvhdr-account">AP (Accounts)</a>[m
+[32m+[m			[32m</li>[m
+[32m+[m[32m            <li>[m
+[32m+[m				[32m<a href="/reports/cvhdr-supplier">Check Voucher</a>[m
+[32m+[m			[32m</li>[m
+[32m+[m			[32m<li>[m
+[32m+[m				[32m<a href="/reports/cvhdr">CV Schedule</a>[m
+[32m+[m			[32m<li>[m
+[32m+[m[32m            <li>[m
+[32m+[m				[32m<a href="/reports/cv-sched">CV Schedule (Bank)</a>[m
+[32m+[m			[32m<li>[m
+[32m+[m		[32m</ul>[m
+[32m+[m[41m    [m	[32m</div>[m
+[32m+[m[41m    [m	[32m<div class="col-sm-10 col-md-10 r-pane pull-right">[m
+[32m+[m[41m        [m	[32m<section>[m
+[32m+[m[41m            [m	[32m<div class="row">[m
+[32m+[m[41m                [m	[32m<div class="col-md-12 title">[m
+[32m+[m[41m                [m		[32m<h1>Account Payable Voucher - Accounts</h1>[m
+[32m+[m[41m                [m	[32m</div>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m                <div class="row">[m
+[32m+[m[41m                [m	[32m<div class="col-md-5">[m
+[32m+[m[32m                        <div class="datepick" align="right" style="margin-bottom:15px;">[m
+[32m+[m[32m                            <form role="form" class="form-inline">[m
+[32m+[m[32m                                <div class="form-group">[m
+[32m+[m[32m                                    <label class="sr-only" for="fr">From:</label>[m
+[32m+[m[32m                                    <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">[m
+[32m+[m[32m                                </div>[m[41m	[m
+[32m+[m[32m                                <div class="form-group">[m
+[32m+[m[32m                                    <label class="sr-only" for="to">To:</label>[m
+[32m+[m[32m                                    <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">[m
+[32m+[m[32m                                </div>[m
+[32m+[m[41m              [m
+[32m+[m[32m                                <button type="submit" class="btn btn-success">Go</button>[m
+[32m+[m[41m                        [m	[32m</form>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div class="form-group apv-status">[m
+[32m+[m[32m                            <div class="btn-group btn-group-justified">[m
+[32m+[m[32m                                <div class="btn-group">[m
+[32m+[m[41m                                [m	[32m<a id="filter-all" class="btn btn-info <?=empty($status)? 'active':''?>" href="/reports/apvhdr-account">All</a>[m
+[32m+[m[32m                                </div>[m
+[32m+[m[32m                                <div class="btn-group">[m
+[32m+[m[41m                                [m	[32m<a id="filter-singles" class="btn btn-info <?=($status=='posted')?'active':''?>" href="/reports/apvhdr-account/posted/">Posted</a>[m
+[32m+[m[32m                                </div>[m
+[32m+[m[32m                                <div class="btn-group">[m
+[32m+[m[32m                                <a id="filter-hirise" class="btn btn-info <?=($status=='unposted')?'active':''?>" href="/reports/apvhdr-account/unposted/">Unposted</a>[m
+[32m+[m[32m                                </div>[m
+[32m+[m[32m                            </div>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div>[m
+[32m+[m[32m                            <ul id="total-list" class="list-group">[m
+[32m+[m[32m                                <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$acv = vApvhdr::sum_group_by_account($dr->fr,$dr->to);[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totamount,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-a"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                                <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$pcv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"1");[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totamount,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-p"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                                <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$ucv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"0");[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totamount,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-u"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                            </ul>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                        <div id="graph">[m
+[32m+[m[32m                        </div>[m
+[32m+[m[41m                [m	[32m</div>[m
+[32m+[m[32m                    <div class="col-md-7">[m
+[32m+[m[41m                    [m	[32m<div id="cvhdr-list" class="panel-group">[m
+[32m+[m[41m                        [m	[32m<?php[m
+[32m+[m								[32mif(empty($apvhdrs)){[m
+[32m+[m									[32mecho 'No records found!';[m
+[32m+[m								[32m} else {[m
+[32m+[m									[32mforeach($apvhdrs as $apvhdr){[m
+[32m+[m										[32m//echo $cvhdr->supplier.' - '.$cvhdr->totchkamt.'<br>';[m
+[32m+[m										[32mecho '<div class="panel panel-default">';[m
+[32m+[m										[32mecho '<div class="panel-heading">';[m
+[32m+[m										[32mecho '<h4 class="panel-title">';[m
+[32m+[m										[32mecho '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$apvhdr->accountid.'" class="collapsed">';[m
+[32m+[m										[32mecho $apvhdr->account;[m
+[32m+[m										[32mif($apvhdr->printctr>0){[m
+[32m+[m[41m                                        [m	[32mecho ' <span class="badge">'.$apvhdr->printctr.'</span>';[m
+[32m+[m											[32mecho '<span class="pull-right tot">'.number_format($apvhdr->totamount,2).'</span>';[m
+[32m+[m										[32m}[m
+[32m+[m[41m										[m
+[32m+[m										[32mecho '</a></h4></div>';[m
+[32m+[m										[32mif($apvhdr->printctr>0){[m
+[32m+[m											[32mecho '<div id="collapse-'.$apvhdr->accountid.'" class="panel-collapse collapse">';[m
+[32m+[m											[32mecho '<div class="panel-body">';[m
+[32m+[m[41m											[m
+[32m+[m[41m											[m
+[32m+[m											[32mecho '<div><table class="table table-striped apv-list">';[m
+[32m+[m											[32m//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';[m
+[32m+[m											[32mecho '<tbody>';[m
+[32m+[m[41m											[m
+[32m+[m											[32m$chld_cvhdrs = vApvhdr::status_with_account($apvhdr->accountid, $dr->fr, $dr->to, $posted);[m
+[32m+[m											[32mforeach($chld_cvhdrs as $chld_cvhdr){[m
+[32m+[m												[32m//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';[m
+[32m+[m												[32mecho '<tr>';[m
+[32m+[m												[32mecho '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';[m
+[32m+[m												[32mecho '<td><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';[m
+[32m+[m												[32mecho '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';[m
+[32m+[m												[32mecho '<td><span class="glyphicon glyphicon-';[m
+[32m+[m												[32mecho $chld_cvhdr->posted ==1 ? 'posted':'unposted';[m
+[32m+[m												[32mecho '"></span></td>';[m
+[32m+[m												[32mecho '<td style="text-align:right;">'. number_format($chld_cvhdr->totamount,2) .'</td>';[m[41m	[m
+[32m+[m												[32mecho '</tr>';[m
+[32m+[m											[32m}[m[41m	[m
+[32m+[m											[32mecho '<tbody></table></div>';[m
+[32m+[m											[32mecho '</div></div>';[m
+[32m+[m										[32m}[m
+[32m+[m										[32mecho '</div>';[m
+[32m+[m[41m									[m
+[32m+[m[41m										[m
+[32m+[m									[32m}[m
+[32m+[m								[32m}[m
+[32m+[m							[32m?>[m
+[32m+[m[32m                        </div>[m
+[32m+[m[32m                    </div>[m
+[32m+[m[32m                </div>[m
+[32m+[m[32m                <div class="row">[m
+[32m+[m[41m                	[m
+[32m+[m[32m                </div>[m
+[32m+[m[41m      [m		[32m</section>[m
+[32m+[m[32m        </div>[m
+[32m+[m[41m  [m
+[32m+[m
+[32m+[m[32m    </div>[m
+[32m+[m[32m</div> <!-- /container -->[m
+[32m+[m[32m<!--[m
+[32m+[m[32m<link rel="stylesheet" href="css/main-ui.css">[m
+[32m+[m[32m<link rel="stylesheet" href="css/styles-ui.css">[m
+[32m+[m[32m-->[m
+[32m+[m
+[32m+[m[32m<script src="/js/vendors/jquery-1.10.1.min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/jquery-ui-1.10.3.js"></script>[m
+[32m+[m[32m<!--[m
+[32m+[m[32m<script src="../js/vendors/jquery-ui-1.10.3.js"></script>[m
+[32m+[m[32m<script src="../js/vendors/jquery-1.9.1.js"></script>[m
+[32m+[m[32m<script src="js/vendors/underscore-min.js"></script>[m
+[32m+[m[32m<script src="js/vendors/backbone-min.js"></script>[m
+[32m+[m[32m-->[m
+[32m+[m[32m<script src="/js/vendors/underscore-min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/backbone-min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/bootstrap.min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/backbone-validation-min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/jquery.cookie-1.4.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/moment.2.1.0-min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/accounting.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/jquery.filedrop.js"></script>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<script src="/js/vendors/highcharts-4.0.1.min.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/highcharts.data.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/highcharts.exporting-4.0.1.js"></script>[m
+[32m+[m[32m<script src="/js/vendors/drilldown.js"></script>[m
+[32m+[m
+[32m+[m[32m<script src="/js/common.js"></script>[m
+[32m+[m[32m<script src="/js/highcharts.js"></script>[m
+[32m+[m[32m<script src="/js/app.js"></script>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m<script>[m
+[32m+[m
+[32m+[m
+[32m+[m[32mgetOtherPercent = function(list, pct){[m
+[32m+[m	[32mvar othersPct = _.reduce(list, function(memo, el){[m
+[32m+[m		[32mif(parseInt(el.percentage) < pct){[m
+[32m+[m			[32mreturn memo + parseFloat(el.percentage);[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn memo;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}, 0);[m
+[32m+[m[41m	[m
+[32m+[m	[32mreturn othersPct;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mgetOthersAmt = function(list, pct){[m
+[32m+[m	[32mvar othersAmt = _.reduce(list, function(memo, el){[m[41m [m
+[32m+[m		[32mif(parseInt(el.percentage) < pct){[m
+[32m+[m			[32mreturn memo + parseFloat(el.totamount);[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn memo;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}, 0);[m
+[32m+[m	[32mreturn othersAmt;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mgetOther2Percent = function(list, pct, index, len){[m
+[32m+[m	[32mvar othersPct = _.reduce(list, function(memo, el, i){[m
+[32m+[m		[32m//console.log('index:'+ i);[m[41m [m
+[32m+[m		[32mif(parseInt(el.percentage) < pct){[m
+[32m+[m			[32mreturn memo + parseFloat(el.percentage);[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn memo;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}, 0);[m
+[32m+[m[41m	[m
+[32m+[m	[32mreturn othersPct;[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mgetOthers2Amt = function(list, pct, index, len){[m
+[32m+[m	[32mvar othersAmt = _.reduce(list, function(memo, el){[m[41m [m
+[32m+[m		[32mif(parseInt(el.percentage) < pct){[m
+[32m+[m			[32mreturn memo + parseFloat(el.totchkamt);[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mreturn memo;[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}, 0);[m
+[32m+[m	[32mreturn othersAmt;[m
+[32m+[m[32m}[m
+[32m+[m[41m				[m
+[32m+[m
+[32m+[m[32m$(document).ready(function(e) {[m
+[32m+[m[41m	[m
+[32m+[m	[32mdaterange();[m
+[32m+[m[41m	[m
+[32m+[m	[32m$.getJSON('/api/report/apvhdr-account?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){[m[41m	[m
+[32m+[m[41m		 [m
+[32m+[m		[32m var minlen = 10,[m
+[32m+[m		[41m [m	[32mmaxlen = 100,[m
+[32m+[m		[41m [m	[32mminpct = 1,[m
+[32m+[m			[32mmaxpct = 2,[m
+[32m+[m		[41m [m	[32msuppliersData = [],[m
+[32m+[m			[32mdrilldownSeries = [];[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m[41m		 [m
+[32m+[m[41m		[m
+[32m+[m		[32m//console.log(cvhdrs.length);[m[41m [m
+[32m+[m		[32mif(cvhdrs.length > maxlen){[m
+[32m+[m			[32malert('Cannot render graph. Too large date range parameter.');[m
+[32m+[m[41m			[m
+[32m+[m		[32m} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {[m
+[32m+[m			[32m//console.log('mid len');[m[41m	[m
+[32m+[m			[32m//console.log(cvhdrs.length);[m
+[32m+[m			[32mvar level = parseInt(cvhdrs.length/minlen);[m
+[32m+[m			[32m//console.log(level);[m
+[32m+[m[41m			[m
+[32m+[m
+[32m+[m			[32m//console.log('othersPct: '+othersPct);[m
+[32m+[m			[32mif(level > 0){[m
+[32m+[m				[32m//console.log('yes: othersPct > 0');[m
+[32m+[m[41m				[m
+[32m+[m				[32mfor(x=0; x<=level; x++){[m
+[32m+[m					[32m//console.log('level '+x);[m
+[32m+[m[41m					[m
+[32m+[m					[32m/*[m
+[32m+[m					[32mvar othersPct = getOther2Percent(cvhdrs, maxpct, x, minlen);[m
+[32m+[m					[32mvar othersAmt = getOthers2Amt(cvhdrs, maxpct);[m[41m				[m
+[32m+[m[41m					[m
+[32m+[m					[32msuppliersData.push({[m
+[32m+[m						[32mname: 'Others',[m
+[32m+[m						[32mamount: accounting.formatMoney(othersAmt,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(othersPct,2)),[m
+[32m+[m						[32msupplier: 'other',[m
+[32m+[m						[32mid: 'othersuid',[m
+[32m+[m						[32mdrilldown: 'others'[m
+[32m+[m					[32m});[m
+[32m+[m[41m					[m
+[32m+[m					[32mdrilldownSeries.push({[m
+[32m+[m						[32mid: 'others',[m
+[32m+[m						[32mname: 'Others',[m
+[32m+[m						[32mdata: [][m[41m	[m
+[32m+[m					[32m});[m
+[32m+[m					[32m*/[m
+[32m+[m[41m					[m
+[32m+[m				[32m}[m
+[32m+[m[41m				[m
+[32m+[m			[32m}[m
+[32m+[m[41m			[m
+[32m+[m			[32mvar tot = 0;[m
+[32m+[m			[32mvar totpct = 0;[m
+[32m+[m			[32mvar l = 1;[m
+[32m+[m			[32mvar cv1 = 0;[m[41m	[m
+[32m+[m			[32mvar arr = [];[m
+[32m+[m[41m			[m
+[32m+[m			[32m_.each(cvhdrs, function(cvhdr, idx){[m
+[32m+[m				[32mif(parseInt(cvhdr.percentage) > maxpct){[m
+[32m+[m					[32mvar x = {[m
+[32m+[m						[32mname: cvhdr.accountcode,[m
+[32m+[m						[32mamount: accounting.formatMoney(cvhdr.totamount,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(cvhdr.percentage,2)),[m
+[32m+[m						[32msupplier: cvhdr.account,[m
+[32m+[m						[32mid: cvhdr.accountid[m
+[32m+[m					[32m}[m[41m	[m
+[32m+[m					[32msuppliersData.push(x);[m
+[32m+[m					[32mcv1++;[m
+[32m+[m[41m					[m
+[32m+[m				[32m} else {[m[41m	[m
+[32m+[m[41m					[m
+[32m+[m					[32mvar z = cv1 + (parseInt(minlen) * l);[m
+[32m+[m					[32mvar y = cv1 + parseInt(minlen);[m
+[32m+[m[41m					[m
+[32m+[m					[32m//console.log(idx+' y:'+y);[m
+[32m+[m					[32mif(idx <= y){[m
+[32m+[m						[32m//console.log('1st level');[m
+[32m+[m					[32m}[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m					[32m//console.log(z);[m
+[32m+[m[41m					[m
+[32m+[m					[32mif(idx >= z){[m
+[32m+[m						[32m//console.log('push:'+tot);[m
+[32m+[m						[32m//console.log('level:'+l);[m
+[32m+[m[41m						[m
+[32m+[m						[32msuppliersData.push({[m
+[32m+[m						[32mname: 'Others '+ l,[m
+[32m+[m						[32mamount: accounting.formatMoney(tot,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(totpct,2)),[m
+[32m+[m						[32msupplier: 'other'+l,[m
+[32m+[m						[32mid: 'othersuid'+l,[m
+[32m+[m						[32mdrilldown: 'others'+l[m
+[32m+[m						[32m});[m
+[32m+[m[41m						[m
+[32m+[m						[32mdrilldownSeries.push({[m
+[32m+[m							[32mid: 'others'+l,[m
+[32m+[m							[32mname: 'Others '+l,[m
+[32m+[m							[32mdata: arr,[m
+[32m+[m							[32mdrilldown: 'others'+l[m[41m	[m
+[32m+[m						[32m});[m
+[32m+[m[41m						[m
+[32m+[m						[32m//console.log(drilldownSeries);[m
+[32m+[m[41m						[m
+[32m+[m						[32ml++;[m
+[32m+[m						[32mtot = 0;[m
+[32m+[m						[32mtotpct = 0;[m
+[32m+[m						[32marr = [];[m
+[32m+[m[41m					[m
+[32m+[m[32m                    }[m[41m [m
+[32m+[m
+[32m+[m[41m                    [m
+[32m+[m[32m                    if(idx==(cvhdrs.length-1)){[m
+[32m+[m[41m                        [m
+[32m+[m
+[32m+[m[32m                        suppliersData.push({[m
+[32m+[m[32m                        name: 'Others '+ l,[m
+[32m+[m[32m                        amount: accounting.formatMoney(tot,"", 2,","),[m
+[32m+[m[32m                        y: parseFloat(accounting.toFixed(totpct,6)),[m
+[32m+[m[32m                        supplier: 'other'+l,[m
+[32m+[m[32m                        id: 'othersuid'+l,[m
+[32m+[m[32m                        drilldown: 'others'+l[m
+[32m+[m[32m                        });[m
+[32m+[m[41m                        [m
+[32m+[m[32m                        drilldownSeries.push({[m
+[32m+[m[32m                            id: 'others'+l,[m
+[32m+[m[32m                            name: 'Others '+l,[m
+[32m+[m[32m                            data: arr,[m
+[32m+[m[32m                            drilldown: 'others'+l[m[41m   [m
+[32m+[m[32m                        });[m
+[32m+[m
+[32m+[m[32m                    }[m
+[32m+[m
+[32m+[m
+[32m+[m[41m                    [m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m
+[32m+[m[32m                    tot = tot + parseFloat(cvhdr.totamount);[m
+[32m+[m					[32mtotpct = totpct + parseFloat(cvhdr.percentage);[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m					[32marr.push({[m
+[32m+[m						[32mname: cvhdr.accountcode,[m
+[32m+[m						[32mamount: accounting.formatMoney(cvhdr.totamount,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(cvhdr.percentage,6)),[m
+[32m+[m						[32msupplier: cvhdr.account,[m
+[32m+[m						[32mid: cvhdr.accountid[m
+[32m+[m					[32m})[m[41m	[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m					[32m/*[m
+[32m+[m[41m					[m
+[32m+[m					[32mif(idx == z){[m
+[32m+[m						[32mconsole.log('last push:'+tot);[m
+[32m+[m						[32mconsole.log('level:'+l);[m
+[32m+[m						[32mconsole.log('push:'+tot);[m
+[32m+[m						[32mconsole.log('level:'+l);[m
+[32m+[m[41m						[m
+[32m+[m						[32marr.push({[m
+[32m+[m						[32mname: 'Others '+ l,[m
+[32m+[m						[32mamount: accounting.formatMoney(tot,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(totpct,2)),[m
+[32m+[m						[32msupplier: 'other'+l,[m
+[32m+[m						[32mid: 'othersuid'+l,[m
+[32m+[m						[32mdrilldown: 'others'[m
+[32m+[m						[32m});[m
+[32m+[m[41m						[m
+[32m+[m						[32mdrilldownSeries.push({[m
+[32m+[m							[32mid: 'others'+l,[m
+[32m+[m							[32mname: 'Others '+l,[m
+[32m+[m							[32mdata: arr,[m
+[32m+[m							[32mdrilldown: 'others'+l[m[41m	[m
+[32m+[m						[32m});[m
+[32m+[m[41m						[m
+[32m+[m					[32m}[m[41m [m
+[32m+[m[32m                    */[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m[41m					[m
+[32m+[m				[32m}[m
+[32m+[m			[32m});[m[41m	[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m		[32m} else {[m
+[32m+[m			[32mconsole.log('below minlen');[m
+[32m+[m			[32m// check if there is CVHDR that % less than minpct[m
+[32m+[m[41m		[m
+[32m+[m			[32mvar othersPct = getOtherPercent(cvhdrs, minpct);[m
+[32m+[m[41m			[m
+[32m+[m			[32m// check if[m[41m [m
+[32m+[m			[32mif(othersPct > 0){[m
+[32m+[m				[32m//console.log('yes! '+ othersPct +' > 0');[m
+[32m+[m				[32mvar othersAmt = getOthersAmt(cvhdrs, minpct);[m
+[32m+[m				[32m/*[m
+[32m+[m				[32mvar othersAmt = _.reduce(cvhdrs, function(memo, cvhdr){[m[41m [m
+[32m+[m					[32mif(parseInt(cvhdr.percentage) < minpct){[m
+[32m+[m						[32mreturn memo + parseFloat(cvhdr.totchkamt);[m
+[32m+[m					[32m} else {[m
+[32m+[m						[32mreturn memo;[m[41m	[m
+[32m+[m					[32m}[m
+[32m+[m				[32m}, 0);[m
+[32m+[m				[32m*/[m
+[32m+[m				[32m//console.log('others totchkamt: '+ othersAmt);[m
+[32m+[m[41m				[m
+[32m+[m				[32msuppliersData.push({[m
+[32m+[m					[32mname: 'Others',[m
+[32m+[m					[32mamount: accounting.formatMoney(othersAmt,"", 2,","),[m
+[32m+[m					[32my: parseFloat(accounting.toFixed(othersPct,2)),[m
+[32m+[m					[32msupplier: 'other',[m
+[32m+[m					[32mid: 'othersuid',[m
+[32m+[m					[32mdrilldown: 'others'[m
+[32m+[m				[32m});[m
+[32m+[m				[32m//console.log(drilldownSeries);[m
+[32m+[m[41m				[m
+[32m+[m				[32mdrilldownSeries.push({[m
+[32m+[m					[32mid: 'others',[m
+[32m+[m					[32mname: 'Others',[m
+[32m+[m					[32mdata: [][m[41m	[m
+[32m+[m				[32m});[m
+[32m+[m				[32m/*[m
+[32m+[m				[32m_.each(cvhdrs, function(cvhdr, memo){[m
+[32m+[m					[32mif(parseInt(cvhdr.percentage) > minpct){[m
+[32m+[m						[32m//[m[41m [m
+[32m+[m					[32m} else {[m
+[32m+[m[41m						[m
+[32m+[m					[32m}[m
+[32m+[m				[32m});[m
+[32m+[m				[32m*/[m
+[32m+[m			[32m} // end: othersPct > 0[m
+[32m+[m[41m			[m
+[32m+[m[41m			[m
+[32m+[m			[32m_.each(cvhdrs, function(cvhdr, memo){[m
+[32m+[m				[32mif(parseInt(cvhdr.percentage) > minpct){[m
+[32m+[m					[32mvar x = {[m
+[32m+[m						[32mname: cvhdr.accountcode,[m
+[32m+[m						[32mamount: accounting.formatMoney(cvhdr.totamount,"", 2,","),[m
+[32m+[m						[32my: parseFloat(accounting.toFixed(cvhdr.percentage,2)),[m
+[32m+[m						[32msupplier: cvhdr.account,[m
+[32m+[m						[32mid: cvhdr.accountid[m
+[32m+[m					[32m}[m[41m	[m
+[32m+[m					[32msuppliersData.push(x);[m
+[32m+[m				[32m} else {[m
+[32m+[m					[32mif(othersPct > 0){[m
+[32m+[m						[32mvar x = {[m
+[32m+[m							[32mname: cvhdr.accountcode,[m
+[32m+[m							[32mamount: accounting.formatMoney(cvhdr.totamount,"", 2,","),[m
+[32m+[m							[32my: parseFloat(accounting.toFixed(cvhdr.percentage,2)),[m
+[32m+[m							[32msupplier: cvhdr.account,[m
+[32m+[m							[32mid: cvhdr.accountid[m
+[32m+[m						[32m}[m[41m	[m
+[32m+[m						[32mdrilldownSeries[0].data.push(x);[m
+[32m+[m					[32m}[m
+[32m+[m				[32m}[m
+[32m+[m			[32m});[m[41m	[m
+[32m+[m		[32m}[m
+[32m+[m[41m		[m
+[32m+[m[41m		[m
+[32m+[m[41m		[m
+[32m+[m		[32m$('#graph').highcharts({[m
+[32m+[m[32m                chart: {[m
+[32m+[m					[32mtype: 'pie',[m
+[32m+[m[32m                    plotBackgroundColor: null,[m
+[32m+[m[32m                    plotBorderWidth: null,[m
+[32m+[m[32m                    plotShadow: false,[m
+[32m+[m[32m                    height: 300,[m
+[32m+[m[32m                },[m
+[32m+[m[32m                title: {[m
+[32m+[m					[32mtext: null,[m
+[32m+[m[32m                    //text: 'Cvhdr by Suppler',[m
+[32m+[m[32m                    //text: this.settings.title,[m
+[32m+[m[32m                    margin: 2,[m
+[32m+[m[32m                    style: {[m
+[32m+[m[32m                        fontSize: '14px'[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                },[m
+[32m+[m[32m                tooltip: {[m
+[32m+[m[32m                    pointFormat: 'Total Amount: <b>  {point.amount} </b> ({point.percentage:.2f}%)'[m
+[32m+[m[32m                },[m
+[32m+[m[32m                plotOptions: {[m
+[32m+[m[32m                    series: {[m
+[32m+[m[32m                        dataLabels: {[m
+[32m+[m[32m                            enabled: true,[m
+[32m+[m[32m                            color: '#000000',[m
+[32m+[m[32m                            connectorColor: '#ccc',[m
+[32m+[m[32m                            //format: '{point.code}: {point.percentage:.2f} %'[m
+[32m+[m[32m                        },[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                },[m
+[32m+[m[32m                series: [{[m
+[32m+[m[32m                    name: 'Main',[m
+[32m+[m[32m                    colorByPoint: true,[m
+[32m+[m[32m                    data: suppliersData[m
+[32m+[m[32m                }],[m
+[32m+[m[32m                drilldown: {[m
+[32m+[m[32m                    series: drilldownSeries[m
+[32m+[m[32m                }[m
+[32m+[m[32m            });[m[41m	[m
+[32m+[m	[32m});[m
+[32m+[m[41m	[m
+[32m+[m[41m	[m
+[32m+[m
+[32m+[m[32m});[m
+[32m+[m[32m</script>[m
+[32m+[m
+[32m+[m
+[32m+[m[32m</body>[m
+[32m+[m[32m</html>[m
+\ No newline at end of file[m
+[1mdiff --git a/www/reports/chk-day.php b/www/reports/chk-day.php[m
+[1mindex 00be976..2406b4a 100644[m
+[1m--- a/www/reports/chk-day.php[m
+[1m+++ b/www/reports/chk-day.php[m
+[36m@@ -395,15 +395,15 @@[m [mtd.hover {[m
+ 											echo $date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td>';[m
+ 											foreach($cvchkdtls as $cvchkdtl){[m
+ 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'">';[m
+[31m-												echo '<a href="/reports/check-print/'.$cvchkdtl->cvhdrid.'" target="_blank">'.$cvchkdtl->refno.'</td>';[m
+[31m-												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';	[m
+[31m-												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno;[m
+[32m+[m												[32mecho '<a href="/reports/check-print/'.$cvchkdtl->cvhdrid.'" target="_blank">'.$cvchkdtl->refno.'</a>';[m
+ 												if($cvchkdtl->posted==1){[m
+ 													echo '<span class="glyphicon glyphicon-ok-circle pull-right" style="color:#5cb85c;" title="posted"></span>';[m
+ 												} else {[m
+ 													echo '<span class="glyphicon glyphicon-remove-circle pull-right" style="color:#f0ad4e;line-height: 1.3;" title="unposted"></span>';[m
+ 												}[m
+ 												echo '</td>';[m
+[32m+[m												[32mecho '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';[m[41m	[m
+[32m+[m												[32mecho '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno.'</td>';[m
+ 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';[m
+ 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';[m
+ 											}[m
+[1mdiff --git a/www/reports/cvhdr-supplier.php b/www/reports/cvhdr-supplier.php[m
+[1mindex 4433ced..0936df8 100644[m
+[1m--- a/www/reports/cvhdr-supplier.php[m
+[1m+++ b/www/reports/cvhdr-supplier.php[m
+[36m@@ -99,6 +99,9 @@[m [m$cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);[m
+ 			<li>[m
+ 				<a href="/reports/apvhdr-age">Accounts Payable (Aged)</a>[m
+ 			</li>[m
+[32m+[m[32m            <li>[m
+[32m+[m				[32m<a href="/reports/apvhdr-account">AP (Accounts)</a>[m
+[32m+[m			[32m</li>[m
+             <li class="active">[m
+ 				<a href="/reports/cvhdr-supplier">Check Voucher</a>[m
+ 			</li>[m
+[36m@@ -146,6 +149,31 @@[m [m$cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);[m
+                                 </div>[m
+                             </div>[m
+                         </div>[m
+[32m+[m[32m                        <div>[m
+[32m+[m[32m                            <ul id="total-list" class="list-group">[m
+[32m+[m[32m                                <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$acv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to);[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    All: <span class="pull-right"><?=number_format($acv->totchkamt,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-a"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                                <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$pcv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"1");[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    Posted: <span class="pull-right"><?=number_format($pcv->totchkamt,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-p"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                                <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">[m
+[32m+[m[41m                                [m	[32m<?php[m
+[32m+[m										[32m$ucv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"0");[m
+[32m+[m									[32m?>[m
+[32m+[m[32m                                    Unposted: <span class="pull-right"><?=number_format($ucv->totchkamt,2)?></span>[m
+[32m+[m[32m                                    <span class="pull-right total-list-u"></span>[m
+[32m+[m[32m                                </li>[m
+[32m+[m[32m                            </ul>[m
+[32m+[m[32m                        </div>[m
+                         <div id="graph">[m
+                         </div>[m
+                 	</div>[m
+[36m@@ -306,7 +334,7 @@[m [m$(document).ready(function(e) {[m
+ 		[m
+ 		//console.log(cvhdrs.length); [m
+ 		if(cvhdrs.length > maxlen){[m
+[31m-			alert('over maxlen!');[m
+[32m+[m			[32malert('Cannot render graph. Too large date range parameter.');[m
+ 			[m
+ 		} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {[m
+ 			//console.log('mid len');	[m
+[36m@@ -407,7 +435,7 @@[m [m$(document).ready(function(e) {[m
+ 					[m
+                     } [m
+ [m
+[31m-                    console.log(idx+'-'+(cvhdrs.length-1));[m
+[32m+[m[41m                    [m
+                     if(idx==(cvhdrs.length-1)){[m
+                         [m
+ [m
+[36m@@ -578,7 +606,8 @@[m [m$(document).ready(function(e) {[m
+                     height: 300,[m
+                 },[m
+                 title: {[m
+[31m-                    text: 'Cvhdr by Suppler',[m
+[32m+[m					[32mtext: null,[m
+[32m+[m[32m                    //text: 'Cvhdr by Suppler',[m
+                     //text: this.settings.title,[m
+                     margin: 2,[m
+                     style: {[m
+[1mdiff --git a/www/reports/print-chk-day.php b/www/reports/print-chk-day.php[m
+[1mindex d546ddb..4d19157 100644[m
+[1m--- a/www/reports/print-chk-day.php[m
+[1m+++ b/www/reports/print-chk-day.php[m
+[36m@@ -226,15 +226,15 @@[m [mtable.table[style*="fixed"] {[m
+                         echo '<td rowspan="'.$len.'">';[m
+                         echo $date->format("M j, Y").'<div>'.$date->format("l").'<div></td>';[m
+                         foreach($cvchkdtls as $cvchkdtl){[m
+[31m-							echo '<td class="bnk-'.$cvchkdtl->bankcode.'">'.$cvchkdtl->refno.'</td>';[m
+[31m-							echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';[m
+[31m-                            echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno;[m
+[32m+[m							[32mecho '<td class="bnk-'.$cvchkdtl->bankcode.'">'.$cvchkdtl->refno;[m
+ 							if($cvchkdtl->posted==1){[m
+[31m-								echo '<span class="glyphicon glyphicon-ok-circle pull-right" style="color:#5cb85c;" title="posted"></span>';[m
+[32m+[m								[32mecho '<span class="glyphicon glyphicon-posted-bw pull-right" title="posted"></span>';[m
+ 							} else {[m
+[31m-								echo '<span class="glyphicon glyphicon-remove-circle pull-right" style="color:#f0ad4e;" title="unposted"></span>';[m
+[32m+[m								[32mecho '<span class="glyphicon glyphicon-unposted-bw pull-right" style="line-height: 1.3;" title="unposted"></span>';[m
+ 							}[m
+ 							echo '</td>';[m
+[32m+[m							[32mecho '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';[m
+[32m+[m[32m                            echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno.'</td>';[m
+                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';[m
+                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';[m
+                         }[m
