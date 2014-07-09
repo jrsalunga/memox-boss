@@ -49,7 +49,7 @@ class vCvapvdtl extends DatabaseObject{
 		if(!is_uuid($id) && $id==NULL) {
 			return false;
 		} else {
-   			$result_array = static::find_by_sql("SELECT * FROM ".static::$table_name." WHERE {$field}id='{$id}' ORDER BY checkdate DESC");
+   			$result_array = static::find_by_sql("SELECT * FROM ".static::$table_name." WHERE {$field}id='{$id}' ORDER BY aprefno DESC");
 			return !empty($result_array) ? $result_array : false;
 		}
   	}
