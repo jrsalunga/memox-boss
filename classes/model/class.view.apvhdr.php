@@ -61,9 +61,24 @@ class vApvhdr extends DatabaseObject{
 	}
 	
 	public static function status_with_group_account($fr, $to, $posted=NULL){
+		/*
+		SELECT a.descriptor AS account, SUM(c.totamount) AS totamount,
+(SUM(c.totamount)/
+(SELECT SUM(c.totamount) FROM account a
+  LEFT JOIN apvdtl b ON a.id = b.accountid
+  LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due
+  BETWEEN '2014-07-01' AND '2014-07-31')) * 100 AS percentage,
+COUNT(c.refno) AS printctr, a.id AS accountid
+FROM account a
+LEFT JOIN apvdtl b
+ON a.id = b.accountid
+LEFT JOIN vapvhdr c
+ON c.id = b.apvhdrid AND c.due BETWEEN '2014-07-01' AND '2014-07-31'
+GROUP BY a.id ORDER BY account ASC
+*/
 		
 		$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";
-		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "(SELECT SUM(c.totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}

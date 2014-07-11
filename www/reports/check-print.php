@@ -214,7 +214,7 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
                         <td class="total-line" colspan="3">Total Check Amount</td>
                         <td class="total-value">
                         <span
-                        <?=($cvhdr->totchkamt!=$totchkamt)?'style="color:red;" title="not balance on the total of individual amount of CHKs"':'title="CV total individual amount: '. number_format($totchkamt,2).'"'?>
+                        <?=($cvhdr->totchkamt!=$totchkamt)?'style="color:red;" title="not balance on the total of individual amount of CHKs: '. number_format($totchkamt,2).'"':'title="CV total individual amount: '. number_format($totchkamt,2).'"'?>
                         >&#8369;</span>
                          <?=number_format($cvhdr->totchkamt,2)?></td>
                     </tr>

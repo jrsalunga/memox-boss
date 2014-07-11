@@ -229,6 +229,11 @@ table td, table th {
 	font-size:11pt;
 }
 
+
+.items tr:last-of-type td:first-of-type {
+    background-color:#eee; 
+}
+
 .items td.am {
     text-align: center;
 	
