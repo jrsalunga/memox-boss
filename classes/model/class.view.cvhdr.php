@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vCvhdr extends DatabaseObject{
 	
 	protected static $table_name="vcvhdr";
-	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'payee' ,'totapvamt' ,'totchkamt' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totapvline' ,'totchkline', 'percentage', 'suppliercode');
+	protected static $db_fields = array('id', 'refno' ,'date' ,'supplier', 'supplierid' ,'payee' ,'totapvamt' ,'totchkamt' ,'notes' ,'posted' ,'cancelled' ,'printctr' ,'totapvline' ,'totchkline', 'percentage', 'suppliercode', 'account', 'accountcode', 'accountid');
 	
 	/*
 	* Database related fields
@@ -29,6 +29,100 @@ class vCvhdr extends DatabaseObject{
 	
 	public $suppliercode;
 	public $percentage;
+	public $account;
+	public $accountcode;
+	public $accountid;
+	
+	
+	
+	
+	/*
+		the table used from this query is from vxCvhdr
+	*/
+	public static function status_with_group_account($fr, $to, $posted=NULL){
+		
+		
+		$sql = "SELECT a.descriptor AS account, SUM(b.cvtotchkamt) AS totchkamt, ";
+		$sql .= "SUM(b.cvtotchkamt)/((SELECT SUM(y.cvtotchkamt) FROM account z ";
+		$sql .= "LEFT JOIN vxcvhdr y ON z.id = y.accountid AND y.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+			$sql .= "AND y.cvposted = '".$posted."' ";
+		}
+		$sql .= ") * .01) AS percentage, ";
+		$sql .= "COUNT(b.cvrefno) AS printctr, a.id AS accountid FROM account a ";
+		$sql .= "LEFT JOIN vxcvhdr b ON a.id = b.accountid AND b.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND b.cvposted = '".$posted."' ";
+			}
+		$sql .= "GROUP BY a.id ORDER BY a.descriptor";
+		
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+		
+	}
+	
+	
+	public static function status_with_account($accountid, $fr, $to, $posted=NULL){
+		if(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){
+			$sql = "SELECT cvrefno AS refno, cvdate as date, cvposted as posted, cvtotchkamt AS totchkamt, supplier, suppliercode, cvhdrid AS id FROM vxcvhdr WHERE accountid = '".$accountid."' ";
+			$sql .= "AND cvdate BETWEEN '".$fr."' AND '".$to."' AND cvposted = '".$posted."' ";
+			$sql .= "ORDER BY cvdate DESC, cvrefno DESC ";
+			/*
+			$sql = "SELECT a.* FROM vapvhdr a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid AND a.posted = '".$posted."' ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
+			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
+			*/
+		} else if(isset($accountid) && is_uuid($accountid) && (!isset($posted) || is_null($posted))){
+			$sql = "SELECT cvrefno AS refno, cvdate as date, cvposted as posted, cvtotchkamt AS totchkamt, supplier, suppliercode, cvhdrid AS id FROM vxcvhdr WHERE accountid = '".$accountid."' ";
+			$sql .= "AND cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "ORDER BY cvdate DESC, cvrefno DESC ";
+			/*
+			$sql = "SELECT a.* FROM vapvhdr a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
+			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
+			*/
+		} else {
+			return false;
+			exit;	
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
+	
+	public static function sum_group_by_account($fr, $to, $posted){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+		
+			$sql = "SELECT SUM(b.cvtotchkamt) AS totchkamt, ";
+			$sql .= "SUM(b.cvtotchkamt)/((SELECT SUM(y.cvtotchkamt) FROM account z ";
+			$sql .= "LEFT JOIN vxcvhdr y ON z.id = y.accountid AND y.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= ") * .01) AS percentage, ";
+			$sql .= "COUNT(b.cvrefno) AS printctr FROM account a ";
+			$sql .= "LEFT JOIN vxcvhdr b ON a.id = b.accountid AND b.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND b.cvposted = '".$posted."' ";
+			}
+
+			
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+			return false;
+		}
+		
+		
+	}
+		
+		
+	
+
 
 	
 	

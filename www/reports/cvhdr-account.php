@@ -23,7 +23,7 @@ if($status=='posted'){
 } else {
 	$posted = NULL;
 }
-$apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
+$vcvhdrs = vCvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 //global $database;
 //echo $database->last_query;
 
@@ -120,7 +120,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Account Payable Voucher - Accounts</h1>
+                		<h1>Check Voucher - Accounts</h1>
                 	</div>
                 </div>
                 <div class="row">
@@ -142,13 +142,13 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                         <div class="form-group apv-status">
                             <div class="btn-group btn-group-justified">
                                 <div class="btn-group">
-                                	<a id="filter-all" class="btn btn-info <?=empty($status)? 'active':''?>" href="/reports/apvhdr-account">All</a>
+                                	<a id="filter-all" class="btn btn-info <?=empty($status)? 'active':''?>" href="/reports/cvhdr-account">All</a>
                                 </div>
                                 <div class="btn-group">
-                                	<a id="filter-singles" class="btn btn-info <?=($status=='posted')?'active':''?>" href="/reports/apvhdr-account/posted/">Posted</a>
+                                	<a id="filter-singles" class="btn btn-info <?=($status=='posted')?'active':''?>" href="/reports/cvhdr-account/posted/">Posted</a>
                                 </div>
                                 <div class="btn-group">
-                                <a id="filter-hirise" class="btn btn-info <?=($status=='unposted')?'active':''?>" href="/reports/apvhdr-account/unposted/">Unposted</a>
+                                <a id="filter-hirise" class="btn btn-info <?=($status=='unposted')?'active':''?>" href="/reports/cvhdr-account/unposted/">Unposted</a>
                                 </div>
                             </div>
                         </div>
@@ -156,23 +156,23 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                             <ul id="total-list" class="list-group">
                                 <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">
                                 	<?php
-										$acv = vApvhdr::sum_group_by_account($dr->fr,$dr->to);
+										$acv = vCvhdr::sum_group_by_account($dr->fr,$dr->to);
 									?>
-                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totamount,2)?></span>
+                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-a"></span>
                                 </li>
                                 <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">
                                 	<?php
-										$pcv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"1");
+										$pcv = vCvhdr::sum_group_by_account($dr->fr,$dr->to,"1");
 									?>
-                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totamount,2)?></span>
+                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-p"></span>
                                 </li>
                                 <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">
                                 	<?php
-										$ucv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"0");
+										$ucv = vCvhdr::sum_group_by_account($dr->fr,$dr->to,"0");
 									?>
-                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totamount,2)?></span>
+                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-u"></span>
                                 </li>
                             </ul>
@@ -183,24 +183,25 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                     <div class="col-md-7">
                     	<div id="cvhdr-list" class="panel-group">
                         	<?php
-								if(empty($apvhdrs)){
+								if(empty($vcvhdrs)){
 									echo 'No records found!';
 								} else {
-									foreach($apvhdrs as $apvhdr){
+									foreach($vcvhdrs as $vcvhdr){
 										//echo $cvhdr->supplier.' - '.$cvhdr->totchkamt.'<br>';
 										echo '<div class="panel panel-default">';
 										echo '<div class="panel-heading">';
 										echo '<h4 class="panel-title">';
-										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$apvhdr->accountid.'" class="collapsed">';
-										echo $apvhdr->account;
-										if($apvhdr->printctr>0){
-                                        	echo ' <span class="badge">'.$apvhdr->printctr.'</span>';
-											echo '<span class="pull-right tot">'.number_format($apvhdr->totamount,2).'</span>';
+										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$vcvhdr->accountid.'" class="collapsed">';
+										echo $vcvhdr->account;
+										if($vcvhdr->printctr>0){
+                                        	echo ' <span class="badge">'.$vcvhdr->printctr.'</span>';
+											echo '<span class="pull-right pct">'.number_format($vcvhdr->percentage,2).'%</span>';
+											echo '<span class="pull-right tot">&#8369; '.number_format($vcvhdr->totchkamt,2).'</span>';
 										}
 										
 										echo '</a></h4></div>';
-										if($apvhdr->printctr>0){
-											echo '<div id="collapse-'.$apvhdr->accountid.'" class="panel-collapse collapse">';
+										if($vcvhdr->printctr>0){
+											echo '<div id="collapse-'.$vcvhdr->accountid.'" class="panel-collapse collapse">';
 											echo '<div class="panel-body">';
 											
 											
@@ -208,17 +209,19 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 											//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
 											echo '<tbody>';
 											
-											$chld_cvhdrs = vApvhdr::status_with_account($apvhdr->accountid, $dr->fr, $dr->to, $posted);
+											$chld_cvhdrs = vCvhdr::status_with_account($vcvhdr->accountid, $dr->fr, $dr->to, $posted);
+											//global $database;
+											//echo $database->last_query;
 											foreach($chld_cvhdrs as $chld_cvhdr){
 												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
 												echo '<tr>';
 												echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
-												echo '<td><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+												echo '<td><a href="/reports/check-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
 												echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
 												echo '<td><span class="glyphicon glyphicon-';
 												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
 												echo '"></span></td>';
-												echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totamount,2) .'</td>';	
+												echo '<td style="text-align:right;">&#8369; '. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
 												echo '</tr>';
 											}	
 											echo '<tbody></table></div>';

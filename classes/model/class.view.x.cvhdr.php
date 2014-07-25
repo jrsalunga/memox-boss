@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vxCvhdr extends DatabaseObject{
 	
 	protected static $table_name="vxcvhdr";
-	protected static $db_fields = array('cvrefno' ,'cvdate' ,'cvpayee' ,'cvtotapvamt' ,'cvtotchkamt' ,'cvnotes' ,'cvposted' ,'cvcancelled' ,'cvhdrid' ,'cvapvdtlamt' ,'cvapvdtlid' ,'aprefno' ,'apdate' ,'apdue' ,'supplier' ,'supplierid' ,'apporefno' ,'apterms' ,'aptotamount' ,'apbalance' ,'apnotes' ,'apposted' ,'apcancelled' ,'apvhdrid' ,'apvdtlamt' ,'apvdtlid' ,'accountcode' ,'account' ,'accountid' ,'acctcatcode' ,'acctcat' ,'acctcatid');
+	protected static $db_fields = array('cvrefno' ,'cvdate' ,'cvpayee' ,'cvtotapvamt' ,'cvtotchkamt' ,'cvnotes' ,'cvposted' ,'cvcancelled' ,'cvhdrid' ,'cvapvdtlamt' ,'cvapvdtlid' ,'aprefno' ,'apdate' ,'apdue' ,'supplier' ,'suppliercode' ,'supplierid' ,'apporefno' ,'apterms' ,'aptotamount' ,'apbalance' ,'apnotes' ,'apposted' ,'apcancelled' ,'apvhdrid' ,'apvdtlamt' ,'apvdtlid' ,'accountcode' ,'account' ,'accountid' ,'acctcatcode' ,'acctcat' ,'acctcatid');
 	
 	/*
 	* Database related fields
@@ -26,6 +26,7 @@ class vxCvhdr extends DatabaseObject{
 	public $apdate;
 	public $apdue;
 	public $supplier;
+	public $suppliercode;
 	public $supplierid;
 	public $apporefno;
 	public $apterms;

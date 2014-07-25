@@ -24,8 +24,8 @@ if($status=='posted'){
 	$posted = NULL;
 }
 $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
-global $database;
-echo $database->last_query;
+//global $database;
+//echo $database->last_query;
 
 ?>
 <!DOCTYPE HTML>
