@@ -78,7 +78,7 @@ GROUP BY a.id ORDER BY account ASC
 */
 		
 		$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";
-		$sql .= "(SELECT SUM(c.totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}

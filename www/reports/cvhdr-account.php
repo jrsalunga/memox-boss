@@ -35,7 +35,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Account Payable Voucher by Accounts</title>
+<title>MemoXpress - Check Voucher by Accounts</title>
 <link rel="shortcut icon" type="image/x-icon" href="/images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="/css/bootstrap.css">

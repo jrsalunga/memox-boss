@@ -87,6 +87,27 @@ ON i.id = d.supplierid
 GROUP BY a.id
 ORDER BY a.checkdate DESC";
 
+$vxCvhdr = "SELECT
+a.refno AS cvrefno, a.date AS cvdate, a.payee AS cvpayee, a.totapvamt AS cvtotapvamt, a.totchkamt AS cvtotchkamt, a.notes AS cvnotes, a.posted AS cvposted, a.cancelled AS cvcancelled, a.id AS cvhdrid,
+b.amount AS cvapvdtlamt, b.id AS cvapvdtlid,
+c.refno AS aprefno, c.date AS apdate, c.due AS apdue, c.supplier, c.supplierid, c.porefno AS apporefno, c.terms AS apterms, c.totamount AS aptotamount, c.balance AS apbalance, c.notes AS apnotes, c.posted AS apposted, c.cancelled AS apcancelled, c.id AS apvhdrid,
+d.amount AS apvdtlamt, d.id AS apvdtlid,
+e.code AS accountcode, e.descriptor AS account, e.id AS accountid,
+f.code AS acctcatcode, f.descriptor AS acctcat, f.id AS acctcatid
+FROM cvhdr a
+LEFT JOIN cvapvdtl b
+ON b.cvhdrid = a.id
+LEFT JOIN vapvhdr c
+ON c.id = b.apvhdrid
+LEFT JOIN apvdtl d
+ON d.apvhdrid = c.id
+LEFT JOIN account e
+ON e.id = d.accountid
+LEFT JOIN acctcat f
+ON f.id = e.acctcatid
+GROUP BY a.id
+ORDER BY a.date DESC";
+
 
 $vcCvchdtl = "SELECT a.checkno, a.checkdate, a.amount, a.id,
 b.id AS cvhdrid, c.id as cvapvdtlid, d.id AS apvhdrid, e.id AS apvdtlid, f.id AS accountid, g.id AS acctcatid, h.id AS bankid, i.id AS supplierid
