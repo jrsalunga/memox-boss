@@ -158,21 +158,21 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                                 	<?php
 										$acv = vApvhdr::sum_group_by_account($dr->fr,$dr->to);
 									?>
-                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totamount,2)?></span>
+                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%">&#8369; <?=number_format($acv->totamount,2)?></span>
                                     <span class="pull-right total-list-a"></span>
                                 </li>
                                 <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">
                                 	<?php
 										$pcv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"1");
 									?>
-                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totamount,2)?></span>
+                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%">&#8369; <?=number_format($pcv->totamount,2)?></span>
                                     <span class="pull-right total-list-p"></span>
                                 </li>
                                 <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">
                                 	<?php
 										$ucv = vApvhdr::sum_group_by_account($dr->fr,$dr->to,"0");
 									?>
-                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totamount,2)?></span>
+                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%">&#8369; <?=number_format($ucv->totamount,2)?></span>
                                     <span class="pull-right total-list-u"></span>
                                 </li>
                             </ul>
@@ -195,7 +195,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 										echo $apvhdr->account;
 										if($apvhdr->printctr>0){
                                         	echo ' <span class="badge">'.$apvhdr->printctr.'</span>';
-											echo '<span class="pull-right tot">'.number_format($apvhdr->totamount,2).'</span>';
+											echo '<span class="pull-right tot">&#8369; '.number_format($apvhdr->totamount,2).'</span>';
 										}
 										
 										echo '</a></h4></div>';
@@ -218,7 +218,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 												echo '<td><span class="glyphicon glyphicon-';
 												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
 												echo '"></span></td>';
-												echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totamount,2) .'</td>';	
+												echo '<td style="text-align:right;">&#8369; '. number_format($chld_cvhdr->totamount,2) .'</td>';	
 												echo '</tr>';
 											}	
 											echo '<tbody></table></div>';
@@ -446,7 +446,27 @@ $(document).ready(function(e) {
                     } 
 
                     
-                    if(idx==(cvhdrs.length-1)){
+                    
+
+                    
+					
+					
+					console.log(cvhdr.totamount);
+                    tot = tot + parseFloat(cvhdr.totamount);
+					console.log(tot);
+					totpct = totpct + parseFloat(cvhdr.percentage);
+					
+					
+					arr.push({
+						name: cvhdr.accountcode,
+						amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
+						y: parseFloat(accounting.toFixed(cvhdr.percentage,6)),
+						supplier: cvhdr.account,
+						id: cvhdr.accountid
+					})	
+					
+					
+					if(idx==(cvhdrs.length-1)){
                         
 
                         suppliersData.push({
@@ -467,23 +487,6 @@ $(document).ready(function(e) {
 
                     }
 
-
-                    
-					
-					
-
-                    tot = tot + parseFloat(cvhdr.totamount);
-					totpct = totpct + parseFloat(cvhdr.percentage);
-					
-					
-					arr.push({
-						name: cvhdr.accountcode,
-						amount: accounting.formatMoney(cvhdr.totamount,"", 2,","),
-						y: parseFloat(accounting.toFixed(cvhdr.percentage,6)),
-						supplier: cvhdr.account,
-						id: cvhdr.accountid
-					})	
-					
 					
 					
 					

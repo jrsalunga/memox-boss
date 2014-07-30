@@ -119,6 +119,33 @@ class vCvhdr extends DatabaseObject{
 		
 		
 	}
+	
+	
+	/** for api **/
+	public static function group_by_account($fr, $to, $posted){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+		
+			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, a.id AS accountid, SUM(b.cvtotchkamt) AS totchkamt,";
+			//$sql = "SELECT a.descriptor AS account, SUM(b.cvtotchkamt) AS totchkamt, ";
+			$sql .= "SUM(b.cvtotchkamt)/((SELECT SUM(y.cvtotchkamt) FROM account z ";
+			$sql .= "INNER JOIN vxcvhdr y ON z.id = y.accountid AND y.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND y.cvposted = '".$posted."' ";
+			}
+			$sql .= ") * .01) AS percentage, ";
+			$sql .= "COUNT(b.cvrefno) AS printctr, a.id AS accountid FROM account a ";
+			$sql .= "INNER JOIN vxcvhdr b ON a.id = b.accountid AND b.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+					$sql .= "AND b.cvposted = '".$posted."' ";
+				}
+			$sql .= "GROUP BY a.id ORDER BY a.descriptor";
+			
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? $result_array : false;
+		} else {
+			return false;	
+		}
+	}
 		
 		
 	

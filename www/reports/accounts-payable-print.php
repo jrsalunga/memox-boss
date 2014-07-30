@@ -183,8 +183,22 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
     	</div>
         <div style="margin: 0 30px;"><strong>Notes:</strong> <em><?=$apvhdr->notes?></em></div>
     </div>
-    <div id="footer">
-    	<div>&nbsp;</div>
+    <div id="footer" class="bottom">
+    	<div>
+        <?php
+			$cvapvdtl = vCvapvdtl::find_by_field_id('apvhdr', $apvhdr->id);
+			if(!$cvapvdtl){
+				echo '<p>no check voucher yet!</p>';
+			} else {
+				$cvhdr = Cvhdr::find_by_id($cvapvdtl->cvhdrid);
+				echo '<p>with check voucher ref no <a href="/reports/check-print/'.$cvhdr->id.'" target="_blank">'.$cvhdr->refno.'</a> ';
+				echo $cvhdr->posted==1 ? '<span class="glyphicon glyphicon-posted-bw"></span></p>':'<span class="glyphicon glyphicon-unposted-bw"></span></p>';	
+			}
+			//global $database;
+			//echo $database->last_query.'<br>';
+			//echo json_encode($cvapvdtl);
+		?>
+        </div>
     </div>
 </div>
 

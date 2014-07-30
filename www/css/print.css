@@ -58,6 +58,20 @@ table td, table th {
    border: 1px solid #fff;  
 }
 
+
+#footer.bottom {
+   bottom: 0;
+   position: absolute; 
+}
+
+#footer.bottom > div {
+	margin: 10px;
+}
+
+#footer.bottom a{
+	text-decoration: none;
+}
+
 #main-logo {
     position:absolute;
     height: 80px; 
@@ -237,6 +251,32 @@ table td, table th {
 .items td.am {
     text-align: center;
 	
+}
+
+
+
+@font-face {
+  font-family: 'Glyphicons Halflings';
+
+  src: url('../fonts/glyphicons-halflings-regular.eot');
+  src: url('../fonts/glyphicons-halflings-regular.eot?#iefix') format('embedded-opentype'), url('../fonts/glyphicons-halflings-regular.woff') format('woff'), url('../fonts/glyphicons-halflings-regular.ttf') format('truetype'), url('../fonts/glyphicons-halflings-regular.svg#glyphicons_halflingsregular') format('svg');
+}
+
+.glyphicon {
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: normal;
+    line-height: 1;
+    position: relative;
+    top: 1px;
+}
+
+.glyphicon-posted-bw:before {
+	content: "\e089";
+}
+.glyphicon-unposted-bw:before {
+	content: "\e088";
 }
 
 

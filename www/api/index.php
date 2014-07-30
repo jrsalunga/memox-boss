@@ -134,6 +134,7 @@ $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 $app->get('/report/ap-vs-cv', 'getApVsCv');
 $app->get('/report/cvhdr-supplier', 'getCvhdrSupplier');
 $app->get('/report/apvhdr-account', 'getApvhdrAccount');
+$app->get('/report/cvhdr-account', 'getCvhdrAccount');
 
 
 
@@ -664,6 +665,37 @@ function getApvhdrAccount(){
             echo $apvhdr->accountcode.',';
             echo $apvhdr->account.',';
             echo $apvhdr->totamount.',';
+            echo $apvhdr->percentage.',';
+            echo PHP_EOL;
+        }
+    }
+
+}
+
+function getCvhdrAccount(){
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+    global $database;
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    $data = $database->escape_value($r->get('data'));
+    $posted = $database->escape_value($r->get('posted'));
+    $range = new DateRange($fr,$to,false);
+
+
+    $apvhdrs = vCvhdr::group_by_account($fr,$to,$posted);
+    //global $database;
+    //echo $database->last_query;
+
+    if(!empty($data) && $data=='json') {
+        echo json_encode($apvhdrs);
+    } else {
+        echo 'Accountcode,Account,Amount,Pecentage';
+        echo PHP_EOL;
+        foreach ($apvhdrs as $apvhdr) {
+            echo $apvhdr->accountcode.',';
+            echo $apvhdr->account.',';
+            echo $apvhdr->totchkamt.',';
             echo $apvhdr->percentage.',';
             echo PHP_EOL;
         }
