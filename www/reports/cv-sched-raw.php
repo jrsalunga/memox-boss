@@ -747,6 +747,7 @@ table.table tbody td {
     									echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'">'.$date->format("M d").'</a></td>';
     									$tot = 0;
     									foreach($banks as $bank){
+											/*
     										$sql = "SELECT SUM(amount) as amount FROM vcvchkdtl ";
     										$sql .= "WHERE checkdate = '".$currdate."' ";
                                             if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
@@ -754,9 +755,13 @@ table.table tbody td {
                                             } 
     										$sql .= "AND bankid = '".$bank->id."'";
     										$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
-                                            //global $database;
-                                            //echo $database->last_query.'<br>';
     										$cvchkdtl = array_shift($cvchkdtl);
+											*/
+											//global $database;
+                                            //echo $database->last_query.'<br>';
+											
+											$cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bank->id, $_GET['posted']); 
+											
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
     										$tot = $tot + $cvchkdtl->amount;
     										echo '<td style="text-align: right;">'.$amt.'</td>';
