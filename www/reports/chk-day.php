@@ -377,7 +377,7 @@ td.hover {
     								foreach($dr->getDaysInterval() as $date){
     									$currdate = $date->format("Y-m-d");
     									echo '<tr>';
-    									
+    									/*
 										$sql = "SELECT * FROM vcvchkdtl ";
     									$sql .= "WHERE checkdate = '".$currdate."' ";
 										if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
@@ -388,9 +388,15 @@ td.hover {
 										} 
 										$sql .= "ORDER BY bankcode ASC, payee";
     									$cvchkdtls = vCvchkdtl::find_by_sql($sql);
-										$len = count($cvchkdtls);
+										*/
 										
-										if($len > 0){
+										$posted = (isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)) ? $_GET['posted']:NULL;
+										$bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']:NULL;	
+										
+										$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted);
+										
+										$len = count($cvchkdtls);
+										if($cvchkdtls){
 											echo '<td rowspan="'.$len.'">';
 											echo $date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td>';
 											foreach($cvchkdtls as $cvchkdtl){

@@ -213,13 +213,14 @@ table.table[style*="fixed"] {
                     echo '<tr>';
                     
                     $sql = "SELECT * FROM vcvchkdtl ";
-                    $sql .= "WHERE checkdate = '".$currdate."' ";
+                    $sql .= "WHERE checkdate = '".$currdate."' AND cancelled = 0 ";
 					if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
 						$sql .= "AND posted = '".$_GET['posted']."' ";
 					} 
                     $sql .= "ORDER BY bankcode ASC, payee";
                     $cvchkdtls = vCvchkdtl::find_by_sql($sql); 
-                    global $database;
+                    //global $database;
+					//echo $database->last_query;
                     $len = count($cvchkdtls);
                     
                     if($len > 0){

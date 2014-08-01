@@ -513,10 +513,12 @@ function getReportBankByStatus($status){
     }
 }
 
+//report/chk-day
 function getChkDay(){
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-    global $database;
+    
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
     $range = new DateRange($fr,$to,false);
@@ -531,7 +533,7 @@ function getChkDay(){
         $currdate = $date->format("Y-m-d");
         
         $sql = "SELECT bankcode, SUM(amount) as amount ";
-        $sql .= "FROM vcvchkdtl WHERE checkdate = '". $currdate."' ";
+        $sql .= "FROM vcvchkdtl WHERE checkdate = '". $currdate."' AND cancelled = 0 ";
         if(isset($p) && ($p==1 || $p==0)){
             $sql .= "AND posted = '".$p."' ";
         }
