@@ -121,9 +121,10 @@ class vCvchkdtl extends DatabaseObject{
 		
 	}
 	
-	/*
+	/*	
 	*	@param: checkdate, posted
 	*	fetch all summary of check details with @param but not cancelled
+	*	url: /report/cv-sched
 	*/
 	public static function summary_by_date($checkdate, $posted=NULL){
 		$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno  ";
@@ -135,6 +136,49 @@ class vCvchkdtl extends DatabaseObject{
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	/*
+	* same as above but w/ bankid
+	*/
+	public static function summary_by_date_with_bankid($checkdate, $bankid, $posted=NULL){
+		$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno  ";
+		$sql .= "FROM ". static::$table_name; 
+		$sql .= " WHERE checkdate = '".$checkdate."' AND bankid = '".$bankid."' AND cancelled = 0 ";
+		if(!is_null($posted) && ($posted===1 || $posted===0)){
+			$sql .= "AND posted = '".$posted."'"; 
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	/*	
+	*	@param: date range
+	*	total all the amount w/in date range
+	*	url: /report/cv-sched
+	*/
+	public static function total_by_date_range($fr, $to){
+		$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
+		$sql .= " WHERE checkdate BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0";
+		$result_array = static::find_by_sql($sql);
+		
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	/*
+	* same as above but w/ posted/status
+	*/
+	public static function total_status_by_date_range($fr, $to, $posted){
+		$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
+		$sql .= " WHERE checkdate BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0 AND posted = '".$posted."'";
+		$result_array = static::find_by_sql($sql);
+		
+		return !empty($result_array) ? array_shift($result_array) : false;	
 	}
 	
 	/** for api **/

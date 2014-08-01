@@ -483,13 +483,15 @@ function getCVBankByStatus($bankid, $status){
 
         //echo ','.rand(1,100);
 
-        $sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
-        $sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
-        $sql .= "AND b.checkdate = '".$currdate."' ";
-        $sql .= "AND bankacctid = '".$bankid."'";
-        //echo $sql. PHP_EOL;
-        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-        $cvchkdtl = array_shift($cvchkdtl);
+        //$sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
+        //$sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
+        //$sql .= "AND b.checkdate = '".$currdate."' ";
+        //$sql .= "AND bankacctid = '".$bankid."'";
+        #echo $sql. PHP_EOL;
+        //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        //$cvchkdtl = array_shift($cvchkdtl);
+        
+        $cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bankid, $s);
         echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
         //echo end($banks)==$bank ? '':',';
 
