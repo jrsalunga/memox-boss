@@ -131,6 +131,7 @@ $app->get('/report/bank/status/:status', 'getReportBankByStatus');
 
 $app->get('/report/chk-day', 'getChkDay');
 
+//reports/cv-bank/<bankid>
 $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
 $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 
@@ -384,38 +385,30 @@ function getReportBankTotal(){
     }
 }
 
+//reports/cv-bank/<bankid>
 function getCVBankTotal($bankid){
-    
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-    global $database;
+    
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
     $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
     echo PHP_EOL;
-
-    $begin = new DateTime($range->fr);
-    $end = new DateTime($range->to);
-    $end = $end->modify('+1 day'); 
     
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
         echo $currdate.',';
-
-        //echo ','.rand(1,100);
-
+        /*
         $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
         $sql .= "WHERE checkdate = '".$currdate."' ";
         $sql .= "AND bankacctid = '".$bankid."' ";
-        //echo $sql. PHP_EOL;
         $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
         $cvchkdtl = array_shift($cvchkdtl);
+        */
+        $cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bankid);
         echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
         //echo end($banks)==$bank ? '':',';
 
@@ -423,10 +416,15 @@ function getCVBankTotal($bankid){
     }
 }
 
+//reports/cv-bank/<bankid>
 function getCVBankByStatus($bankid, $status){
-    //global $database;
-   // $fr = $database->escape_value($r->get('fr'));
-    //$to = $database->escape_value($r->get('to'));
+    global $database;
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    
     if($status=='posted'){
         $s = 1;
     } else if($status=='unposted'){
@@ -435,36 +433,22 @@ function getCVBankByStatus($bankid, $status){
         $s = NULL;
     }
 
-    $app = \Slim\Slim::getInstance();
-    $r = $app->request();
-
-    $range = new DateRange($r->get('fr'),$r->get('to'), false);
+    $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
-    echo PHP_EOL;
-
-    $begin = new DateTime($range->fr);
-    $end = new DateTime($range->to);
-    $end = $end->modify('+1 day'); 
+    echo PHP_EOL;    
     
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
         echo $currdate.',';
-
-        //echo ','.rand(1,100);
-
-        //$sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
-        //$sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
-        //$sql .= "AND b.checkdate = '".$currdate."' ";
-        //$sql .= "AND bankacctid = '".$bankid."'";
-        #echo $sql. PHP_EOL;
-        //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-        //$cvchkdtl = array_shift($cvchkdtl);
-        
+        /*
+        $sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
+        $sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
+        $sql .= "AND b.checkdate = '".$currdate."' ";
+        $sql .= "AND bankacctid = '".$bankid."'";
+        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        $cvchkdtl = array_shift($cvchkdtl);
+        */
         $cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bankid, $s);
         echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
         //echo end($banks)==$bank ? '':',';
