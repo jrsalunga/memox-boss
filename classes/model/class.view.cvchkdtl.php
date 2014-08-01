@@ -154,6 +154,28 @@ class vCvchkdtl extends DatabaseObject{
 	}
 	
 	/*	
+	*	@param: checkdate, bankid, posted   @return: array of obj
+	*	fetch all check details with @param but not cancelled fiter with bankid or posted/status
+	*	url: /report/chk-day ~ Check Brakdown
+	*/
+	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL){
+		$sql = "SELECT * FROM ". static::$table_name;
+		$sql .= " WHERE checkdate = '".$checkdate."' ";
+		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
+			$sql .= "AND posted = '".$posted."' "; 
+		}
+		if((!is_null($bankid) || $bankid!="") && is_uuid($bankid)){
+			$sql .= "AND bankid = '".$bankid."'"; 
+		}
+		$sql .= " ORDER BY bankcode ASC, payee";
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
+	
+	
+	/*	
 	*	@param: date range
 	*	total all the amount w/in date range
 	*	url: /report/cv-sched
