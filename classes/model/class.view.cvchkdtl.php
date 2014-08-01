@@ -173,15 +173,13 @@ class vCvchkdtl extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 	}
 	
-	
-	
 	/*	
 	*	@param: date range
 	*	total all the amount w/in date range
 	*	url: /report/cv-sched
 	*/
 	public static function total_by_date_range($fr, $to){
-		$range = new DateRange($fr, $to);
+		//$range = new DateRange($fr, $to);
 		
 		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
 		$sql .= " WHERE checkdate BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0";
@@ -194,7 +192,7 @@ class vCvchkdtl extends DatabaseObject{
 	* same as above but w/ posted/status
 	*/
 	public static function total_status_by_date_range($fr, $to, $posted){
-		$range = new DateRange($fr, $to);
+		//$range = new DateRange($fr, $to);
 		
 		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
 		$sql .= " WHERE checkdate BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0 AND posted = '".$posted."'";
@@ -203,7 +201,11 @@ class vCvchkdtl extends DatabaseObject{
 		return !empty($result_array) ? array_shift($result_array) : false;	
 	}
 	
-	
+	/*	
+	*	@param: date range, bank id
+	*	total all the amount w/in date range by bank
+	*	url: reports/cv-bank/<bankid> (graph)
+	*/
 	public static function bank_total_by_date_range($bankid, $fr, $to){
 		//$range = new DateRange($fr, $to);
 		
@@ -213,6 +215,26 @@ class vCvchkdtl extends DatabaseObject{
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	/*	
+	*	@param: date range, bank id
+	*	total all the amount per status w/in date range by bank 
+	*	url: reports/cv-bank/<bankid> (graph)
+	*/
+	public static function bank_total_status_by_date_range($bankid, $fr, $to, $posted){
+		//$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
+		$sql .= " WHERE bankid = '".$bankid."' AND checkdate BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "AND cancelled = 0 ";
+		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
+			$sql .= "AND posted = '".$posted."' "; 
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+		
 	}
 	
 	
