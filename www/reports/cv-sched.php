@@ -1,5 +1,6 @@
 <?php
 require_once('../../lib/initialize.php');
+ini_set('display_errors','On');
 !$session->is_logged_in() ? redirect_to("../login"): "";
 if(isset($_GET['fr']) && isset($_GET['to'])){
     sanitize($_GET);
@@ -168,7 +169,7 @@ $(document).ready(function(e) {
 	
 	
 	$.get('../api/report/bank/status/posted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+		//console.log(csv);
 		//var totalOption = {
 		$('#sg-posted').highcharts({
 			data: {
@@ -241,7 +242,7 @@ $(document).ready(function(e) {
 	
 	
 	$.get('../api/report/bank/status/unposted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+		//console.log(csv);
 		//var totalOption = {
 		$('#sg-unposted').highcharts({
 			data: {
@@ -716,13 +717,16 @@ $(document).ready(function(e) {
                                         echo '<td><a href="chk-day?fr='.$currdate.'&to='.$currdate.'&ref=cv-sched">'.$date->format("M j, Y").'</a></td>';
                                         
                                         //foreach($banks as $bank){
-                                            $sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM cvchkdtl ";
-                                            $sql .= "WHERE checkdate = '".$currdate."' ";
-                                            //$sql .= "AND bankacctid = '".$bank->id."'";
-                                            $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+                                            //$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM cvchkdtl ";
+                                            //$sql .= "WHERE checkdate = '".$currdate."' ";
+                                            #$sql .= "AND bankacctid = '".$bank->id."'";
+                                            //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+											//$cvchkdtl = array_shift($cvchkdtl);
+											
+											$cvchkdtl = vCvchkdtl::summary_by_date($currdate);
 											//global $database;
-											//echo $database->last_query;
-                                            $cvchkdtl = array_shift($cvchkdtl);
+											//echo $database->last_query; 
+                                            
                                             $amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
                                             echo '<td style="text-align: right;" >';
                                             if($cvchkdtl->checkno > 0){

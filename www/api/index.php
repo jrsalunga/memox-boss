@@ -124,8 +124,8 @@ $app->get('/cv-sched', 'getCVSched');
 $app->get('/report/cv', 'getReportCV');
 $app->get('/report/bank/total', 'getReportBankTotal');
 
+//report/cv-sched
 $app->get('/report/chk-day', 'getChkDay');
-
 $app->get('/report/bank/status/:status', 'getReportBankByStatus');
 
 $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
@@ -366,7 +366,7 @@ function getReportCV(){
 }
 
 
-
+//report/cv-sched
 function getReportBankTotal(){
     
     $app = \Slim\Slim::getInstance();
@@ -393,11 +393,12 @@ function getReportBankTotal(){
 
         //echo ','.rand(1,100);
 
-        $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
-        $sql .= "WHERE checkdate = '".$currdate."' ";
-        //echo $sql. PHP_EOL;
-        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-        $cvchkdtl = array_shift($cvchkdtl);
+        //$sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+        //$sql .= "WHERE checkdate = '".$currdate."' ";
+        //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        //$cvchkdtl = array_shift($cvchkdtl);
+
+        $cvchkdtl = vCvchkdtl::summary_by_date($currdate);
         echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
         //echo end($banks)==$bank ? '':',';
 
@@ -447,6 +448,7 @@ function getCVBankTotal($bankid){
 }
 
 
+//report/cv-sched
 function getCVBankByStatus($bankid, $status){
     //global $database;
    // $fr = $database->escape_value($r->get('fr'));
@@ -456,10 +458,8 @@ function getCVBankByStatus($bankid, $status){
     } else if($status=='unposted'){
         $s = 0;
     } else {
-
+        $s = NULL;
     }
-
-    
 
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
