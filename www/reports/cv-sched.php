@@ -720,6 +720,8 @@ $(document).ready(function(e) {
                                             $sql .= "WHERE checkdate = '".$currdate."' ";
                                             //$sql .= "AND bankacctid = '".$bank->id."'";
                                             $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+											//global $database;
+											//echo $database->last_query;
                                             $cvchkdtl = array_shift($cvchkdtl);
                                             $amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
                                             echo '<td style="text-align: right;" >';

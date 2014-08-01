@@ -144,7 +144,7 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 						//$p = $item->type == 1 ? '('.$prj.')' : '';
 						
 						echo "<tr>";
-						echo "<td>". $item_code ."</td><td colspan='2'>". uc_first($item_descriptor)."</em></td><td>". number_format($item->amount,2) ."</td>";
+						echo "<td>". $item_code ."</td><td colspan='2'>". uc_first($item_descriptor)."</em></td><td>&#8369; ". number_format($item->amount,2) ."</td>";
 						echo "</tr>";
 					}
 					
@@ -158,25 +158,25 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
                         <td class="total-line" colspan="0">Total Amount</td>
-                        <td class="total-value"><?=number_format($apvhdr->totamount,2)?></td>
+                        <td class="total-value">&#8369; <?=number_format($apvhdr->totamount,2)?></td>
                     </tr>
                     <tr>
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
                         <td class="total-line" colspan="0">Total Debit</td>
-                        <td class="total-value"><?=number_format($apvhdr->totdebit,2)?></td>
+                        <td class="total-value">&#8369; <?=number_format($apvhdr->totdebit,2)?></td>
                     </tr>
                     <tr>
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
                         <td class="total-line" colspan="0">Total Credit</td>
-                        <td class="total-value"><?=number_format($apvhdr->totcredit,2)?></td>
+                        <td class="total-value">&#8369; <?=number_format($apvhdr->totcredit,2)?></td>
                     </tr>
                     <tr>
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
                         <td class="total-line" colspan="0">Balance</td>
-                        <td class="total-value"><?=number_format($apvhdr->balance,2)?></td>
+                        <td class="total-value">&#8369; <?=number_format($apvhdr->balance,2)?></td>
                     </tr>
                 </tbody>
             </table>
@@ -188,11 +188,11 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
         <?php
 			$cvapvdtl = vCvapvdtl::find_by_field_id('apvhdr', $apvhdr->id);
 			if(!$cvapvdtl){
-				echo '<p>no check voucher yet!</p>';
+				echo '<p>no check voucher</p>';
 			} else {
 				$cvhdr = Cvhdr::find_by_id($cvapvdtl->cvhdrid);
 				echo '<p>with check voucher ref no <a href="/reports/check-print/'.$cvhdr->id.'" target="_blank">'.$cvhdr->refno.'</a> ';
-				echo $cvhdr->posted==1 ? '<span class="glyphicon glyphicon-posted-bw"></span></p>':'<span class="glyphicon glyphicon-unposted-bw"></span></p>';	
+				echo $cvhdr->posted==1 ? '<span title="Posted" class="glyphicon glyphicon-posted-bw"></span></p>':'<span title="Unposted" class="glyphicon glyphicon-unposted-bw"></span></p>';	
 			}
 			//global $database;
 			//echo $database->last_query.'<br>';
