@@ -203,6 +203,19 @@ class vCvchkdtl extends DatabaseObject{
 		return !empty($result_array) ? array_shift($result_array) : false;	
 	}
 	
+	
+	public static function bank_total_by_date_range($bankid, $fr, $to){
+		//$range = new DateRange($fr, $to);
+		
+		$sql = "SELECT SUM(amount) as amount FROM ".static::$table_name;
+		$sql .= " WHERE bankid = '".$bankid."' AND checkdate BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "AND cancelled = 0";
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	
 	/** for api **/
 	public static function group_by_account($fr, $to, $posted){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
