@@ -29,7 +29,7 @@ class Cvchkdtl extends DatabaseObject{
 		}
   	}
 	
-	
+	// functionality diverted to vCvchkdtl
 	public static function total_by_date_range($fr, $to){
 		$range = new DateRange($fr, $to);
 		
@@ -52,6 +52,7 @@ class Cvchkdtl extends DatabaseObject{
 		
 	}
 	
+	
 	// functionality diverted to vCvchkdtl
 	public static function bank_total_by_date_range($bankid, $fr, $to){
 		$range = new DateRange($fr, $to);
@@ -63,7 +64,7 @@ class Cvchkdtl extends DatabaseObject{
 		
 	}
 	
-	
+	// functionality diverted to vCvchkdtl
 	public static function bank_total_status_by_date_range($bankid, $fr, $to, $s){
 		$range = new DateRange($fr, $to);
 		

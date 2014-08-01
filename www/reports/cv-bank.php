@@ -649,7 +649,7 @@ $(document).ready(function(e) {
                             <p>Total</p>
                             <div class="GAJv">
                             	<?php
-									$drtot = Cvchkdtl::bank_total_by_date_range($bank->id, $dr->fr, $dr->to); 									
+									$drtot = vCvchkdtl::bank_total_by_date_range($bank->id, $dr->fr, $dr->to); 							
 								?>
                                 <h4><?=number_format($drtot->amount,2)?></h4>
                                 <div id="sg-total" class="thumb-graph">
@@ -678,7 +678,7 @@ $(document).ready(function(e) {
                             <p>Unposted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotu = Cvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 0); 									
+									$drtotu = vCvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 0);									
 								?>
                                 <h4><?=number_format($drtotu->amount,2)?></h4>
                                 <div id="sg-unposted" class="thumb-graph">
@@ -692,7 +692,7 @@ $(document).ready(function(e) {
                             <p>Posted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotp = Cvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 1); 									
+									$drtotp = vCvchkdtl::bank_total_status_by_date_range($bank->id, $dr->fr, $dr->to, 1); 									
 								?>
                                 <h4><?=number_format($drtotp->amount,2)?></h4>
                                 <div id="sg-posted" class="thumb-graph">
@@ -753,14 +753,16 @@ $(document).ready(function(e) {
     									$tot = 0;
 										$tot_check = 0;
     									for($x = 0; $x <= 1; $x++){
+											/*
     										$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM vcvchkdtl ";
     										$sql .= "WHERE checkdate = '".$currdate."' ";
                                          	$sql .= "AND posted = '".$x."' ";
     										$sql .= "AND bankid = '".$bankid."'";
     										$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
-                                            //global $database;
-                                            //echo $database->last_query.'<br>';
     										$cvchkdtl = array_shift($cvchkdtl);
+											*/
+											$cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bankid, $x);
+											
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
     										$tot = $tot + $cvchkdtl->amount;
     										echo '<td style="text-align: right;">';
