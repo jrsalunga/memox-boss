@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vCvchkdtl extends DatabaseObject{
 	
 	protected static $table_name="vcvchkdtl";
-	protected static $db_fields = array('checkno' ,'checkdate' ,'amount' ,'id' ,'refno' ,'payee' ,'posted' ,'cvhdrdate' ,'cvhdrid' ,'supplier' ,'suppliercode' ,'supplierid' ,'bank' ,'bankcode' ,'acctno' ,'bankid');
+	protected static $db_fields = array('checkno' ,'checkdate' ,'amount' ,'id' ,'refno' ,'payee' ,'posted' ,'cancelled' ,'cvhdrdate' ,'cvhdrid' ,'supplier' ,'suppliercode' ,'supplierid' ,'bank' ,'bankcode' ,'acctno' ,'bankid');
 	
 	/*
 	* Database related fields
@@ -18,6 +18,7 @@ class vCvchkdtl extends DatabaseObject{
 	public $refno;
 	public $payee;
 	public $posted;
+	public $cancelled;
 	public $cvhdrdate;
 	public $cvhdrid;
 	public $supplier;

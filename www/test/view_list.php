@@ -38,7 +38,7 @@ LEFT JOIN supplier b
 ON a.supplierid = b.id";
 
 $vCvchkdtl = "SELECT a.checkno, a.checkdate, a.amount, a.id,
-b.refno, b.payee, b.posted, b.date as cvhdrdate, b.id as cvhdrid,
+b.refno, b.payee, b.posted, b.cancelled, b.date as cvhdrdate, b.id as cvhdrid,
 c.descriptor as supplier, c.code as suppliercode, c.id as supplierid,
 d.descriptor as bank, d.code as bankcode, d.acctno, d.id as bankid
 FROM cvchkdtl a
