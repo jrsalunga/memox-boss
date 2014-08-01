@@ -120,13 +120,16 @@ $app->delete('/txn/:child/:parent/:id', 'deleteChildTable');
 
 $app->get('/fbid/:table/:field/:fieldid', 'findAllByFieldId');
 
-$app->get('/cv-sched', 'getCVSched');
+
 $app->get('/report/cv', 'getReportCV');
-$app->get('/report/bank/total', 'getReportBankTotal');
+
 
 //report/cv-sched
-$app->get('/report/chk-day', 'getChkDay');
+$app->get('/cv-sched', 'getCVSched');
+$app->get('/report/bank/total', 'getReportBankTotal');
 $app->get('/report/bank/status/:status', 'getReportBankByStatus');
+
+$app->get('/report/chk-day', 'getChkDay');
 
 $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
 $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
@@ -211,13 +214,12 @@ function getApVsCv(){
 
 }
 
-
+//report/cv-sched
 function getCVSched(){
     global $database;
     $app = \Slim\Slim::getInstance();
-    $r = $app->request();
-
-    
+   
+    $r = $app->request(); 
     $fr =  $database->escape_value($r->get('fr'));
     $to =  $database->escape_value($r->get('to'));
 
@@ -269,24 +271,18 @@ function getCVSched(){
 
         echo $currdate.',';
         foreach ($banks as $bank) {
-            $sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
-            $sql .= "WHERE bankacctid = '".$bank->id."' ";
-            $sql .= "AND checkdate = '".$currdate."' ";
-            //echo $sql. PHP_EOL;
-            $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-            $cvchkdtl = array_shift($cvchkdtl);
+            //$sql = "SELECT SUM(amount) as amount FROM cvchkdtl ";
+            //$sql .= "WHERE bankacctid = '".$bank->id."' ";
+            //$sql .= "AND checkdate = '".$currdate."' ";
+            //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+            //$cvchkdtl = array_shift($cvchkdtl);
+
+            $cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bank->id);
             echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
             echo end($banks)==$bank ? '':',';
         }
-
         echo PHP_EOL;
-
-    };
-
-    //echo 'jeff '. PHP_EOL . 'salunga';
-
-    //echo json_encode($bank);
-
+    }
 }
 
 
@@ -362,32 +358,23 @@ function getReportCV(){
     //echo 'jeff '. PHP_EOL . 'salunga';
 
     //echo json_encode($bank);
-
 }
-
 
 //report/cv-sched
 function getReportBankTotal(){
-    
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-    global $database;
+    
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
+    
     $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
     echo PHP_EOL;
-
-    $begin = new DateTime($range->fr);
-    $end = new DateTime($range->to);
-    $end = $end->modify('+1 day'); 
     
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
         echo $currdate.',';
 
@@ -405,8 +392,6 @@ function getReportBankTotal(){
         echo PHP_EOL;
     }
 }
-
-
 
 function getCVBankTotal($bankid){
     
@@ -446,8 +431,6 @@ function getCVBankTotal($bankid){
         echo PHP_EOL;
     }
 }
-
-
 
 function getCVBankByStatus($bankid, $status){
     //global $database;
@@ -501,36 +484,27 @@ function getCVBankByStatus($bankid, $status){
 
 //report/cv-sched
 function getReportBankByStatus($status){
-    //global $database;
-   // $fr = $database->escape_value($r->get('fr'));
-    //$to = $database->escape_value($r->get('to'));
+    global $database;
+    $app = \Slim\Slim::getInstance();
+    
+    $r = $app->request();
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+    
     if($status=='posted'){
         $s = 1;
     } else if($status=='unposted'){
         $s = 0;
     } else {
-
+        $s = NULL;
     }
 
-    
-
-    $app = \Slim\Slim::getInstance();
-    $r = $app->request();
-
-    $range = new DateRange($r->get('fr'),$r->get('to'));
+    $range = new DateRange($fr,$to,false);
 
     echo 'Days,Total';
     echo PHP_EOL;
 
-    $begin = new DateTime($range->fr);
-    $end = new DateTime($range->to);
-    $end = $end->modify('+1 day'); 
-    
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
         echo $currdate.',';
 
@@ -547,7 +521,6 @@ function getReportBankByStatus($status){
         echo PHP_EOL;
     }
 }
-
 
 function getChkDay(){
     $app = \Slim\Slim::getInstance();
@@ -609,7 +582,6 @@ function getChkDay(){
     };
 }
 
-
 function getCvhdrSupplier(){
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
@@ -638,7 +610,6 @@ function getCvhdrSupplier(){
             echo PHP_EOL;
         }
     }
-
 }
 
 
