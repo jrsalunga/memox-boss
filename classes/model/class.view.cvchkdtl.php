@@ -121,6 +121,22 @@ class vCvchkdtl extends DatabaseObject{
 		
 	}
 	
+	/*
+	*	@param: checkdate, posted
+	*	fetch all summary of check details with @param but not cancelled
+	*/
+	public static function summary_by_date($checkdate, $posted=NULL){
+		$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno  ";
+		$sql .= "FROM ". static::$table_name; 
+		$sql .= " WHERE checkdate = '".$checkdate."' AND cancelled = 0 ";
+		if(!is_null($posted) && ($posted===1 || $posted===0)){
+			$sql .= "AND posted = '".$posted."'"; 
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
 	/** for api **/
 	public static function group_by_account($fr, $to, $posted){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
