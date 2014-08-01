@@ -145,7 +145,7 @@ class vCvchkdtl extends DatabaseObject{
 		$sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno  ";
 		$sql .= "FROM ". static::$table_name; 
 		$sql .= " WHERE checkdate = '".$checkdate."' AND bankid = '".$bankid."' AND cancelled = 0 ";
-		if(!is_null($posted) && ($posted===1 || $posted===0)){
+		if(!is_null($posted) && ($posted==1 || $posted==0)){
 			$sql .= "AND posted = '".$posted."'"; 
 		}
 		

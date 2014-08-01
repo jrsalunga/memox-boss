@@ -180,7 +180,7 @@ $(document).ready(function(e) {
 	
 	
 	$.get('../api/report/bank/status/posted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+		//console.log(csv);
 		//var totalOption = {
 		$('#sg-posted').highcharts({
 			data: {
@@ -253,7 +253,7 @@ $(document).ready(function(e) {
 	
 	
 	$.get('../api/report/bank/status/unposted?fr=<?=$dr->fr?>&to=<?=$dr->to?>', function (csv) {
-		console.log(csv);
+		//console.log(csv);
 		//var totalOption = {
 		$('#sg-unposted').highcharts({
 			data: {
@@ -635,7 +635,7 @@ table.table tbody td {
                             <p>Total</p>
                             <div class="GAJv">
                             	<?php
-									$drtot = Cvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
+									$drtot = vCvchkdtl::total_by_date_range($dr->fr, $dr->to); 									
 								?>
                                 <h4><?=number_format($drtot->amount,2)?></h4>
                                 <div id="sg-total" class="thumb-graph">
@@ -664,7 +664,7 @@ table.table tbody td {
                             <p>Unposted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotu = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
+									$drtotu = vCvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 0); 									
 								?>
                                 <h4><?=number_format($drtotu->amount,2)?></h4>
                                 <div id="sg-unposted" class="thumb-graph">
@@ -678,7 +678,7 @@ table.table tbody td {
                             <p>Posted</p>
                             <div class="GAJv">
                             	<?php
-									$drtotp = Cvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
+									$drtotp = vCvchkdtl::total_status_by_date_range($dr->fr, $dr->to, 1); 									
 								?>
                                 <h4><?=number_format($drtotp->amount,2)?></h4>
                                 <div id="sg-posted" class="thumb-graph">

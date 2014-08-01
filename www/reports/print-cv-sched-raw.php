@@ -234,6 +234,7 @@ table {
     				echo '<td>'.$date->format("M j, Y").'</td>';
     				$tot = 0;
     				foreach($banks as $bank){
+						/*
     					$sql = "SELECT SUM(amount) as amount FROM vcvchkdtl ";
     					$sql .= "WHERE checkdate = '".$currdate."' ";
                         if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
@@ -242,6 +243,10 @@ table {
     					$sql .= "AND bankid = '".$bank->id."'";
     					$cvchkdtl = vCvchkdtl::find_by_sql($sql); 
     					$cvchkdtl = array_shift($cvchkdtl);
+						*/
+						
+						$cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bank->id, $_GET['posted']);
+						
     					$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
     					$tot = $tot + $cvchkdtl->amount;
     					echo '<td style="text-align: right;">'.$amt.'</td>';

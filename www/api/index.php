@@ -246,27 +246,19 @@ function getCVSched(){
 
     $banks = Bank::find_all();
 
-    //$d = array('EWB', 'BPI');
     $d = array();
     echo 'Days,';
     foreach ($banks as $bank) {
        array_push($d, $bank->code);   
     }
-    //print_r($d);
+
     echo join(',', $d);
     echo PHP_EOL;
 
-   
-
-    $begin = new DateTime($fr);
-    $end = new DateTime($to);
-    $end = $end->modify('+1 day'); 
-    
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
+    $range = new DateRange($fr,$to,false);
     
     $tot = 0;
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
 
         echo $currdate.',';
