@@ -278,7 +278,6 @@ function getCVSched(){
 }
 
 
-
 function getReportCV(){
     global $database;
     $app = \Slim\Slim::getInstance();
