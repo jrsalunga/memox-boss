@@ -160,7 +160,7 @@ class vCvchkdtl extends DatabaseObject{
 	*/
 	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL){
 		$sql = "SELECT * FROM ". static::$table_name;
-		$sql .= " WHERE checkdate = '".$checkdate."' ";
+		$sql .= " WHERE checkdate = '".$checkdate."' AND cancelled = 0 ";
 		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
 			$sql .= "AND posted = '".$posted."' "; 
 		}
