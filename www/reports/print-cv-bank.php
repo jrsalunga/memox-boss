@@ -238,14 +238,16 @@ table {
                     $tot = 0;
                     $tot_check = 0;
                     for($x = 0; $x <= 1; $x++){
+						/*
                         $sql = "SELECT SUM(amount) as amount, COUNT(amount) as checkno FROM vcvchkdtl ";
                         $sql .= "WHERE checkdate = '".$currdate."' ";
                         $sql .= "AND posted = '".$x."' ";
                         $sql .= "AND bankid = '".$bankid."'";
                         $cvchkdtl = vCvchkdtl::find_by_sql($sql); 
-                        //global $database;
-                        //echo $database->last_query.'<br>';
                         $cvchkdtl = array_shift($cvchkdtl);
+						*/
+						$cvchkdtl = vCvchkdtl::summary_by_date_with_bankid($currdate, $bankid, $x);
+						
                         $amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
                         $tot = $tot + $cvchkdtl->amount;
                         echo '<td style="text-align: right;">';
