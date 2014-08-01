@@ -448,7 +448,7 @@ function getCVBankTotal($bankid){
 }
 
 
-//report/cv-sched
+
 function getCVBankByStatus($bankid, $status){
     //global $database;
    // $fr = $database->escape_value($r->get('fr'));
@@ -499,7 +499,7 @@ function getCVBankByStatus($bankid, $status){
     }
 }
 
-
+//report/cv-sched
 function getReportBankByStatus($status){
     //global $database;
    // $fr = $database->escape_value($r->get('fr'));
@@ -534,14 +534,13 @@ function getReportBankByStatus($status){
         $currdate = $date->format("Y-m-d");
         echo $currdate.',';
 
-        //echo ','.rand(1,100);
+        //$sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
+        //$sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
+        //$sql .= "AND b.checkdate = '".$currdate."' ";
+        //$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
+        //$cvchkdtl = array_shift($cvchkdtl);
 
-        $sql = "SELECT SUM(amount) as amount FROM cvhdr a, cvchkdtl b ";
-        $sql .= "WHERE a.id = b.cvhdrid AND a.posted = '".$s."' ";
-        $sql .= "AND b.checkdate = '".$currdate."' ";
-        //echo $sql. PHP_EOL;
-        $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
-        $cvchkdtl = array_shift($cvchkdtl);
+        $cvchkdtl = vCvchkdtl::summary_by_date($currdate, $s);
         echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
         //echo end($banks)==$bank ? '':',';
 
