@@ -120,9 +120,8 @@ $app->delete('/txn/:child/:parent/:id', 'deleteChildTable');
 
 $app->get('/fbid/:table/:field/:fieldid', 'findAllByFieldId');
 
-
+//report/cv
 $app->get('/report/cv', 'getReportCV');
-
 
 //report/cv-sched
 $app->get('/cv-sched', 'getCVSched');
@@ -278,7 +277,7 @@ function getCVSched(){
     }
 }
 
-
+//report/cv
 function getReportCV(){
     global $database;
     $app = \Slim\Slim::getInstance();
@@ -308,48 +307,31 @@ function getReportCV(){
         //$to = date('Y-m-d', strtotime('now'));
     }
 
+    $range = new DateRange($fr,$to,false);
 
-   
     echo 'Days,Unposted,Posted,Total';
     echo PHP_EOL;
-
-   
-
-    $begin = new DateTime($fr);
-    $end = new DateTime($to);
-    $end = $end->modify('+1 day'); 
     
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
 
         $tot = 0;
         echo $currdate.',';
         for($ctr=0; $ctr <= 1; $ctr++) {
-            //echo $ctr.',';
-
+            /*
             $sql = "SELECT SUM(b.amount) AS amount FROM cvhdr a, cvchkdtl b ";
             $sql .= "WHERE a.id = b.cvhdrid  AND checkdate = '".$currdate."' AND a.posted = ". $ctr;
             $cvchkdtl = Cvchkdtl::find_by_sql($sql); 
             $cvchkdtl = array_shift($cvchkdtl);
+            */
+            $cvchkdtl = vCvchkdtl::summary_by_date($currdate, $ctr);
             echo empty($cvchkdtl->amount) ? '0.00': $cvchkdtl->amount;
             //echo $ctr==1 ? '':',';
             $tot = $tot + $cvchkdtl->amount;
             echo $ctr==1 ? ','.$tot : ',';
-            //echo ',';
         }
-        //echo '0.00';
-
         echo PHP_EOL;
-
-    };
-
-    //echo 'jeff '. PHP_EOL . 'salunga';
-
-    //echo json_encode($bank);
+    }
 }
 
 //report/cv-sched
@@ -558,6 +540,7 @@ function getChkDay(){
         echo PHP_EOL;
     };
 }
+
 
 function getCvhdrSupplier(){
     $app = \Slim\Slim::getInstance();
