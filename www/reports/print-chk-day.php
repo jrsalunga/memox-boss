@@ -73,14 +73,11 @@ $(document).ready(function(e) {
 				//console.log('same index');
 			} else {
 				if(($(el1).text()!='0' || $(el).text()!='0') && (parseInt($(el1).text()) == parseInt($(el).text()))){
-					console.log('duplicate checno');
 					
 					var html = $(el1).text();
-					var html2 = '<span class="glyphicon glyphicon-warning" title="duplicate check no" style="cursor: pointer;"></span>';
+					html += ' <span class="glyphicon glyphicon-warning" title="warning: Duplicate check no!" style="cursor: pointer;"></span>';
 					
-					$(el1).html(html+' '+html2);
-					//$(el1).css('color','red');
-					//$(el1).attr('title','duplicate check no');
+					$(el1).html(html);
 				}
 			}
 		});

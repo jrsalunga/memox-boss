@@ -94,8 +94,11 @@ $(document).ready(function(e) {
 				//console.log('same index');
 			} else {
 				if(($(el1).text()!='0' || $(el).text()!='0') && ($(el1).text() == $(el).text())){
-					console.log('duplicate checno');
-					//$(el1).css('border','1px red solid');
+					
+					var html = $(el1).text();
+					html += ' <span class="glyphicon glyphicon-warning" title="warning: Duplicate check no!" style="cursor: pointer;"></span>';
+					$(el1).html(html);
+					
 					$(el1).css('color','red');
 					$(el1).attr('title','duplicate check no');
 				}
