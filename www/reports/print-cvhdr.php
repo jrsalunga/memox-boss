@@ -187,11 +187,14 @@ table.table[style*="fixed"] {
     									$tot = 0;
 										$tot_check = 0;
     									for($x = 0; $x <= 1; $x++){
+											/*
     										$sql = "SELECT SUM(b.amount) as amount, COUNT(b.amount) as checkno FROM cvhdr a, cvchkdtl b ";
     										$sql .= "WHERE a.id = b.cvhdrid AND b.checkdate = '".$currdate."' ";
     										$sql .= "AND a.posted = '".$x."'";
     										$cvchkdtl = Cvchkdtl::find_by_sql($sql); 
     										$cvchkdtl = array_shift($cvchkdtl);
+											*/
+											$cvchkdtl = vCvchkdtl::summary_by_date($currdate, $x);
     										$amt = empty($cvchkdtl->amount) ? '-': number_format($cvchkdtl->amount, 2);
 											$tot = $tot + $cvchkdtl->amount;
     										echo '<td style="text-align: right;">';
