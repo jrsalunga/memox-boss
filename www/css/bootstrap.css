@@ -3026,6 +3026,10 @@ input[type="button"].btn-block {
 	font-family: 'Glyphicons Regular';
   	content: "\e459";
 }
+.glyphicon-warning:before {
+	font-family: 'Glyphicons Regular';
+  	content: "\e079";
+}
 .caret {
   display: inline-block;
   width: 0;

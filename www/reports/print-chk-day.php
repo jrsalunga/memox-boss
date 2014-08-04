@@ -65,6 +65,27 @@ function daterange(){
     
 $(document).ready(function(e) {
 	
+	$('td.checkno').each(function( idx, el ){
+		var idx1 = idx;
+		var el1 = el;
+		$('td.checkno').each(function( idx, el ){
+			if(idx1 == idx){
+				//console.log('same index');
+			} else {
+				if(($(el1).text()!='0' || $(el).text()!='0') && (parseInt($(el1).text()) == parseInt($(el).text()))){
+					console.log('duplicate checno');
+					
+					var html = $(el1).text();
+					var html2 = '<span class="glyphicon glyphicon-warning" title="duplicate check no" style="cursor: pointer;"></span>';
+					
+					$(el1).html(html+' '+html2);
+					//$(el1).css('color','red');
+					//$(el1).attr('title','duplicate check no');
+				}
+			}
+		});
+	});
+	
 	daterange();
 	
     $("table.table").fixMe({
@@ -235,7 +256,7 @@ table.table[style*="fixed"] {
 							}
 							echo '</td>';
 							echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';
-                            echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->checkno.'</td>';
+                            echo '<td class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
                         }
