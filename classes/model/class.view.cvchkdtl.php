@@ -49,6 +49,16 @@ class vCvchkdtl extends DatabaseObject{
   	}
 	
 	
+	public static function checks($valid=TRUE){
+		$sql = "SELECT * FROM ".static::$table_name;
+		if($valid){
+			$sql .= " WHERE checkno <> 0 ";
+		}
+		$sql .= "ORDER BY checkno";
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
 	
 	public static function status_with_group_account($fr, $to, $posted=NULL){
 		
