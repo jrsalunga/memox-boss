@@ -6,7 +6,7 @@ require_once(ROOT.DS.'classes'.DS.'database.php');
 class vCvchkdtl extends DatabaseObject{
 	
 	protected static $table_name="vcvchkdtl";
-	protected static $db_fields = array('checkno' ,'checkdate' ,'amount' ,'id' ,'refno' ,'payee' ,'posted' ,'cancelled' ,'cvhdrdate' ,'cvhdrid' ,'supplier' ,'suppliercode' ,'supplierid' ,'bank' ,'bankcode' ,'acctno' ,'bankid');
+	protected static $db_fields = array('checkno' ,'checkdate' ,'amount' ,'id' ,'refno' ,'payee' ,'posted' ,'cancelled' ,'cvhdrdate' ,'cvhdrid' ,'supplier' ,'suppliercode' ,'supplierid' ,'bank' ,'bankcode' ,'acctno' ,'bankid', 'chkctr');
 	
 	/*
 	* Database related fields
@@ -28,6 +28,8 @@ class vCvchkdtl extends DatabaseObject{
 	public $bankcode;
 	public $acctno;
 	public $bankid;
+	public $chkctr;
+	
 
 	
 	
@@ -169,7 +171,7 @@ class vCvchkdtl extends DatabaseObject{
 	*	url: /report/chk-day ~ Check Brakdown
 	*/
 	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL){
-		$sql = "SELECT * FROM ". static::$table_name;
+		$sql = "SELECT a.*, (SELECT COUNT(checkno) FROM vcvchkdtl WHERE checkno = a.checkno AND cancelled = 0) as chkctr FROM ". static::$table_name. " a";
 		$sql .= " WHERE checkdate = '".$checkdate."' AND cancelled = 0 ";
 		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
 			$sql .= "AND posted = '".$posted."' "; 
@@ -246,6 +248,16 @@ class vCvchkdtl extends DatabaseObject{
 		return !empty($result_array) ? array_shift($result_array) : false;
 		
 	}
+	
+	
+	public static function find_all_by_field($field=NULL,$value=NULL) {
+		if(is_null($field) && is_null($value)) {
+			return false;
+		} else {
+   			$result_array = static::find_by_sql("SELECT * FROM ".static::$table_name." WHERE {$field}='{$value}' AND cancelled = 0");
+			return !empty($result_array) ? $result_array : false;
+		}
+  	}
 	
 	
 	/** for api **/

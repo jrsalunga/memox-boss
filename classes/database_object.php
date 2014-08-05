@@ -49,6 +49,15 @@ class DatabaseObject {
 		}
   	}
 	
+	public static function find_all_by_field($field=NULL,$value=NULL) {
+		if(is_null($field) && is_null($value)) {
+			return false;
+		} else {
+   			$result_array = static::find_by_sql("SELECT * FROM ".static::$table_name." WHERE {$field}='{$value}'");
+			return !empty($result_array) ? $result_array : false;
+		}
+  	}
+	
 	public static function delete_all_by_field_id($field=0,$id=0) {
 		global $database;
 		if(!is_uuid($id) && $id==NULL) {
