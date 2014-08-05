@@ -727,7 +727,7 @@ table.table tbody td {
              		<div class="col-md-12">
                     	
                         <br>
-                    	<table class="table table-bordered table-hover">
+                    	<table class="table table-bordered table-hover cv-sched-raw">
                         	<thead>
                             	<tr>
                             	<?php

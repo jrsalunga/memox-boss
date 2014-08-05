@@ -85,7 +85,14 @@ function daterange(){
 
 $(document).ready(function(e) {
 	
+	 $(".pop").popover({
+    html: true,
+    content: function () {
+        return $(".pop-content").html();
+    }
+  });
 	
+	/*
 	$('td.checkno').each(function( idx, el ){
 		var idx1 = idx;
 		var el1 = el;
@@ -93,7 +100,7 @@ $(document).ready(function(e) {
 			if(idx1 == idx){
 				//console.log('same index');
 			} else {
-				if(($(el1).text()!='0' || $(el).text()!='0') && ($(el1).text() == $(el).text())){
+				if(($(el1).text()!='0' || $(el).text()!='0') && (parseInt($(el1).text()) == parseInt($(el).text()))){
 					
 					var html = $(el1).text();
 					html += ' <span class="glyphicon glyphicon-warning" title="warning: Duplicate check no!" style="cursor: pointer;"></span>';
@@ -105,7 +112,7 @@ $(document).ready(function(e) {
 			}
 		});
 	});
-	
+	*/
 	
 	
 	$("td").hover(function() {
@@ -432,7 +439,38 @@ td.hover {
 												}
 												echo '</td>';
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';	
-												echo '<td class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno.'</td>';
+												echo '<td ';
+												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
+													echo 'style="color:red;"';	
+												}
+												echo ' class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno;
+												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
+													
+													$childs = vCvchkdtl::find_all_by_field('checkno', $cvchkdtl->checkno);
+													global $database;
+													
+													
+													echo ' <span class="glyphicon glyphicon-warning pop" rel="popover" style="cursor:pointer;"';
+													echo 'data-container="body" data-toggle="popover" data-title="'.(count($childs)-1).' duplicate(s)"';
+   													echo 'data-content=" ';
+													
+													
+													foreach($childs as $child){
+														if($cvchkdtl->refno == $child->refno){
+															
+														} else {
+															echo '<a href=\'/reports/check-print/'.$child->cvhdrid.'\' target=\'_blank\'>';
+															echo $child->refno;
+															echo '</a><br>';
+														}
+														
+													}	
+													
+													
+													
+													echo ' "></span>';
+												}
+												echo '</td>';
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
 											}

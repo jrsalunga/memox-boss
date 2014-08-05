@@ -767,6 +767,10 @@ table.table th {
 	height: 300px;
 }
 
+table.cv-sched-raw th {
+	font-size:12px;
+}
+
 
 
 
