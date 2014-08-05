@@ -449,8 +449,28 @@ td.hover {
 													$childs = vCvchkdtl::find_all_by_field('checkno', $cvchkdtl->checkno);
 													//global $database;
 													
+													switch((count($childs))){
+														case 2:
+															$title = 'Duplicate';
+															break;
+														case 3:
+															$title = 'Triplicate';
+															break;
+														case 4:
+															$title = 'Quadruplicate';
+															break;
+														case 5:
+															$title = 'Pentuiplicate';
+															break;
+														case 6:
+															$title = 'Sextuplicate';
+															break;
+														default:
+															$title = 'Many Copy';
+													}
+													
 													echo ' <span class="glyphicon glyphicon-warning pop" rel="popover" style="cursor:pointer;"';
-													echo 'data-container="body" data-toggle="popover" data-title="'.(count($childs)-1).' duplicate(s)"';
+													echo 'data-container="body" data-toggle="popover" data-title="'.$title.'"';
    													echo 'data-content=" ';
 													
 													foreach($childs as $child){
