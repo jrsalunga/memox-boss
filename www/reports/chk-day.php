@@ -441,19 +441,17 @@ td.hover {
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';	
 												echo '<td ';
 												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
-													echo 'style="color:red;"';	
+													echo 'style="color:#f0ad4e;"';	
 												}
 												echo ' class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno;
 												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
 													
 													$childs = vCvchkdtl::find_all_by_field('checkno', $cvchkdtl->checkno);
-													global $database;
-													
+													//global $database;
 													
 													echo ' <span class="glyphicon glyphicon-warning pop" rel="popover" style="cursor:pointer;"';
 													echo 'data-container="body" data-toggle="popover" data-title="'.(count($childs)-1).' duplicate(s)"';
    													echo 'data-content=" ';
-													
 													
 													foreach($childs as $child){
 														if($cvchkdtl->refno == $child->refno){
@@ -463,11 +461,7 @@ td.hover {
 															echo $child->refno;
 															echo '</a><br>';
 														}
-														
-													}	
-													
-													
-													
+													}
 													echo ' "></span>';
 												}
 												echo '</td>';
@@ -477,12 +471,6 @@ td.hover {
 										} else {
 											echo '<td>'.$date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
 										}
-										
-										
-										
-										//echo $database->last_query;
-    									
-    									
     									echo '</tr>';
     								}
     							?>

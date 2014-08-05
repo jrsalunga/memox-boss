@@ -64,7 +64,7 @@ function daterange(){
 }
     
 $(document).ready(function(e) {
-	
+	/*
 	$('td.checkno').each(function( idx, el ){
 		var idx1 = idx;
 		var el1 = el;
@@ -82,7 +82,7 @@ $(document).ready(function(e) {
 			}
 		});
 	});
-	
+	*/
 	daterange();
 	
     $("table.table").fixMe({
@@ -229,7 +229,7 @@ table.table[style*="fixed"] {
                 foreach($dr->getDaysInterval() as $date){
                     $currdate = $date->format("Y-m-d");
                     echo '<tr>';
-                    
+                    /*
                     $sql = "SELECT * FROM vcvchkdtl ";
                     $sql .= "WHERE checkdate = '".$currdate."' AND cancelled = 0 ";
 					if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
@@ -239,7 +239,13 @@ table.table[style*="fixed"] {
                     $cvchkdtls = vCvchkdtl::find_by_sql($sql); 
                     //global $database;
 					//echo $database->last_query;
-                    $len = count($cvchkdtls);
+					*/
+					$posted = (isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)) ? $_GET['posted']:NULL;
+					$bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']:NULL;	
+										
+					$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted);
+                    
+					$len = count($cvchkdtls);
                     
                     if($len > 0){
                         echo '<td rowspan="'.$len.'">';
@@ -253,7 +259,11 @@ table.table[style*="fixed"] {
 							}
 							echo '</td>';
 							echo '<td class="bnk-'.$cvchkdtl->bankcode.'" title="'.$cvchkdtl->bank.'">'.$cvchkdtl->bankcode.'</td>';
-                            echo '<td class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno.'</td>';
+                            echo '<td class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno;
+							if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
+								echo ' <span class="glyphicon glyphicon-warning"></span>';
+							}
+							echo '</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
                         }
