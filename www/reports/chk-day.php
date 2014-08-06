@@ -390,8 +390,6 @@ td.hover {
                         </div>
                         
                         <a class="btn btn-default" href="print-chk-day<?=$qs?>&ref=print"><span class="glyphicon glyphicon-print"></span> Printer Friendly</a>
-                
-                        
                     </div>
                     
                     <div class="col-md-12">
@@ -474,7 +472,7 @@ td.hover {
    													echo 'data-content=" ';
 													
 													foreach($childs as $child){
-														if($cvchkdtl->refno == $child->refno){
+														if($cvchkdtl->refno == $child->refno && $cvchkdtl->checkdate == $child->checkdate){
 															
 														} else {
 															echo '<a href=\'/reports/check-print/'.$child->cvhdrid.'\' target=\'_blank\'>';
