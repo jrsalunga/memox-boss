@@ -134,14 +134,17 @@ $app->get('/report/chk-day', 'getChkDay');
 $app->get('/report/cv-bank/:bankid/total', 'getCVBankTotal');
 $app->get('/report/cv-bank/:bankid/status/:status', 'getCVBankByStatus');
 
+//reports/index
 $app->get('/report/ap-vs-cv', 'getApVsCv');
+
+
 $app->get('/report/cvhdr-supplier', 'getCvhdrSupplier');
 $app->get('/report/apvhdr-account', 'getApvhdrAccount');
 $app->get('/report/cvhdr-account', 'getCvhdrAccount');
 
 
 
- /*****************************  Run App **************************/
+/*****************************  Run App **************************/
 
 
 $app->get('/r/apvdue', 'apvGetDue');
@@ -151,28 +154,21 @@ $app->run();
 
 // ctrl k + ctrl 1 = fold 1st level
 
+//report/index
 function getApVsCv(){
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-    global $database;
+    
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
-    $range = new DateRange($fr,$to);
+    $range = new DateRange($fr,$to,false);
 
     echo 'Days,AP Unposted,AP Posted,AP Total,Check Unposted,Check Posted,Check Total';
     echo PHP_EOL;
-
-    $begin = new DateTime($range->fr);
-    $end = new DateTime($range->to);
-    $end = $end->modify('+1 day'); 
     
-    $interval = new DateInterval('P1D');
-    $daterange = new DatePeriod($begin, $interval ,$end);
-    
-    
-    foreach($daterange as $date){
+    foreach($range->getDaysInterval() as $date){
         $currdate = $date->format("Y-m-d");
-
 
         $tot = 0;
         echo $currdate.',';
@@ -180,7 +176,7 @@ function getApVsCv(){
             //echo $ctr.',';
 
             $sql = "SELECT SUM(totamount) AS totamount FROM vapvhdr ";
-            $sql .= "WHERE due = '".$currdate."' AND posted = ". $ctr;
+            $sql .= "WHERE due = '".$currdate."' AND cancelled = 0 AND posted = ". $ctr;
             $vapvhdr = vApvhdr::find_by_sql($sql); 
             $vapvhdr = array_shift($vapvhdr);
             echo empty($vapvhdr->totamount) ? '0.00': $vapvhdr->totamount;
@@ -191,14 +187,12 @@ function getApVsCv(){
         }
         echo ',';
 
-
-
         $tot2 = 0;
         for($ctr=0; $ctr <= 1; $ctr++) {
             //echo $ctr.',';
 
             $sql = "SELECT SUM(amount) AS amount FROM vcvchkdtl ";
-            $sql .= "WHERE checkdate = '".$currdate."' AND posted = ". $ctr;
+            $sql .= "WHERE checkdate = '".$currdate."' AND cancelled = 0 AND posted = ". $ctr;
             $vcvchkdtl = vCvchkdtl::find_by_sql($sql); 
             $vcvchkdtl = array_shift($vcvchkdtl);
             echo empty($vcvchkdtl->amount) ? '0.00': $vcvchkdtl->amount;
@@ -207,11 +201,8 @@ function getApVsCv(){
             echo $ctr==1 ? ','.$tot2 : ',';
             //echo ',';
         }
-        //echo '0.00';
-
         echo PHP_EOL;
     }
-
 }
 
 //report/cv-sched

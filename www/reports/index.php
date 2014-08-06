@@ -126,7 +126,8 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                 	</div>
                     <div class="col-md-6">
                     	<?php
-							$sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
+							$sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ";
+							$sql .="AND cancelled = 0 ORDER BY supplier;";
                           	$curr_apvhdrs = vApvhdr::find_by_sql($sql);
 						?>
                     	<div class="panel panel-default">
@@ -170,7 +171,8 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                 	</div>
                     <div class="col-md-6">
 						<?php
-                        	$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ORDER BY supplier;";
+                        	$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ";
+							$sql .= "AND cancelled = 0 ORDER BY supplier;";
 							$curr_vcvchkdtls = vCvchkdtl::find_by_sql($sql);
                         ?>
                     	<div class="panel panel-default">
