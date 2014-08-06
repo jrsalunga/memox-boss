@@ -155,9 +155,10 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 										$status = $curr_apvhdr->posted==1 ? 'glyphicon-posted-bw':'glyphicon-unposted-bw';
                                         echo '<a href="/reports/accounts-payable-print/'.$curr_apvhdr->id.'" target="_blank" class="list-group-item">';
                                         echo '<p class="list-group-item-text">'.$curr_apvhdr->refno;
-										echo ' <span class="glyphicon '.$status.'"></span></p>';
+										echo ' <span class="glyphicon '.$status.'"></span>';
+										echo '<span class="pull-right">'.date('F j, Y', strtotime($curr_apvhdr->due)).'</span></p>';
                                         echo '<h4 class="list-group-item-heading">'.$curr_apvhdr->supplier.'</h4>';
-                                        echo '<p class="list-group-item-text"><span class="pull-right"><strong>'.number_format($curr_apvhdr->totamount,2).'</strong></span></p>';
+                                        echo '<p class="list-group-item-text"><span class="pull-right">&#8369; <strong>'.number_format($curr_apvhdr->totamount,2).'</strong></span></p>';
 										echo '<div style="clear:both;"></div>';
                                         echo '</a>';
                                     }
@@ -204,7 +205,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 										echo '<span class="pull-right">'.date('F j, Y', strtotime($curr_vcvchkdtl->cvhdrdate)).'</span></p>';
                                         echo '<h4 class="list-group-item-heading">'.$curr_vcvchkdtl->supplier.'</h4>';
                                         echo '<p class="list-group-item-text">'. $curr_vcvchkdtl->bankcode;
-										echo '<span class="pull-right"><strong>'.number_format($curr_vcvchkdtl->amount,2).'</strong></span></p>';
+										echo '<span class="pull-right">&#8369; <strong>'.number_format($curr_vcvchkdtl->amount,2).'</strong></span></p>';
                                         echo '<div style="clear:both;"></div>';
 										echo '</a>';
 									}
