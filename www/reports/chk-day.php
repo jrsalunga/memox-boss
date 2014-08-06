@@ -471,9 +471,10 @@ td.hover {
 													echo 'data-container="body" data-toggle="popover" data-title="'.$title.'"';
    													echo 'data-content=" ';
 													
+													$found = false;
 													foreach($childs as $child){
-														if($cvchkdtl->refno == $child->refno && $cvchkdtl->checkdate == $child->checkdate){
-															
+														if($cvchkdtl->refno == $child->refno && $found==false){
+															$found=true;
 														} else {
 															echo '<a href=\'/reports/check-print/'.$child->cvhdrid.'\' target=\'_blank\'>';
 															echo $child->refno;
