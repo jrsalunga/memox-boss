@@ -73,6 +73,9 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 	<div class="isposted" style="visibility: <?=$apvhdr->posted==1?"visible":"hidden"?>">
     	<h1>Posted</h1>
     </div>
+    <div class="iscancelled" style="visibility: <?=$cvhdr->cancelled==1?"visible":"hidden"?>">
+    	<h1>Cancelled</h1>
+    </div>
     <div id="header">
     	<div id="main-logo">
             <img src="<?=$relativeslash?>../images/memoxpress.png" />

@@ -173,9 +173,31 @@ table td, table th {
 	
 }
 
+
+.iscancelled{
+	position:absolute; 
+	top:250px; 
+	left:280px;
+	padding: 20px; 
+	border: 2px dashed #f0ad4e;
+	z-index: 11;
+	opacity: 0.8;
+	
+	-webkit-transform: rotate(5deg);
+    -moz-transform: rotate(5deg);
+	border-radius: 10px;
+	
+}
+
+
 .isposted > h1 {
 	font-size: 50px;
 	color: red;
+}
+
+.iscancelled > h1 {
+	font-size: 50px;
+	color: #f0ad4e;
 }
 
 
