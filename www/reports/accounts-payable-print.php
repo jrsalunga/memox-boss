@@ -95,10 +95,7 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 					#$location = Location::find_by_id($apvhdr->locationid);
 				?>
                 <div></div>
-                
-                
-                </div>
-               	
+                </div>           	
                 <table id="meta">
                 	<tbody>
                     	<tr>
@@ -127,36 +124,22 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
             	<thead>
                 	<tr>
                     	<th>Code </th>
-                        <th colspan="2">Description</th>
-                 
+                        <th colspan="2">Description</th>             
                         <th>Amount</th>
                     </tr>
                 </thead>
                 <tbody>
                 	<?php
-					
 					$items = Apvdtl::find_all_by_field_id('apvhdr',$apvhdrid);
-					
-					//global $database;
-					//echo $database->last_query.'<br>';
-					
 					foreach($items as $item){
 						$item_code = Account::row($item->accountid,0);
 						$item_descriptor = Account::row($item->accountid,1);
-						//$prj = Project::row($item->projectid,0);
-						//$p = $item->type == 1 ? '('.$prj.')' : '';
 						
 						echo "<tr>";
 						echo "<td>". $item_code ."</td><td colspan='2'>". uc_first($item_descriptor)."</em></td><td>&#8369; ". number_format($item->amount,2) ."</td>";
 						echo "</tr>";
-					}
-					
-					//echo json_encode($item);
-					
-	
-					
+					}				
 					?>
-      
                     <tr>
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
@@ -184,7 +167,7 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
                 </tbody>
             </table>
     	</div>
-        <div style="margin: 0 30px;"><strong>Notes:</strong> <em><?=$apvhdr->notes?></em></div>
+        <div style="margin: 0 20px 50px;"><strong>Notes:</strong> <em><?=$apvhdr->notes?></em></div>
     </div>
     <div id="footer" class="bottom">
     	<div>
@@ -197,9 +180,6 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 				echo '<p>with check voucher ref no <a href="/reports/check-print/'.$cvhdr->id.'" target="_blank">'.$cvhdr->refno.'</a> ';
 				echo $cvhdr->posted==1 ? '<span title="Posted" class="glyphicon glyphicon-posted-bw"></span></p>':'<span title="Unposted" class="glyphicon glyphicon-unposted-bw"></span></p>';	
 			}
-			//global $database;
-			//echo $database->last_query.'<br>';
-			//echo json_encode($cvapvdtl);
 		?>
         </div>
     </div>

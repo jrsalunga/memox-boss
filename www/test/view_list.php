@@ -132,4 +132,6 @@ GROUP BY a.id
 ORDER BY a.checkdate DESC";
 
 
-?>
+
+$product2 = "DROP VIEW IF EXISTS `memox`.`vproduct2`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW  `memox`.`vproduct2` AS select `a`.`code` AS `code`,`c`.`descriptor` AS `brand`,`d`.`descriptor` AS `model`,`a`.`descriptor` AS `descriptor`,`e`.`descriptor` AS `category`,`b`.`descriptor` AS `type`,`a`.`onhand` AS `onhand`,`a`.`minlevel` AS `minlevel`,`a`.`maxlevel` AS `maxlevel`,`a`.`reorderqty` AS `reorderqty`,`a`.`unitprice` AS `unitprice`,`a`.`floorprice` AS `floorprice`,`a`.`avecost` AS `avecost`,`a`.`brandid` AS `brandid`,`a`.`modelid` AS `modelid`,`a`.`prodcatid` AS `prodcatid`,`a`.`typeid` AS `typeid`,`a`.`serialized` AS `serialized`,`a`.`uom` AS `uom`,`a`.`longdesc` AS `longdesc`,`a`.`picfile` AS `picfile`,`a`.`id` AS `id` from ((((`product` `a` join `product_type` `b`) join `brand` `c`) join `model` `d`) join `prodcat` `e`) where ((`a`.`typeid` = `b`.`code`) and (`a`.`brandid` = `c`.`id`) and (`a`.`modelid` = `d`.`id`) and (`a`.`prodcatid` = `e`.`id`)) order by `a`.`descriptor`;";
