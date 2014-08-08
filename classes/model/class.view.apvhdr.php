@@ -119,7 +119,7 @@ GROUP BY a.id ORDER BY account ASC
 		return !empty($result_array) ? $result_array : false;
 	}
 	
-	public static function sum_group_by_account($fr, $to, $posted){
+	public static function sum_group_by_account($fr, $to, $posted=NULL){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
 		
 			$sql = "SELECT SUM(a.totamount) AS totamount, ";
@@ -127,10 +127,10 @@ GROUP BY a.id ORDER BY account ASC
 			$sql .= "/((SELECT SUM(totamount) ";
 			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
 			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";
-			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."') ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to." AND cancelled = 0') ";
 			$sql .= "* .01),5) AS percentage ";
 			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
-			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";
+			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id  AND c.cancelled = 0";
 			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
