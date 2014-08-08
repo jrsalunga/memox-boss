@@ -60,37 +60,28 @@ class vApvhdr extends DatabaseObject{
 		
 	}
 	
+	
+	/*	
+	*	@param: date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all APV(not cancelled) to summarize total amount w/ percentage GROUP BY account
+	*	url: /reports/apvhdr-account
+	*/
 	public static function status_with_group_account($fr, $to, $posted=NULL){
-		/*
-		SELECT a.descriptor AS account, SUM(c.totamount) AS totamount,
-(SUM(c.totamount)/
-(SELECT SUM(c.totamount) FROM account a
-  LEFT JOIN apvdtl b ON a.id = b.accountid
-  LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due
-  BETWEEN '2014-07-01' AND '2014-07-31')) * 100 AS percentage,
-COUNT(c.refno) AS printctr, a.id AS accountid
-FROM account a
-LEFT JOIN apvdtl b
-ON a.id = b.accountid
-LEFT JOIN vapvhdr c
-ON c.id = b.apvhdrid AND c.due BETWEEN '2014-07-01' AND '2014-07-31'
-GROUP BY a.id ORDER BY account ASC
-*/
 		
 		$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";
-		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' cancelled = 0'";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}
 		$sql .= " )) * 100 AS percentage, ";
 		$sql .= "COUNT(c.refno) AS printctr, a.id AS accountid ";
 		$sql .= "FROM account a LEFT JOIN apvdtl b ON a.id = b.accountid ";
-		$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' cancelled = 0'";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}
 		$sql .= "GROUP BY a.id ORDER BY account ASC";
-		
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? $result_array : false;
