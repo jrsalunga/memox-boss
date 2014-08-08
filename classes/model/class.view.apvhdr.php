@@ -70,14 +70,14 @@ class vApvhdr extends DatabaseObject{
 	public static function status_with_group_account($fr, $to, $posted=NULL){
 		
 		$sql = "SELECT a.descriptor AS account, SUM(c.totamount) AS totamount, (SUM(c.totamount)/";
-		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' cancelled = 0'";
+		$sql .= "(SELECT SUM(totamount) FROM vapvhdr WHERE due BETWEEN '".$fr."' AND '".$to."' ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}
 		$sql .= " )) * 100 AS percentage, ";
 		$sql .= "COUNT(c.refno) AS printctr, a.id AS accountid ";
 		$sql .= "FROM account a LEFT JOIN apvdtl b ON a.id = b.accountid ";
-		$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' cancelled = 0'";
+		$sql .= "LEFT JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND posted = '".$posted."' ";
 		}
@@ -118,10 +118,10 @@ class vApvhdr extends DatabaseObject{
 			$sql .= "/((SELECT SUM(totamount) ";
 			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
 			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id ";
-			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to." AND cancelled = 0') ";
+			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0) ";
 			$sql .= "* .01),5) AS percentage ";
 			$sql .= "FROM vapvhdr a, apvdtl b, account c ";
-			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id  AND c.cancelled = 0";
+			$sql .= "WHERE a.id = b.apvhdrid AND b.accountid = c.id  AND a.cancelled = 0 ";
 			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
