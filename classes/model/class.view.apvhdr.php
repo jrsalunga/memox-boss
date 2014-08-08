@@ -147,26 +147,29 @@ class vApvhdr extends DatabaseObject{
 	*	@return: array of this class object or FALSE if no record found
 	*	fetch all APV(not cancelled) to summarize total amount w/ percentage GROUP BY account(will not list all account)
 	*	url: /reports/apvhdr-account
+	* 	rev 2: based on self::status_with_group_account()
+	*			diff: a.code AS accountcode, INNER JOIN, ORDER BY totamount DESC
 	*/
 	public static function group_by_account($fr, $to, $posted=NULL){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
-		
-			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, a.id AS accountid, ";
-			$sql .= "SUM(c.totamount) AS totamount, (SUM(c.totamount)/ ";
-			$sql .= "(SELECT SUM(totamount) FROM vapvhdr ";
-			$sql .= "WHERE due BETWEEN '".$fr."' AND '".$to."' AND cancelled = 0 ";
+			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, SUM(c.totamount) AS totamount, ";
+			$sql .= "(SUM(c.totamount)/(SELECT SUM(x.totamount) FROM account z ";
+			$sql .= "INNER JOIN apvdtl y ON z.id = y.accountid ";
+			$sql .= "INNER JOIN vapvhdr x ON x.id = y.apvhdrid AND x.due BETWEEN '".$fr."' AND '".$to."' AND x.cancelled = 0 ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND x.posted = '".$posted."' ";
+			}
+			$sql .= " )) * 100 AS percentage, ";
+			$sql .= "COUNT(c.refno) AS printctr, a.id AS accountid ";
+			$sql .= "FROM account a ";
+			$sql .= "INNER JOIN apvdtl b ON a.id = b.accountid ";
+			$sql .= "INNER JOIN vapvhdr c ON c.id = b.apvhdrid AND c.due BETWEEN '".$fr."' AND '".$to."' AND c.cancelled = 0 ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND posted = '".$posted."' ";
 			}
-			$sql .= ")) * 100 AS percentage ";
-			$sql .= "FROM account a ";
-			$sql .= "INNER JOIN apvdtl b ON a.id = b.accountid ";
-			$sql .= "INNER JOIN vapvhdr c ON c.id = b.apvhdrid ";
-			$sql .= "AND c.due BETWEEN '".$fr."' AND '".$to."' AND c.cancelled = 0 ";
-			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
-				$sql .= "AND c.posted = '".$posted."' ";
-			}
+			//$sql .= "GROUP BY a.id ORDER BY account ASC";
 			$sql .= "GROUP BY a.id ORDER BY totamount DESC ";
+			
 			
 			$result_array = static::find_by_sql($sql);
 			return !empty($result_array) ? $result_array : false;
