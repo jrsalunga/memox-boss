@@ -168,9 +168,8 @@ class vApvhdr extends DatabaseObject{
 				$sql .= "AND posted = '".$posted."' ";
 			}
 			//$sql .= "GROUP BY a.id ORDER BY account ASC";
-			$sql .= "GROUP BY a.id ORDER BY totamount DESC ";
-			
-			
+			$sql .= "GROUP BY a.id ORDER BY c.totamount DESC ";
+				
 			$result_array = static::find_by_sql($sql);
 			return !empty($result_array) ? $result_array : false;
 		} else {
