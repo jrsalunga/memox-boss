@@ -195,7 +195,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 										echo $apvhdr->account;
 										if($apvhdr->printctr>0){
                                         	echo ' <span class="badge">'.$apvhdr->printctr.'</span>';
-											echo '<span class="pull-right tot">&#8369; '.number_format($apvhdr->totamount,2).'</span>';
+											echo '<span class="pull-right tot" title="'.number_format($apvhdr->percentage,2).'% of the Total Amount">&#8369; '.number_format($apvhdr->totamount,2).'</span>';
 										}
 										
 										echo '</a></h4></div>';
@@ -213,12 +213,14 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
 												echo '<tr>';
 												echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
-												echo '<td><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
-												echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
-												echo '<td><span class="glyphicon glyphicon-';
+												echo '<td title="APV Reference No"><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+												echo '<td title="Due Date">'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
+												echo '<td title="';
+												echo $chld_cvhdr->posted ==1 ? 'Posted':'Unposted';
+												echo '"><span class="glyphicon glyphicon-';
 												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
 												echo '"></span></td>';
-												echo '<td style="text-align:right;">&#8369; '. number_format($chld_cvhdr->totamount,2) .'</td>';	
+												echo '<td title="APV Total Amount" style="text-align:right;">&#8369; '. number_format($chld_cvhdr->totamount,2) .'</td>';	
 												echo '</tr>';
 											}	
 											echo '<tbody></table></div>';
