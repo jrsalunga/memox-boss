@@ -91,7 +91,13 @@ class vApvhdr extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 	}
 	
-	
+	/*	
+	*	@param: acccountid, date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all APV(not cancelled) FILTERED BY accountid (sub query for self::status_with_group_account())
+	*	url: /reports/apvhdr-account
+	* 	
+	*/
 	public static function status_with_account($accountid, $fr, $to, $posted=NULL){
 		if(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){
 			$sql = "SELECT a.* FROM vapvhdr a ";
