@@ -58,7 +58,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
             <span class="icon-bar"></span>
           </button>
          <a href="/">
-          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+          		<img src="/images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
         	</a>
            <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
@@ -79,7 +79,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                     </a>
                         <ul class="dropdown-menu">
                         	<li><a href="#settings">Settings</a></li>
-                            <li><a href="../logout">Sign Out</a></li>
+                            <li><a href="/logout">Sign Out</a></li>
 
      
                       </ul>
@@ -209,6 +209,8 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 											echo '<tbody>';
 											
 											$chld_cvhdrs = vApvhdr::status_with_account($apvhdr->accountid, $dr->fr, $dr->to, $posted);
+											//global $database;
+											//echo $database->last_query;
 											foreach($chld_cvhdrs as $chld_cvhdr){
 												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
 												echo '<tr>';
@@ -226,9 +228,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 											echo '<tbody></table></div>';
 											echo '</div></div>';
 										}
-										echo '</div>';
-									
-										
+										echo '</div>';		
 									}
 								}
 							?>
