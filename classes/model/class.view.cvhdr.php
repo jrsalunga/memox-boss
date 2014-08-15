@@ -35,27 +35,30 @@ class vCvhdr extends DatabaseObject{
 	
 	
 	
-	
-	/*
-		the table used from this query is from vxCvhdr
+
+	/*	
+	*	@param: date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all CV(not cancelled) to summarize total amount w/ percentage GROUP BY account(list all account)
+	*	url: /reports/cvhdr-account
+	* 	comment: the table used from this query is from vxCvhdr
 	*/
 	public static function status_with_group_account($fr, $to, $posted=NULL){
 		
 		
 		$sql = "SELECT a.descriptor AS account, SUM(b.cvtotchkamt) AS totchkamt, ";
 		$sql .= "SUM(b.cvtotchkamt)/((SELECT SUM(y.cvtotchkamt) FROM account z ";
-		$sql .= "LEFT JOIN vxcvhdr y ON z.id = y.accountid AND y.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "LEFT JOIN vxcvhdr y ON z.id = y.accountid AND y.cvdate BETWEEN '".$fr."' AND '".$to."' AND cvcancelled = 0 ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 			$sql .= "AND y.cvposted = '".$posted."' ";
 		}
 		$sql .= ") * .01) AS percentage, ";
 		$sql .= "COUNT(b.cvrefno) AS printctr, a.id AS accountid FROM account a ";
-		$sql .= "LEFT JOIN vxcvhdr b ON a.id = b.accountid AND b.cvdate BETWEEN '".$fr."' AND '".$to."' ";
+		$sql .= "LEFT JOIN vxcvhdr b ON a.id = b.accountid AND b.cvdate BETWEEN '".$fr."' AND '".$to."' AND cvcancelled = 0 ";
 		if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND b.cvposted = '".$posted."' ";
 			}
 		$sql .= "GROUP BY a.id ORDER BY a.descriptor";
-		
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? $result_array : false;
