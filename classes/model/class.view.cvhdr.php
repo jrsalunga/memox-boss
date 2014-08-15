@@ -65,30 +65,23 @@ class vCvhdr extends DatabaseObject{
 		
 	}
 	
-	
+	/*	
+	*	@param: acccountid, date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all APV(not cancelled) FILTERED BY accountid (sub query for self::status_with_group_account())
+	*	url: /reports/apvhdr-account	
+	*/
 	public static function status_with_account($accountid, $fr, $to, $posted=NULL){
-		if(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){
-			$sql = "SELECT cvrefno AS refno, cvdate as date, cvposted as posted, cvtotchkamt AS totchkamt, supplier, suppliercode, cvhdrid AS id FROM vxcvhdr WHERE accountid = '".$accountid."' ";
-			$sql .= "AND cvdate BETWEEN '".$fr."' AND '".$to."' AND cvposted = '".$posted."' ";
-			$sql .= "ORDER BY cvdate DESC, cvrefno DESC ";
-			/*
-			$sql = "SELECT a.* FROM vapvhdr a ";
-			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid AND a.posted = '".$posted."' ";
-			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
-			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
-			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
-			*/
-		} else if(isset($accountid) && is_uuid($accountid) && (!isset($posted) || is_null($posted))){
-			$sql = "SELECT cvrefno AS refno, cvdate as date, cvposted as posted, cvtotchkamt AS totchkamt, supplier, suppliercode, cvhdrid AS id FROM vxcvhdr WHERE accountid = '".$accountid."' ";
+		//if(isset($accountid) && is_uuid($accountid) && isset($posted) && !is_null($posted)){
+		if(!is_null($accountid) && is_uuid($accountid) && $accountid!=''){
+			$sql = "SELECT cvrefno AS refno, cvdate as date, cvposted as posted, cvtotchkamt AS totchkamt, supplier, suppliercode, cvhdrid AS id ";
+			$sql .= "FROM vxcvhdr WHERE accountid = '".$accountid."' AND cvcancelled = 0 ";
 			$sql .= "AND cvdate BETWEEN '".$fr."' AND '".$to."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
 			$sql .= "ORDER BY cvdate DESC, cvrefno DESC ";
-			/*
-			$sql = "SELECT a.* FROM vapvhdr a ";
-			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid ";
-			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
-			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
-			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
-			*/
+	
 		} else {
 			return false;
 			exit;	
