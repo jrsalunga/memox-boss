@@ -139,7 +139,11 @@ $app->get('/report/ap-vs-cv', 'getApVsCv');
 
 
 $app->get('/report/cvhdr-supplier', 'getCvhdrSupplier');
+
+//reports/apvhdr-account
 $app->get('/report/apvhdr-account', 'getApvhdrAccount');
+
+//reports/cvhdr-account
 $app->get('/report/cvhdr-account', 'getCvhdrAccount');
 
 
@@ -563,7 +567,7 @@ function getCvhdrSupplier(){
     }
 }
 
-
+//report/account-apvhdr
 function getApvhdrAccount(){
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
@@ -595,20 +599,20 @@ function getApvhdrAccount(){
 
 }
 
+//reports/cvhdr-account
 function getCvhdrAccount(){
+    global $database;
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
-    global $database;
+  
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
     $data = $database->escape_value($r->get('data'));
     $posted = $database->escape_value($r->get('posted'));
+    
     $range = new DateRange($fr,$to,false);
 
-
     $apvhdrs = vCvhdr::group_by_account($fr,$to,$posted);
-    //global $database;
-    //echo $database->last_query;
 
     if(!empty($data) && $data=='json') {
         echo json_encode($apvhdrs);

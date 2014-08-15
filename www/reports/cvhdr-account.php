@@ -58,7 +58,7 @@ $vcvhdrs = vCvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
             <span class="icon-bar"></span>
           </button>
          <a href="/">
-          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+          		<img src="/images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
         	</a>
            <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
@@ -214,14 +214,16 @@ $vcvhdrs = vCvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 											//echo $database->last_query;
 											foreach($chld_cvhdrs as $chld_cvhdr){
 												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
-												echo '<tr>';
+												echo '<tr ';
+												echo $chld_cvhdr->cancelled ==1 ? 'style="text-decoration:line-through':'';
+												echo '">';
 												echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
 												echo '<td><a href="/reports/check-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
 												echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
 												echo '<td><span class="glyphicon glyphicon-';
 												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
 												echo '"></span></td>';
-												echo '<td style="text-align:right;">&#8369; '. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
+												echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
 												echo '</tr>';
 											}	
 											echo '<tbody></table></div>';
