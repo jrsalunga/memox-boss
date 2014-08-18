@@ -23,7 +23,8 @@ if($status=='posted'){
 } else {
 	$posted = NULL;
 }
-$apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
+//$apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
+$accounts = Account::find_all();
 //global $database;
 //echo $database->last_query;
 
@@ -183,6 +184,54 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                     <div class="col-md-7">
                     	<div id="cvhdr-list" class="panel-group">
                         	<?php
+								foreach($accounts as $account){
+									$apvhdr = vApvhdr::summary_by_account($account->id, $dr->fr, $dr->to, $posted);
+									echo '<div class="panel panel-default">';
+									echo '<div class="panel-heading">';
+									echo '<h4 class="panel-title">';
+									echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$account->id.'" class="collapsed">';
+									echo $account->descriptor;
+									if($apvhdr->printctr>0){
+										echo ' <span class="badge">'.$apvhdr->printctr.'</span>';
+										echo '<span class="pull-right tot" title="'.number_format($apvhdr->percentage,2).'% of the Total Amount">&#8369; '.number_format($apvhdr->totamount,2).'</span>';
+									}
+									echo '</a></h4></div>';
+									if($apvhdr->printctr>0){
+										echo '<div id="collapse-'.$account->id.'" class="panel-collapse collapse">';
+										echo '<div class="panel-body">';
+										echo '<div><table class="table table-striped apv-list">';
+										//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
+										echo '<tbody>';
+										
+										$chld_cvhdrs = vApvhdr::status_with_account($account->id, $dr->fr, $dr->to, $posted);
+										//global $database;
+										//echo $database->last_query;
+										foreach($chld_cvhdrs as $chld_cvhdr){
+											//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
+											echo '<tr ';
+											echo $chld_cvhdr->cancelled ==1 ? 'style="text-decoration:line-through':'';
+											echo '">';
+											echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
+											echo '<td title="APV Reference No"><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+											echo '<td title="Due Date">'. date('F j, Y', strtotime($chld_cvhdr->due)) .'</td>';
+											echo '<td title="';
+											echo $chld_cvhdr->posted ==1 ? 'Posted':'Unposted';
+											echo '"><span class="glyphicon glyphicon-';
+											echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
+											echo '"></span></td>';
+											echo '<td title="'.number_format($chld_cvhdr->percentage,2).' of '.number_format($chld_cvhdr->totamount,2).' Total Amount" style="text-align:right;">'. number_format($chld_cvhdr->percentage,2) .'</td>';	
+											echo '</tr>';
+										}	
+										echo '<tbody></table></div>';
+										echo '</div></div>';
+									}
+									echo '</div>';		
+									
+									
+								}
+								
+								
+								/*
 								if(empty($apvhdrs)){
 									echo 'No records found!';
 								} else {
@@ -209,8 +258,8 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 											echo '<tbody>';
 											
 											$chld_cvhdrs = vApvhdr::status_with_account($apvhdr->accountid, $dr->fr, $dr->to, $posted);
-											//global $database;
-											//echo $database->last_query;
+											global $database;
+											echo $database->last_query;
 											foreach($chld_cvhdrs as $chld_cvhdr){
 												//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
 												echo '<tr ';
@@ -233,6 +282,7 @@ $apvhdrs = vApvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
 										echo '</div>';		
 									}
 								}
+								*/
 							?>
                         </div>
                     </div>
