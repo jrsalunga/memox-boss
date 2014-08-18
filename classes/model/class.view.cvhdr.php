@@ -77,7 +77,7 @@ class vCvhdr extends DatabaseObject{
 			$sql .= "FROM vxcvhdr WHERE accountid = '".$accountid."' AND cvcancelled = 0 ";
 			$sql .= "AND cvdate BETWEEN '".$fr."' AND '".$to."' ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
-				$sql .= "AND a.posted = '".$posted."' ";
+				$sql .= "AND cvposted = '".$posted."' ";
 			}
 			$sql .= "ORDER BY cvdate DESC, cvrefno DESC ";
 	
