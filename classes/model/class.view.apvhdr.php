@@ -91,6 +91,41 @@ class vApvhdr extends DatabaseObject{
 		return !empty($result_array) ? $result_array : false;
 	}
 	
+	
+	/*	
+	*	@param: accountid, date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all APV(not cancelled) to summarize total amount w/ percentage per account(using accountid)
+	*	this method is replacement for self::status_with_group_account() with issue on calculating totamount
+	*	url: /reports/apvhdr-account
+	* 	
+	*/
+	public static function summary_by_account($accountid=NULL, $fr, $to, $posted=NULL){
+		if(!is_null($accountid) && is_uuid($accountid) && $accountid!=''){	
+			$sql = "SELECT c.descriptor AS account, SUM(a.amount) AS totamount, ";
+			$sql .= "(SUM(a.amount)/(SELECT SUM(y.amount) FROM account z ";
+			$sql .= "INNER JOIN apvdtl y ON z.id = y.accountid ";
+			$sql .= "INNER JOIN vapvhdr x ON x.id = y.apvhdrid AND x.due BETWEEN '".$fr."' AND '".$to."' AND x.cancelled = 0 ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND x.posted = '".$posted."' ";
+			}
+			$sql .= ")) * 100 AS percentage, COUNT(b.refno) AS printctr ";
+			$sql .= "FROM apvdtl a ";
+			$sql .= "INNER JOIN vapvhdr b ON a.apvhdrid = b.id AND b.due BETWEEN '2014-07-01' AND '2014-07-31' AND b.cancelled = 0 ";
+			$sql .= "INNER JOIN account c ON c.id = a.accountid AND c.id = '".$accountid."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND posted = '".$posted."' ";
+			}
+		} else {
+			return false;
+			exit;
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	
 	/*	
 	*	@param: acccountid, date range, posted
 	*	@return: array of this class object or FALSE if no record found
@@ -154,8 +189,8 @@ class vApvhdr extends DatabaseObject{
 	*/
 	public static function group_by_account($fr, $to, $posted=NULL){
 		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
-			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, SUM(c.totamount) AS totamount, ";
-			$sql .= "(SUM(c.totamount)/(SELECT SUM(x.totamount) FROM account z ";
+			$sql = "SELECT a.code AS accountcode, a.descriptor AS account, SUM(b.amount) AS totamount, ";
+			$sql .= "(SUM(b.amount)/(SELECT SUM(y.amount) FROM account z ";
 			$sql .= "INNER JOIN apvdtl y ON z.id = y.accountid ";
 			$sql .= "INNER JOIN vapvhdr x ON x.id = y.apvhdrid AND x.due BETWEEN '".$fr."' AND '".$to."' AND x.cancelled = 0 ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
