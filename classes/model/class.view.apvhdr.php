@@ -131,10 +131,13 @@ class vApvhdr extends DatabaseObject{
 	*	@return: array of this class object or FALSE if no record found
 	*	fetch all APV(not cancelled) FILTERED BY accountid (sub query for self::status_with_group_account())
 	*	url: /reports/apvhdr-account	
+	*	note: use the $percentage to hold Apvdtl amount
 	*/
 	public static function status_with_account($accountid=NULL, $fr, $to, $posted=NULL){
 		if(!is_null($accountid) && is_uuid($accountid) && $accountid!=''){
-			$sql = "SELECT a.* FROM vapvhdr a ";
+			
+			$sql = "SELECT a.suppliercode, a.supplier, a.refno, a.due, b.amount AS percentage, a.totamount, a.posted, a.cancelled, a.id ";
+			$sql .= "FROM vapvhdr a ";
 			$sql .= "INNER JOIN apvdtl b ON a.id = b.apvhdrid AND a.cancelled = 0 ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
@@ -142,6 +145,7 @@ class vApvhdr extends DatabaseObject{
 			$sql .= "AND a.due BETWEEN '".$fr."' AND '".$to."' ";
 			$sql .= "INNER JOIN account c ON c.id = b.accountid AND b.accountid = '".$accountid."' ";
 			$sql .= "ORDER BY a.due DESC, a.refno DESC ";
+			
 		} else {
 			return false;
 			exit;	
