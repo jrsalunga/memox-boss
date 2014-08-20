@@ -303,7 +303,8 @@ class vCvchkdtl extends DatabaseObject{
 		if(!is_null($supplierid) && is_uuid($supplierid) && $supplierid!=''){	
 			$sql = "SELECT a.* ";
 			$sql .= "FROM vcvchkdtl a ";
-			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' ";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' ";
+			$sql .= "AND a.supplierid = '".$supplierid."' AND a.cancelled = 0 ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
 			}
