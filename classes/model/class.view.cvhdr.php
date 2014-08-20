@@ -155,11 +155,14 @@ class vCvhdr extends DatabaseObject{
 	*/
 	public static function summary_by_supplier($supplierid, $fr, $to, $posted=NULL){
 		if(!is_null($supplierid) && is_uuid($supplierid) && $supplierid!=''){	
-			$sql = "SELECT a.supplier, SUM(a.amount) AS totchkamt, COUNT(a.amount) AS printctr ";
+			$sql = "SELECT a.supplier, SUM(a.amount) AS totchkamt, ";
+			$sql .= "(SUM(a.amount)/((SELECT SUM(x.amount) FROM vcvchkdtl x ";
+			$sql .= "WHERE x.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' AND x.cancelled = 0) * .01)) AS percentage, ";
+			$sql .= "COUNT(a.amount) AS printctr ";
 			$sql .= "FROM vcvchkdtl a ";
 			$sql .= "LEFT JOIN cvhdr b ";
 			$sql .= "ON a.cvhdrid = b.id ";
-			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' AND a.cancelled = 0";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' AND a.cancelled = 0 ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
 			}
