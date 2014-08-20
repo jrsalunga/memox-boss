@@ -91,7 +91,7 @@ class vCvhdr extends DatabaseObject{
 	}
 	
 	/*	
-	*	@param: acccountid, date range, posted
+	*	@param:  date range, posted
 	*	@return: array of this class object or FALSE if no record found
 	*	fetch all APV(not cancelled) FILTERED BY accountid (sub query for self::status_with_group_account())
 	*	url: /reports/apvhdr-account	
@@ -114,8 +114,33 @@ class vCvhdr extends DatabaseObject{
 		} else {
 			return false;
 		}
-		
-		
+	}
+	
+	/*	
+	*	@param:  date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	sum all CVCHKDTL of CVHDR(not cancelled) FILTERED BY status
+	*	url: /reports/cvhdr-supplier	
+	*/
+	public static function sum_group_by_supplier($fr, $to, $posted=NULL){
+		if((!isset($fr) || !empty($fr)) && (!isset($to) || !empty($to))){
+			
+			$sql = "SELECT SUM(a.amount) AS totchkamt, ";
+			$sql .= "(SUM(a.amount)/((SELECT SUM(x.amount) FROM vcvchkdtl x ";
+			$sql .= "WHERE x.checkdate BETWEEN '".$fr."' AND '".$to."' AND x.cancelled = 0) * .01)) AS percentage, ";
+			$sql .= "COUNT(a.amount) AS printctr ";
+			$sql .= "FROM vcvchkdtl a ";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."'  AND a.cancelled = 0 ";
+
+			if((!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
+
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+			return false;
+		}
 	}
 	
 	
@@ -134,7 +159,7 @@ class vCvhdr extends DatabaseObject{
 			$sql .= "FROM vcvchkdtl a ";
 			$sql .= "LEFT JOIN cvhdr b ";
 			$sql .= "ON a.cvhdrid = b.id ";
-			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' ";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' AND a.cancelled = 0";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND a.posted = '".$posted."' ";
 			}
@@ -146,6 +171,12 @@ class vCvhdr extends DatabaseObject{
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;
 	}
+	
+	
+	
+	
+	
+	
 	
 	
 	
