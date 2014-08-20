@@ -119,6 +119,38 @@ class vCvhdr extends DatabaseObject{
 	}
 	
 	
+	
+	/*	
+	*	@param: accountid, date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all APV(not cancelled) to summarize total amount w/ percentage per account(using accountid)
+	*	this method is replacement for self::status_with_group_account() with issue on calculating totamount
+	*	url: /reports/apvhdr-account
+	* 	
+	*/
+	public static function summary_by_supplier($supplierid, $fr, $to, $posted=NULL){
+		if(!is_null($supplierid) && is_uuid($supplierid) && $supplierid!=''){	
+			$sql = "SELECT a.supplier, SUM(a.amount) AS totchkamt, COUNT(a.amount) AS printctr ";
+			$sql .= "FROM vcvchkdtl a ";
+			$sql .= "LEFT JOIN cvhdr b ";
+			$sql .= "ON a.cvhdrid = b.id ";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
+		} else {
+			return false;
+			exit;
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? array_shift($result_array) : false;
+	}
+	
+	
+	
+	
+	
 	/** for api **/
 	/*	
 	*	@param: date range, posted
