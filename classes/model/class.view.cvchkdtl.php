@@ -289,5 +289,34 @@ class vCvchkdtl extends DatabaseObject{
 	}
 	
 	
+	
+	/*	
+	*	@param: supplierid, date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all CV(not cancelled) to summarize cvchkdtl total amount w/ percentage per account(using supplierid)
+	*	sub query for vCvhdr::summary_by_supplier (summary listing for each supplier)
+	*	url: /reports/cvhdr-supplier
+	*   
+	* 	
+	*/
+	public static function status_with_supplier($supplierid, $fr, $to, $posted=NULL){
+		if(!is_null($supplierid) && is_uuid($supplierid) && $supplierid!=''){	
+			$sql = "SELECT a.* ";
+			$sql .= "FROM vcvchkdtl a ";
+			$sql .= "WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.supplierid = '".$supplierid."' ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
+			$sql .= "ORDER BY a.checkdate DESC";
+		} else {
+			return false;
+			exit;
+		}
+		
+		$result_array = static::find_by_sql($sql);
+		return !empty($result_array) ? $result_array : false;
+	}
+	
+	
 }
 
