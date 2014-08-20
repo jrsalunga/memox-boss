@@ -23,8 +23,17 @@ if($status=='posted'){
 } else {
 	$posted = NULL;
 }
-$cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
-//global $database;
+
+global $database;
+if(isset($_GET['q']) && $_GET['q']!=''){
+	$sql = "SELECT * FROM supplier WHERE descriptor LIKE ";
+	$sql .= "'%".$database->escape_value($_GET['q'])."%' ORDER BY descriptor";
+	$suppliers = Supplier::find_by_sql($sql);
+} else {
+	$suppliers = Supplier::find_all();
+}
+
+
 //echo $database->last_query;
 
 ?>
@@ -158,21 +167,23 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                                 	<?php
 										$acv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to);
 									?>
-                                    All: <span class="pull-right"><?=number_format($acv->totchkamt,2)?></span>
+                                    All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%"><?=number_format($acv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-a"></span>
                                 </li>
                                 <li class="list-group-item  <?=($status=='posted')?'list-group-item-info':''?>">
                                 	<?php
 										$pcv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"1");
+										//global $database;
+										//echo $database->last_query;
 									?>
-                                    Posted: <span class="pull-right"><?=number_format($pcv->totchkamt,2)?></span>
+                                    Posted: <span class="pull-right" title="<?=number_format($pcv->percentage,2)?>%"><?=number_format($pcv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-p"></span>
                                 </li>
                                 <li class="list-group-item <?=($status=='unposted')?'list-group-item-info':''?>">
                                 	<?php
 										$ucv = vCvhdr::sum_group_by_supplier($dr->fr,$dr->to,"0");
 									?>
-                                    Unposted: <span class="pull-right"><?=number_format($ucv->totchkamt,2)?></span>
+                                    Unposted: <span class="pull-right" title="<?=number_format($ucv->percentage,2)?>%"><?=number_format($ucv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-u"></span>
                                 </li>
                             </ul>
@@ -183,42 +194,55 @@ $cvhdrs = vCvhdr::status_with_group_supplier($dr->fr, $dr->to, $posted);
                     <div class="col-md-7">
                     	<div id="cvhdr-list" class="panel-group">
                         	<?php
-								if(empty($cvhdrs)){
+								if(empty($suppliers)){
 									echo 'No records found!';
 								} else {
-									foreach($cvhdrs as $cvhdr){
-										//echo $cvhdr->supplier.' - '.$cvhdr->totchkamt.'<br>';
+									foreach($suppliers as $supplier){
+										$cvhdr = vCvhdr::summary_by_supplier($supplier->id, $dr->fr, $dr->to, $posted);
+										//echo $database->last_query;
+										
 										echo '<div class="panel panel-default">';
 										echo '<div class="panel-heading">';
 										echo '<h4 class="panel-title">';
-										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$cvhdr->supplierid.'" class="collapsed">';
-										echo $cvhdr->supplier;
-                                        echo ' <span class="badge">'.$cvhdr->printctr.'</span>';
-										echo '<span class="pull-right tot">'.number_format($cvhdr->totchkamt,2).'</span>';
+										echo '<a data-toggle="collapse" data-parent="#cvhdr-list" href="#collapse-'.$supplier->id.'" class="collapsed">';
+										echo $supplier->descriptor;
+										if($cvhdr->printctr > 0){
+                                        	echo ' <span class="badge">'.$cvhdr->printctr.'</span>';
+											echo '<span class="pull-right tot"title="'.number_format($cvhdr->percentage,2).'% of the Total Amount">&#8369 '.number_format($cvhdr->totchkamt,2).'</span>';
+										}
 										echo '</a></h4></div>';
-										echo '<div id="collapse-'.$cvhdr->supplierid.'" class="panel-collapse collapse">';
-										echo '<div class="panel-body">';
-										
-										
-										echo '<div><table class="table table-striped apv-list">';
-										//echo '<thead><tr><th>APV Ref No</th><th>Date</th><th>Amount</th></tr></thead>';
-										echo '<tbody>';
-										
-										$chld_cvhdrs = vCvhdr::status_with_supplier($cvhdr->supplierid, $dr->fr, $dr->to, $posted);
-										foreach($chld_cvhdrs as $chld_cvhdr){
-											//echo $chld_cvhdr->refno.' - '.$chld_cvhdr->totchkamt.'<br>';
-											echo '<tr>';
-											//echo '<td>'.$apvdtl1->account .'</td>';
-											echo '<td><a href="/reports/check-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
-											echo '<td>'. date('F j, Y', strtotime($chld_cvhdr->date)) .'</td>';
-											echo '<td><span class="glyphicon glyphicon-';
-											echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
-											echo '"></span></td>';
-											echo '<td style="text-align:right;">'. number_format($chld_cvhdr->totchkamt,2) .'</td>';	
-											echo '</tr>';
-										}	
-										echo '<tbody></table></div>';
-										echo '</div></div></div>';
+										if($cvhdr->printctr > 0){
+											echo '<div id="collapse-'.$supplier->id.'" class="panel-collapse collapse">';
+											echo '<div class="panel-body">';
+											
+											echo '<div><table class="table table-striped apv-list">';
+											//echo '<thead><tr><th>CV Ref No</th><th>Bank</th><th>Check No</th><th>Check Date</th><th>CV Status</th><th>Check Amount</th></tr></thead>';
+											echo '<tbody>';
+											
+											$chld_cvhdrs = vCvchkdtl::status_with_supplier($supplier->id, $dr->fr, $dr->to, $posted);
+											foreach($chld_cvhdrs as $chld_cvhdr){
+												echo '<tr ';
+												echo $chld_cvhdr->cancelled ==1 ? 'style="text-decoration:line-through':'';
+												echo '">';
+												echo '<td title="CV Ref No"><a href="/reports/check-print/'.$chld_cvhdr->cvhdrid.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
+												echo '<td title="Bank: '.$chld_cvhdr->bank.'">'.$chld_cvhdr->bankcode.'</td>';
+												echo '<td title="Check No">';
+												echo $chld_cvhdr->checkno == 0 ? '-':'<span class="glyphicon glyphicon-money"></span> '. $chld_cvhdr->checkno;
+												echo '</td>';
+												echo '<td title="Check Date">'. date('M j, Y', strtotime($chld_cvhdr->checkdate)) .'</td>';
+												echo '<td title="CV ';
+												echo $chld_cvhdr->posted ==1 ? 'Posted':'Unposted';
+												echo '"><span class="glyphicon glyphicon-';
+												echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';
+												echo '"></span></td>';
+												echo '<td style="text-align:right;">'. number_format($chld_cvhdr->amount,2) .'</td>';	
+												echo '</tr>';
+											}	
+											
+											echo '<tbody></table></div>';
+											echo '</div></div>';
+										}
+										echo '</div>';
 										
 									}
 								}
