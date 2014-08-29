@@ -5,8 +5,15 @@ include_once('../../classes/class.cleanurl.php');
 ini_set('display_errors','Off');
 $cleanUrl->setParts('cvhdrid');
 
-#echo $apvhdrid;
-$cvhdr = vCvhdr::find_by_id($cvhdrid);
+//echo is_uuid($cvhdrid) ? 'uid ':'not uid ';
+if(is_uuid($cvhdrid)){
+	$cvhdr = vCvhdr::find_by_id($cvhdrid);
+	if(!$cvhdr){
+		$cvhdr = vCvhdr::first('refno');
+	}
+} else {
+	$cvhdr = vCvhdr::first('refno');
+}
 //global $database;
 //echo $database->last_query;
 //echo var_dump($cvhdr);
@@ -148,7 +155,7 @@ $(document).ready(function(){
                 <tbody>
                 	<?php
 					
-					$cvapvdtls = vCvapvdtl::find_all_by_field_id('cvhdr',$cvhdrid);
+					$cvapvdtls = vCvapvdtl::find_all_by_field_id('cvhdr',$cvhdr->id);
 					
 					//echo json_encode($database->last_query);
 					$totapvamt = 0;
@@ -208,7 +215,7 @@ $(document).ready(function(){
                 <tbody>
                 	<?php
 					
-					$cvchkdtls = Cvchkdtl::find_all_by_field_id('cvhdr',$cvhdrid);
+					$cvchkdtls = Cvchkdtl::find_all_by_field_id('cvhdr',$cvhdr->id);
 					
 					
 					$totchkamt = 0;
