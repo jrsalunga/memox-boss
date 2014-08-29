@@ -337,10 +337,19 @@ table td, table th {
 .glyphicon-print:before {
   content: "\e045";
 }
-
+.pager:after {
+    content: " ";
+    display: table;
+}
+.pager:before, .pager:after {
+    box-sizing: border-box;
+}
+.pager:after {
+    clear: both;
+}
 .pager {
   padding-left: 0;
-  margin: 20px 0;
+/*  margin: 20px 0; */
   text-align: center;
   list-style: none;
 }
@@ -354,6 +363,7 @@ table td, table th {
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 15px;
+  font-size: 14px;
 }
 .pager li > a:hover,
 .pager li > a:focus {
@@ -385,6 +395,8 @@ table td, table th {
 
 
 
+
+
 /**************** print preview  ***************/
 
 
@@ -399,10 +411,10 @@ table td, table th {
 	position:absolute;
 	top: 25px;
 	background-color:#fff;
-	
+	/*
 	width:200px;
 	height: 200px;
-	
+	*/
 
 	-webkit-border-radius: 5px;
 	border-radius: 5px;
@@ -440,14 +452,15 @@ table td, table th {
 }
 
 #settings-dialog .print-preview {
-	float: right;
+	
 }
 
 
 #settings-dialog > .pager-c {
-	position: absolute;
+	/*position: absolute;
 	bottom: 0px;
-	width: 180px;
+	width: 180px;*/
+	
 }
 
 

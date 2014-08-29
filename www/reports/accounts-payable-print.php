@@ -207,6 +207,18 @@ $(document).ready(function(){
         <span class="glyphicon glyphicon-print"></span> 
         Print Preview</a>
   	</div>
+    <?php
+		$n = Apvhdr::next('refno', $apvhdr->refno);
+		$p = Apvhdr::previous('refno', $apvhdr->refno);
+	?>
+    
+    <div class="pager-c">
+    	<ul class="pager">
+          <li class="previous"><a href="/reports/accounts-payable-print/<?=$p->id?>">Prev</a></li>
+          <li class="next"><a href="/reports/accounts-payable-print/<?=$n->id?>">Next</a></li>
+        </ul>
+    </div>
+    
 </div>
 </body>
 </html>
