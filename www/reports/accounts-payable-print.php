@@ -6,7 +6,15 @@ ini_set('display_errors','Off');
 $cleanUrl->setParts('apvhdrid');
 
 //echo $apvhdrid;
-$apvhdr = vApvhdr::find_by_id($apvhdrid);
+if(is_uuid($apvhdrid)){
+	$apvhdr = vApvhdr::find_by_id($apvhdrid);
+	if(!$apvhdr){
+		$apvhdr = vApvhdr::first('refno');
+	}
+} else {
+	$apvhdr = vApvhdr::first('refno');
+}
+//$apvhdr = vApvhdr::find_by_id($apvhdrid);
 //global $database;
 //echo $database->last_query;
 //echo var_dump($cvhdr);
@@ -147,7 +155,7 @@ $(document).ready(function(){
                 </thead>
                 <tbody>
                 	<?php
-					$items = Apvdtl::find_all_by_field_id('apvhdr',$apvhdrid);
+					$items = Apvdtl::find_all_by_field_id('apvhdr',$apvhdr->id);
 					foreach($items as $item){
 						$item_code = Account::row($item->accountid,0);
 						$item_descriptor = Account::row($item->accountid,1);
