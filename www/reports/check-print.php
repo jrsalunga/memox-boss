@@ -262,6 +262,22 @@ $(document).ready(function(){
         <span class="glyphicon glyphicon-print"></span> 
         Print Preview</a>
   	</div>
+    
+   
+    <?php
+	$n = Cvhdr::next('refno', $cvhdr->refno);
+	$p = Cvhdr::previous('refno', $cvhdr->refno);
+	?>
+    
+    <div class="pager-c">
+    	<ul class="pager">
+          <li class="previous"><a href="/reports/check-print/<?=$p->id?>">Prev</a></li>
+          <li class="next"><a href="/reports/check-print/<?=$n->id?>">Next</a></li>
+        </ul>
+    </div>
+    
+    
+    
 </div>
 </body>
 </html>
