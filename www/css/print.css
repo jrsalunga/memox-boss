@@ -275,6 +275,40 @@ table td, table th {
 	
 }
 
+/*********** TBS **********/
+
+
+
+
+.btn {
+    -moz-user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1.42857;
+    margin-bottom: 0;
+    padding: 6px 12px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.btn-default {
+    background-color: #fff;
+    border-color: #ccc;
+    color: #333;
+}
+
+.btn-default:hover, .btn-default:focus {
+    background-color: #ebebeb;
+    border-color: #adadad;
+    color: #333;
+}
+
 
 
 @font-face {
@@ -300,7 +334,63 @@ table td, table th {
 .glyphicon-unposted-bw:before {
 	content: "\e088";
 }
+.glyphicon-print:before {
+  content: "\e045";
+}
 
+#settings-dialog a{
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+	text-decoration:none;
+}
+
+#settings-dialog {
+	
+	position:absolute;
+	top: 25px;
+	background-color:#fff;
+	
+	width:200px;
+	height: 200px;
+	
+
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	border: 1px solid #b4b4b4;
+	
+}
+
+#settings-dialog.show {
+	left: 0px;
+	
+}
+
+#settings-dialog.hide {
+	left: -201px;
+	
+}
+
+
+#settings-dialog:after {
+	background: none repeat scroll 0 0 rgba(0, 0, 0, 0);
+    bottom: 9px;
+    box-shadow: 0 10px 8px rgba(0, 0, 0, 0.6);
+    content: "";
+    height: 55%;
+    position: absolute;
+    right: 20px;
+    transform: skew(20deg) rotate(3deg);
+    width: 100%;
+    z-index: -1;
+}
+
+
+#settings-dialog > div {
+	margin: 10px;
+}
+
+#settings-dialog .print-preview {
+	float: right;
+}
 
 
 

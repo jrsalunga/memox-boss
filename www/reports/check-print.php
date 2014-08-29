@@ -23,6 +23,31 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 <link rel="stylesheet" href="/css/print.css">
 
 
+<script src="/js/vendors/jquery-1.10.1.min.js"></script>
+<script src="/js/vendors/jquery-ui-1.10.3.js"></script>
+
+<script language="javascript">
+
+            $(document).ready(function(){
+ 
+         //on window scroll fire it will call a function.
+
+                $(window).scroll(function () {
+ 
+         //after window scroll fire it will add define pixel added to that element.
+
+                    set = $(document).scrollTop()+25;
+ 
+        //this is the jQuery animate function to fixed the div position after scrolling.
+
+                    $('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
+
+                });
+
+            });
+
+         </script>
+
 
 <style media="screen">
 #page-wrap {
@@ -61,6 +86,10 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 	*/
 /*	border: 1px solid #F00; */
     min-height: 1054px;
+}
+
+#settings-dialog {
+	display:none;
 }
 </style>
 
@@ -230,12 +259,20 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
     <div id="footer">
     	<div>&nbsp;</div>
     </div>
+    
+    
     <!--
     <div style="position:absolute; bottom: 0px;">
     	test
     </div>
     -->
 </div>
-
+<div id="settings-dialog" class="show">
+	<div>
+    	<a href="javascript:window.print()" class="btn btn-default print-preview">
+        <span class="glyphicon glyphicon-print"></span> 
+        Print Preview</a>
+  	</div>
+</div>
 </body>
 </html>
