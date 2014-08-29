@@ -400,6 +400,27 @@ class DatabaseObject {
 	}
 	
 	
+	public static function next($field=NULL, $value=NULL) {
+		if(!is_null($field) && !is_null($value)) {
+			$sql = "SELECT * FROM ".static::$table_name." WHERE ".$field." > '".$value."' ORDER BY ".$field." LIMIT 1";
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+   			return false;
+		}
+  	}
+	
+	public static function previous($field=NULL, $value=NULL) {
+		if(!is_null($field) && !is_null($value)) {
+			$sql = "SELECT * FROM ".static::$table_name." WHERE ".$field." < '".$value."' ORDER BY ".$field." DESC LIMIT 1";
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		} else {
+   			return false;
+		}
+  	}
+	
+	
 	
 
 
