@@ -27,26 +27,15 @@ $cvhdr = vCvhdr::find_by_id($cvhdrid);
 <script src="/js/vendors/jquery-ui-1.10.3.js"></script>
 
 <script language="javascript">
-
-            $(document).ready(function(){
- 
-         //on window scroll fire it will call a function.
-
-                $(window).scroll(function () {
- 
-         //after window scroll fire it will add define pixel added to that element.
-
-                    set = $(document).scrollTop()+25;
- 
-        //this is the jQuery animate function to fixed the div position after scrolling.
-
-                    $('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
-
-                });
-
-            });
-
-         </script>
+function floatMe(){
+	set = $(document).scrollTop()+25;
+	$('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
+}
+$(document).ready(function(){
+	floatMe();
+	$(window).scroll(floatMe);
+});
+</script>
 
 
 <style media="screen">
