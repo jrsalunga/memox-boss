@@ -2,7 +2,7 @@
 include_once('../../lib/initialize.php');
 include_once('../../classes/class.cleanurl.php');
 #error_reporting(E_ALL);
-ini_set('display_errors','On');
+ini_set('display_errors','Off');
 $cleanUrl->setParts('apvhdrid');
 
 //echo $apvhdrid;
@@ -22,6 +22,19 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 
 <link rel="stylesheet" href="/css/print.css">
 
+<script src="/js/vendors/jquery-1.10.1.min.js"></script>
+<script src="/js/vendors/jquery-ui-1.10.3.js"></script>
+
+<script language="javascript">
+function floatMe(){
+	set = $(document).scrollTop()+25;
+	$('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
+}
+$(document).ready(function(){
+	floatMe();
+	$(window).scroll(floatMe);
+});
+</script>
 
 
 <style media="screen">
@@ -61,6 +74,10 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
 	*/
 /*	border: 1px solid #F00; */
     min-height: 1054px;
+}
+
+#settings-dialog {
+	display:none;
 }
 </style>
 
@@ -184,6 +201,12 @@ $apvhdr = vApvhdr::find_by_id($apvhdrid);
         </div>
     </div>
 </div>
-
+<div id="settings-dialog" class="show">
+	<div>
+    	<a href="javascript:window.print()" class="btn btn-default print-preview">
+        <span class="glyphicon glyphicon-print"></span> 
+        Print Preview</a>
+  	</div>
+</div>
 </body>
 </html>
