@@ -337,6 +337,13 @@ table td, table th {
 .glyphicon-print:before {
   content: "\e045";
 }
+.glyphicon-chevron-left:before {
+  content: "\e079";
+}
+.glyphicon-chevron-right:before {
+  content: "\e080";
+}
+
 .pager:after {
     content: " ";
     display: table;
@@ -356,6 +363,9 @@ table td, table th {
 .pager li {
   display: inline;
 }
+
+
+
 .pager li > a,
 .pager li > span {
   display: inline-block;
@@ -405,6 +415,9 @@ table td, table th {
 	text-decoration:none;
 	color: #333;
 }
+
+
+
 
 #settings-dialog {
 	

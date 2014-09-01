@@ -38,9 +38,25 @@ function floatMe(){
 	set = $(document).scrollTop()+25;
 	$('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
 }
+function fixPrintSettings(){
+	if(parseInt($(document).width()) <= 1100){
+		$('.print-preview').html('<span class="glyphicon glyphicon-print"></span>');
+		$('.previous a').html('<span class="glyphicon glyphicon-chevron-left"></span>').css('margin-bottom','10px');
+		$('.next a').html('<span class="glyphicon glyphicon-chevron-right"></span>');
+		$('.pager li').css('display', 'block');
+		//console.log('fix');
+	} else {
+		$('.print-preview').html('<span class="glyphicon glyphicon-print"></span> Print Preview');
+		$('.previous a').html('Prev');
+		$('.next a').html('Next');
+		$('.pager li').css('display', 'inline');
+	}	
+}
 $(document).ready(function(){
 	floatMe();
 	$(window).scroll(floatMe);
+	fixPrintSettings();
+	$(window).resize(fixPrintSettings);
 });
 </script>
 

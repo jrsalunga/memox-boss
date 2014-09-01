@@ -38,9 +38,25 @@ function floatMe(){
 	set = $(document).scrollTop()+25;
 	$('#settings-dialog').animate({top:set+'px'},{duration:0,queue:false});
 }
+function fixPrintSettings(){
+	if(parseInt($(document).width()) <= 1100){
+		$('.print-preview').html('<span class="glyphicon glyphicon-print"></span>');
+		$('.previous a').html('<span class="glyphicon glyphicon-chevron-left"></span>').css('margin-bottom','10px');
+		$('.next a').html('<span class="glyphicon glyphicon-chevron-right"></span>');
+		$('.pager li').css('display', 'block');
+		//console.log('fix');
+	} else {
+		$('.print-preview').html('<span class="glyphicon glyphicon-print"></span> Print Preview');
+		$('.previous a').html('Prev');
+		$('.next a').html('Next');
+		$('.pager li').css('display', 'inline');
+	}	
+}
 $(document).ready(function(){
 	floatMe();
 	$(window).scroll(floatMe);
+	fixPrintSettings();
+	$(window).resize(fixPrintSettings);
 });
 </script>
 
@@ -265,7 +281,7 @@ $(document).ready(function(){
 </div>
 <div id="settings-dialog" class="show">
 	<div>
-    	<a href="javascript:window.print()" class="btn btn-default print-preview">
+    	<a href="javascript:window.print()" class="btn btn-default print-preview" title="Print Preview">
         <span class="glyphicon glyphicon-print"></span> 
         Print Preview</a>
   	</div>
@@ -278,8 +294,8 @@ $(document).ready(function(){
     
     <div class="pager-c">
     	<ul class="pager">
-          <li class="previous"><a href="/reports/check-print/<?=$p->id?>">Prev</a></li>
-          <li class="next"><a href="/reports/check-print/<?=$n->id?>">Next</a></li>
+          <li class="previous"><a href="/reports/check-print/<?=$p->id?>" title="Previous Record">Prev</a></li>
+          <li class="next"><a href="/reports/check-print/<?=$n->id?>"  title="Next Record">Next</a></li>
         </ul>
     </div>
     
