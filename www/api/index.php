@@ -536,7 +536,7 @@ function getChkDay(){
     };
 }
 
-
+//reports/cvhdr-supplier
 function getCvhdrSupplier(){
     $app = \Slim\Slim::getInstance();
     $r = $app->request();
@@ -546,7 +546,6 @@ function getCvhdrSupplier(){
     $data = $database->escape_value($r->get('data'));
     $posted = $database->escape_value($r->get('posted'));
     $range = new DateRange($fr,$to,false);
-
 
     $cvhdrs = vCvhdr::group_by_supplier($fr,$to,$posted);
     //global $database;
@@ -629,7 +628,6 @@ function getCvhdrAccount(){
     }
 
 }
-
 
 function getChildTable($child, $parent, $id){
 

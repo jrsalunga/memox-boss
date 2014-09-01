@@ -67,7 +67,7 @@ if(isset($_GET['q']) && $_GET['q']!=''){
             <span class="icon-bar"></span>
           </button>
          <a href="/">
-          		<img src="../images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
+          		<img src="/images/memoxpress.png" class="img-responsive header-logo" style="height:44px; width:100px; margin: 3px;">
         	</a>
            <a class="navbar-brand" href="/">MemoXpress</a>
         </div>
@@ -352,7 +352,7 @@ $(document).ready(function(e) {
 		 var minlen = 10,
 		 	maxlen = 100,
 		 	minpct = 1,
-			maxpct = 2,
+			maxpct = 1.5,
 		 	suppliersData = [],
 			drilldownSeries = [];
 			
