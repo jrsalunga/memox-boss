@@ -146,7 +146,7 @@ class vCvhdr extends DatabaseObject{
 	
 	
 	/*	
-	*	@param: accountid, date range, posted
+	*	@param: supplierid, date range, posted
 	*	@return: array of this class object or FALSE if no record found
 	*	fetch all APV(not cancelled) to summarize total amount w/ percentage per account(using accountid)
 	*	this method is replacement for self::status_with_group_account() with issue on calculating totamount
@@ -174,14 +174,6 @@ class vCvhdr extends DatabaseObject{
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? array_shift($result_array) : false;
 	}
-	
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	
@@ -215,6 +207,39 @@ class vCvhdr extends DatabaseObject{
 		} else {
 			return false;	
 		}
+	}
+	
+	/** for api **/
+	/*	
+	*	@param: date range, posted
+	*	@return: array of this class object or FALSE if no record found
+	*	fetch all CV(not cancelled) to summarize total amount w/ percentage
+	*	
+	*	url: /reports/cvhdr-supplier
+	* 	
+	*/
+	public static function group_by_supplier($fr, $to, $posted=NULL){
+		
+			$sql = "SELECT c.code AS suppliercode, c.descriptor AS supplier, SUM(b.amount) as totchkamt,";
+			$sql .= "(SUM(b.amount)/((SELECT SUM(x.amount) FROM cvchkdtl x ";
+			$sql .= "INNER JOIN cvhdr y ON x.cvhdrid = y.id ";
+			$sql .= "WHERE x.checkdate BETWEEN '".$fr."' AND '".$to."' AND y.cancelled = 0 ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND y.posted = '".$posted."' ";
+			}
+			$sql .=") * .01)) AS percentage, ";
+			$sql .= "COUNT(b.amount) AS printctr ";
+			$sql .= "FROM cvhdr a ";
+			$sql .= "INNER JOIN cvchkdtl b ON a.id = b.cvhdrid ";
+			$sql .= "INNER JOIN supplier c ON c.id = a.supplierid ";
+			$sql .= "WHERE b.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.cancelled = 0 ";
+			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
+				$sql .= "AND a.posted = '".$posted."' ";
+			}
+			$sql .= "GROUP BY a.supplierid ORDER BY 4 DESC";
+			//echo $sql;
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? $result_array : false;
 	}
 		
 		
