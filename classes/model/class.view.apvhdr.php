@@ -49,9 +49,9 @@ class vApvhdr extends DatabaseObject{
 	
 	public static function getDue($duedate, $posted){
 		if(is_int($posted) && $posted==0 || $posted==1){
-			$sql = "SELECT * FROM vapvhdr WHERE due <= '". $duedate ."' AND posted = ". $posted ." ORDER BY due ASC";
+			$sql = "SELECT * FROM vapvhdr WHERE due <= '". $duedate ."' AND posted = ". $posted ." AND cancelled = 0 AND balance > 0 ORDER BY due ASC";
 		} else {
-			$sql = "SELECT * FROM vapvhdr WHERE due <= '". $duedate ."' ORDER BY due ASC";
+			$sql = "SELECT * FROM vapvhdr WHERE due <= '". $duedate ."' AND cancelled = 0 AND balance > 0 ORDER BY due ASC";
 		}
 		
 		
@@ -111,7 +111,7 @@ class vApvhdr extends DatabaseObject{
 			}
 			$sql .= ")) * 100 AS percentage, COUNT(b.refno) AS printctr ";
 			$sql .= "FROM apvdtl a ";
-			$sql .= "INNER JOIN vapvhdr b ON a.apvhdrid = b.id AND b.due BETWEEN '2014-07-01' AND '2014-07-31' AND b.cancelled = 0 ";
+			$sql .= "INNER JOIN vapvhdr b ON a.apvhdrid = b.id AND b.due BETWEEN '".$fr."' AND '".$to."' AND b.cancelled = 0 ";
 			$sql .= "INNER JOIN account c ON c.id = a.accountid AND c.id = '".$accountid."' ";
 			if(isset($posted) && (!is_null($posted) || $posted!="") && ($posted=="1" || $posted=="0")){
 				$sql .= "AND posted = '".$posted."' ";

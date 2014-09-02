@@ -114,9 +114,7 @@ if(isset($_GET['q']) && $_GET['q']!=''){
             <li class="active">
 				<a href="/reports/cvhdr-supplier">Check Voucher</a>
 			</li>
-            <li>
-				<a href="/reports/cvhdr-account">CV (Accounts)</a>
-			</li>
+           
 			<li>
 				<a href="/reports/cvhdr">CV Schedule</a>
 			<li>

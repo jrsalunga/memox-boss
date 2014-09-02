@@ -747,7 +747,7 @@ var AgeApvDtl = Backbone.View.extend({
 
 	},
 	render: function(){
-		console.log(this);
+		//console.log(this);
 		this.$el.html(this.template(this.model.toJSON()));
 		this.$el.attr("data-posted", this.model.get('posted'));
 		return this;
@@ -787,7 +787,7 @@ var AgeApvDtls = Backbone.View.extend({
 		this.collection.each(this.addOne, this);
 	},
 	cleanUp: function(){
-		console.log('trigger clean_up AgeApvDtls');
+		//console.log('trigger clean_up AgeApvDtls');
 		this.trigger('clean_up');
 	}
 });
@@ -843,7 +843,7 @@ var AgeApvhdrDetail = Backbone.View.extend({
 		return guid();
 	},
 	cleanUp: function(){
-		console.log('trigger clean_up AgeApvhdrDetail');
+		//console.log('trigger clean_up AgeApvhdrDetail');
 		this.trigger('clean_up');
 	}
 });
@@ -932,7 +932,7 @@ var AgeApvhdrDetails = Backbone.View.extend({
 		}
 
 		this.vageApvhdrs = new AgeApvhdrDetail({model:apvRM, collection: col});
-		console.log(this.vageApvhdrs);
+		//console.log(this.vageApvhdrs);
 		this.vageApvhdrs.listenTo(this, 'clean_up', this.vageApvhdrs.close);
 		this.$el.find('.report-detail-all').append(this.vageApvhdrs.render().el);
 		
@@ -981,7 +981,7 @@ var AgeApvhdrDetails = Backbone.View.extend({
 		
 	},
 	cleanUp: function(){
-		console.log('trigger clean_up AgeApvhdrDetails');
+		//console.log('trigger clean_up AgeApvhdrDetails');
 		this.trigger('clean_up');
 	}
 });
@@ -998,10 +998,10 @@ var ReportApvhdrAge = Backbone.View.extend({
 
 		this.pie = new vPie({el: "#c-pie", collection: this.pie_apvhdrs, settings: {title: 'Percentage per Age Total'}});
 		this.stackedBar = new vStackedBar({el: "#c-stacked-bar", collection: this.collection,  settings: {title: 'Total Amount per Age'}});
-		console.log(this.stackedBar);
+		//console.log(this.stackedBar);
 		//this.apvhdrAgeDetails = new ApvhdrAgeDetails({el: '#apvhdr-age-details' , collection: this.collection});
 		this.ageApvhdrDetails = new AgeApvhdrDetails({el: '#apvhdr-age-details' , collection: this.collection});
-		console.log(this.ageApvhdrDetails);
+		//console.log(this.ageApvhdrDetails);
 		//this._iDate = moment().format("YYYY-MM-DD"); // input date
 		this.$el.find('#range-to').val(moment().format("YYYY-MM-DD"));
 

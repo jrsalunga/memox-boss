@@ -157,6 +157,8 @@ $vcvhdrs = vCvhdr::status_with_group_account($dr->fr, $dr->to, $posted);
                                 <li class="list-group-item <?=empty($status)? 'list-group-item-info':''?>">
                                 	<?php
 										$acv = vCvhdr::sum_group_by_account($dr->fr,$dr->to);
+										//global $database;
+										//echo $database->last_query;
 									?>
                                     All: <span class="pull-right" title="<?=number_format($acv->percentage,2)?>%">&#8369; <?=number_format($acv->totchkamt,2)?></span>
                                     <span class="pull-right total-list-a"></span>

@@ -106,9 +106,6 @@ $accounts = Account::find_all();
             <li>
 				<a href="/reports/cvhdr-supplier">Check Voucher</a>
 			</li>
-            <li>
-				<a href="/reports/cvhdr-account">CV (Accounts)</a>
-			</li>
 			<li>
 				<a href="/reports/cvhdr">CV Schedule</a>
 			<li>
@@ -186,6 +183,8 @@ $accounts = Account::find_all();
                         	<?php
 								foreach($accounts as $account){
 									$apvhdr = vApvhdr::summary_by_account($account->id, $dr->fr, $dr->to, $posted);
+									//global $database;
+									//echo $database->last_query;
 									echo '<div class="panel panel-default">';
 									echo '<div class="panel-heading">';
 									echo '<h4 class="panel-title">';
@@ -214,7 +213,7 @@ $accounts = Account::find_all();
 											echo '<td title="'.$chld_cvhdr->supplier.'">'.$chld_cvhdr->suppliercode .'</td>';
 											echo '<td title="APV Reference No"><a href="/reports/accounts-payable-print/'.$chld_cvhdr->id.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
 											echo '<td title="Due Date">'. date('F j, Y', strtotime($chld_cvhdr->due)) .'</td>';
-											echo '<td title="';
+											echo '<td title="APV ';
 											echo $chld_cvhdr->posted ==1 ? 'Posted':'Unposted';
 											echo '"><span class="glyphicon glyphicon-';
 											echo $chld_cvhdr->posted ==1 ? 'posted':'unposted';

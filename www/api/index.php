@@ -824,14 +824,12 @@ function updateTable($table, $id) {
     $oTable = new $sTable();
 
     foreach ($get as $key => $value) {
-
         /*
         if($key=="id") {
             if(isset($value) &&  $value != NULL) {
                 $oTable->$key = $value;
             }
         } else {
-
         */
             $oTable->$key = $value;
         #}

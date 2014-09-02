@@ -297,6 +297,12 @@ $(document).ready(function(e) {
             <li>
 				<a href="apvhdr-age">Accounts Payable (Aged)</a>
 			</li>
+            <li>
+				<a href="apvhdr-account">AP (Accounts)</a>
+			</li>
+            <li>
+				<a href="cvhdr-supplier">Check Voucher</a>
+			</li>
             <li class="active">
             	<a href="cvhdr">CV Schedule </a>
             <li>
