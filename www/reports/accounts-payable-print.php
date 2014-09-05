@@ -238,8 +238,12 @@ $(document).ready(function(){
     
     <div class="pager-c">
     	<ul class="pager">
-          <li class="previous"><a href="/reports/accounts-payable-print/<?=$p->id?>">Prev</a></li>
-          <li class="next"><a href="/reports/accounts-payable-print/<?=$n->id?>">Next</a></li>
+          <li class="previous">
+          	<?=$p?'<a href="/reports/accounts-payable-print/'.$p->id.'">Prev</a>':'<span class="disabled">Prev</span>'?>
+          </li>
+          <li class="next">
+          	<?=$n?'<a href="/reports/accounts-payable-print/'.$n->id.'">Next</a>':'<span class="disabled">Next</span>'?>
+          </li>
         </ul>
     </div>
     
