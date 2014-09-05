@@ -103,6 +103,10 @@ $(document).ready(function(){
 #settings-dialog {
 	display:none;
 }
+#footer.bottom {
+    position: relative;
+	color: #000;
+}
 </style>
 
 
