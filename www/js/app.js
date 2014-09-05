@@ -21,17 +21,13 @@ var ApvhdrsDue = AppRouter.extend({
         "apvdue/:due": "apvdue"
        
     },
-
     initialize: function () {
     	var reportApvhdr = new ReportApvhdr({collection: apvhdrs});
 
-    	
-		console.log(reportApvhdr);
-		//reportApvhdr.render();
-
-       
+    	this.apvdue($('#range-to').val());
+		//console.log(reportApvhdr);
+		//reportApvhdr.render(); 
     },
-
 	home: function() {
        
     },
@@ -50,9 +46,6 @@ var ApvhdrsDue = AppRouter.extend({
     				+'<div class="col-sm-10 col-md-10 r-pane"></div>';
     	
     	$('.stage').html(html);
-
-
-
     },
     apvdue: function(due){
     	//apvhdrs.url = '../www/api/r/apvdue?due='+ due;
@@ -62,10 +55,6 @@ var ApvhdrsDue = AppRouter.extend({
 
         $('#range-to').val(due);
     }
-
-
-   
-
 });
 
 
@@ -78,9 +67,9 @@ var ApvhdrsAge = AppRouter.extend({
 
     initialize: function () {
         this.reportApvhdrAge = new ReportApvhdrAge({el: '#apvhdr-report', collection: apvhdrs}); 
-        console.log(this.reportApvhdrAge);  
+        this.apvdue($('#range-to').val());
+        //console.log(this.reportApvhdrAge);  
     },
-
     home: function() {
     },
     apvdue: function(due){
@@ -88,8 +77,6 @@ var ApvhdrsAge = AppRouter.extend({
         apvhdrs.url = '../api/r/apvdue?due='+ due;
         //apvhdrs.url = 'http://mfi-boss.no-ip.biz/api/r/apvdue?callback=hello&due='+ due;
         apvhdrs.fetch({reset: true});
-
-       
 
         $('#range-to').val(due);
     }
