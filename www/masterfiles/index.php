@@ -16,7 +16,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MemoXpress - Reports Dashboard</title>
+<title>MemoXpress - Masterfiles Dashboard</title>
 <link rel="shortcut icon" type="image/x-icon" href="../images/memoxpress-favicon.jpg" />
 
 <link rel="stylesheet" href="../css/bootstrap.css">
@@ -39,135 +39,17 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 		<div class="col-sm-2 col-md-2 l-pane">
     	<?php
             $activ = '';
-            include_once('../inc/menu-nav.php');
+            include_once('../inc/masterfiles-menu-nav.php');
         ?>
     	</div>
     	<div class="col-sm-10 col-md-10 r-pane pull-right">
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Reports Dashboard</h1>
+                		<h1>Masterfiles</h1>
                 	</div>
                 </div>
-                <div class="row">
-                	<div class="col-md-6">
-                        
-                    </div>
-                	<div class="col-md-6 datepick">
-                        <form role="form" class="form-inline pull-right">
-                            <div class="form-group">
-                                <label class="sr-only" for="fr">From:</label>
-                                <input type="text" class="form-control" id="fr" name="fr" placeholder="YYYY-MM-DD" value="<?=$dr->fr?>">
-                            </div>	
-                            <div class="form-group">
-                                <label class="sr-only" for="to">To:</label>
-                                <input type="text" class="form-control" id="to" name="to" placeholder="YYYY-MM-DD"  value="<?=$dr->to?>">
-                            </div>
-          
-                            <button type="submit" class="btn btn-success">Go</button>
-                        </form>
-                	</div>
-                </div>
-                <div class="row">
-                	<div class="col-md-12">
-                		<div class="col-md-12">
-                        	<div id="graph" class="graph-full">
-                            </div>
-                        </div>
-                	</div>
-                    <div class="col-md-6">
-                    	<?php
-							$sql = "SELECT * FROM vapvhdr WHERE due = '".date('Y-m-d', strtotime('now'))."' ";
-							$sql .="AND cancelled = 0 ORDER BY supplier;";
-                          	$curr_apvhdrs = vApvhdr::find_by_sql($sql);
-						?>
-                    	<div class="panel panel-default">
-                         	<div class="panel-heading">
-                            	<h3 class="panel-title">
-                                <span class="badge"><?=count($curr_apvhdrs)?></span>
-                                	Account Payables due today
-                                    <span class="pull-right">&#8369; 
-                                    <?php
-										$sa = 0;
-                               			foreach($curr_apvhdrs as $curr_apvhdr){ 
-											$sa = $sa + $curr_apvhdr->totamount;
-										}
-										echo number_format($sa,2);
-									?>
-                                    </span>
-                             	</h3>
-                          	</div>
-                          	<div class="panel-body">
-                            	<div class="list-group">
-								<?php
-                                    
-                                    foreach($curr_apvhdrs as $curr_apvhdr){
-                                        //echo .'<br>';
-										$status = $curr_apvhdr->posted==1 ? 'glyphicon-posted-bw':'glyphicon-unposted-bw';
-                                        echo '<a href="/reports/accounts-payable-print/'.$curr_apvhdr->id.'" target="_blank" class="list-group-item">';
-                                        echo '<p class="list-group-item-text">'.$curr_apvhdr->refno;
-										echo ' <span class="glyphicon '.$status.'"></span>';
-										echo '<span class="pull-right">'.date('F j, Y', strtotime($curr_apvhdr->due)).'</span></p>';
-                                        echo '<h4 class="list-group-item-heading">'.$curr_apvhdr->supplier.'</h4>';
-                                        echo '<p class="list-group-item-text"><span class="pull-right">&#8369; <strong>'.number_format($curr_apvhdr->totamount,2).'</strong></span></p>';
-										echo '<div style="clear:both;"></div>';
-                                        echo '</a>';
-                                    }
-                                ?>
-                            	</div>
-                          	</div>
-                        </div>
-                		
-                        <br>
-                        
-                	</div>
-                    <div class="col-md-6">
-						<?php
-                        	$sql = "SELECT * FROM vcvchkdtl WHERE checkdate = '".date('Y-m-d', strtotime('now'))."' ";
-							$sql .= "AND cancelled = 0 ORDER BY supplier;";
-							$curr_vcvchkdtls = vCvchkdtl::find_by_sql($sql);
-                        ?>
-                    	<div class="panel panel-default">
-                         	<div class="panel-heading">
-                            	<h3 class="panel-title">
-                                <span class="badge"><?=count($curr_vcvchkdtls)?></span>
-                                	Checks dated today
-                                    <span class="pull-right">&#8369; 
-                                    <?php
-										$sc = 0;
-                               			foreach($curr_vcvchkdtls as $curr_vcvchkdtl){ 
-											$sc = $sc + $curr_vcvchkdtl->amount;
-										}
-										echo number_format($sc,2);
-									?>
-                                    </span>
-                             	</h3>
-                          	</div>
                 
-                          	<div class="panel-body">
-                            	<div class="list-group">
-                				<?php
-									foreach($curr_vcvchkdtls as $curr_vcvchkdtl){
-										//echo $curr_vcvchkdtl->checkno.'<br>';
-										$status = $curr_vcvchkdtl->posted==1 ? 'glyphicon-posted-bw':'glyphicon-unposted-bw';
-										echo '<a href="/reports/check-print/'.$curr_vcvchkdtl->cvhdrid.'" target="_blank" class="list-group-item">';
-                                        echo '<p class="list-group-item-text">'.$curr_vcvchkdtl->checkno;
-										echo ' <span class="glyphicon '.$status.'"></span>';
-										echo '<span class="pull-right">'.date('F j, Y', strtotime($curr_vcvchkdtl->cvhdrdate)).'</span></p>';
-                                        echo '<h4 class="list-group-item-heading">'.$curr_vcvchkdtl->supplier.'</h4>';
-                                        echo '<p class="list-group-item-text">'. $curr_vcvchkdtl->bankcode;
-										echo '<span class="pull-right">&#8369; <strong>'.number_format($curr_vcvchkdtl->amount,2).'</strong></span></p>';
-                                        echo '<div style="clear:both;"></div>';
-										echo '</a>';
-									}
-								?>
-                                </div>
-                            </div>
-                        </div>
-                        <br>
-                        
-                	</div>
-                </div>
       		</section>
         </div>
   

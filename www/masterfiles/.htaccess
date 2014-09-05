@@ -1,0 +1,7 @@
+RewriteEngine on
+
+
+RewriteRule ^index(\/.*)*$ /masterfiles/index.php
+RewriteRule ^check(\/.*)*$ /masterfiles/check.php
+
+
