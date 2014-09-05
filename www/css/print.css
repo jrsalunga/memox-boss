@@ -410,10 +410,18 @@ table td, table th {
 /**************** print preview  ***************/
 
 
-#settings-dialog a{
+#settings-dialog a,
+#settings-dialog .next span,
+#settings-dialog .previous span{
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 	text-decoration:none;
 	color: #333;
+}
+
+#settings-dialog .next span.disabled,
+#settings-dialog .previous span.disabled{
+	color: #ccc;
+	cursor:not-allowed;
 }
 
 

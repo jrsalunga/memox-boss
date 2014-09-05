@@ -294,8 +294,12 @@ $(document).ready(function(){
     
     <div class="pager-c">
     	<ul class="pager">
-          <li class="previous"><a href="/reports/check-print/<?=$p->id?>" title="Previous Record">Prev</a></li>
-          <li class="next"><a href="/reports/check-print/<?=$n->id?>"  title="Next Record">Next</a></li>
+          <li class="previous">
+          	<?=$p?'<a href="/reports/check-print/'.$p->id.'" title="Previous Record">Prev</a>':'<span class="disabled">Prev</span>'?>
+		  </li>
+          <li class="next">
+          	<?=$n?'<a href="/reports/check-print/'.$n->id.'" title="Next Record">Next</a>':'<span class="disabled">Next</span>'?>         
+          </li>
         </ul>
     </div>
     
