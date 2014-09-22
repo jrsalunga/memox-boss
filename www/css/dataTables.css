@@ -547,10 +547,27 @@ table.dataTable.display tbody td:not(:last-child) {
 }
 
 
+table.dataTable.row-border tbody td:last-child, 
+table.dataTable.display tbody td:last-child {
+  border-top:none;
+  border-bottom: 1px solid #eee;
+  border-right: none;
+}
+
+
 table.dataTable.row-border tbody tr:last-child td, 
 table.dataTable.display tbody tr:last-child td {
   border-top:none;
   border-bottom: 1px solid #ccc;
+}
+
+table.dataTable.display tbody td.currency {
+	text-align:right;
+}
+
+
+table.dataTable.display tbody td > a {
+	color: #005c9c;
 }
 
 

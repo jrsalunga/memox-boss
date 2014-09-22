@@ -100,7 +100,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 
 <script src="../js/vendors/bootstrap.min.js"></script>
-
+<script src="../js/vendors/accounting.js"></script>
 <!--
 <script src="../js/vendors/jquery-1.10.1.min.js"></script>
 <script src="../js/vendors/jquery-ui-1.10.3.js"></script>
@@ -140,16 +140,28 @@ var table = $('.tb-data').DataTable({
         //"ajax": "/api/dt/vcvchkdtl",
         "ajax": "/api/dt/s/vcvchkdtl",
         "aoColumns": [
-            { "mData": "refno" },
+            { 
+                "mData": "refno",
+                "mRender": function(data, type, full ){
+                    return '<a href="/reports/check-print/'+full.cvhdrid+'" target="_blank">'+data+'</a>';
+                } 
+            },
             { "mData": "checkno" },
             { "mData": "bankcode" },
             { "mData": "checkdate" },
             { "mData": "payee" },
-            { "mData": "amount" }
+            { 
+                "mData": "amount",
+                "mRender": function(data, type, full ){
+                    return accounting.formatMoney(data,'',2,",",".");
+                }
+            }
             ],
         "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
                 $(nRow).attr("data-id", aData.id);
                 $(nRow).attr("id", aData.id);
+
+                $('td:eq(5)', nRow).addClass("currency");
         }
     });
 

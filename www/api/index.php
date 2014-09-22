@@ -1604,7 +1604,8 @@ function sdt($table){
             }
         ),
         */
-        array('db'=>'id', 'dt'=>6)
+        array('db'=>'id', 'dt'=>6),
+        array('db'=>'cvhdrid', 'dt'=>7)
     );
 
 
