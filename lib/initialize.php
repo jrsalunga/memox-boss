@@ -49,6 +49,7 @@ setReporting();
 
 require_once(ROOT.DS.'classes'.DS.'session.php');
 require_once(ROOT.DS.'classes'.DS.'database.php');
+require_once(ROOT.DS.'classes'.DS.'database2.php');
 require_once(ROOT.DS.'classes'.DS.'database_object.php');
 require_once(ROOT.DS.'classes'.DS.'functions.php');
 
@@ -83,9 +84,9 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.vproject.php');
 
 
 
-
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.hc.pie.php');
 
+require_once(ROOT.DS.'classes'.DS.'ssp.class.php');
 require_once(ROOT.DS.'classes'.DS.'class.cleanurl.php');
 
 

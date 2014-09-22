@@ -1,6 +1,5 @@
 <?php
 
-
 class DateRange {
 	
 	public $fr;
@@ -371,6 +370,86 @@ function hrefer_next($dr){
 			echo '?fr='.$dr->fr_next_day().'&to='.$dr->to_next_day();
 		}
 	}
+}
+
+
+
+
+
+
+class DT {
+
+
+
+	function __construct(){
+
+	}
+
+	static function get_table_headers($bindings, $table){
+		
+		global $database2;
+
+		$sql = "DESCRIBE ". $table;
+    	$rows = $database2->query($bindings, $sql);
+	    $aColumns = array();
+	    
+	    foreach ($rows as $row) {
+	    	$aColumns[] = $row[0];
+	    }
+		
+	    return $aColumns;
+	}
+
+
+	static function limit($request, $columns){
+		$limit = '';
+
+		if ( isset($request['start']) && $request['length'] != -1 ) {
+			$limit = "LIMIT ".intval($request['start']).", ".intval($request['length']);
+		}
+		return $limit;
+	}
+
+
+
+	static function order ( $request, $columns )
+	{
+		$order = '';
+
+		if ( isset($request['order']) && count($request['order']) ) {
+			$orderBy = array();
+			$dtColumns = self::pluck( $columns, 'dt' );
+
+			for ( $i=0, $ien=count($request['order']) ; $i<$ien ; $i++ ) {
+				// Convert the column index into the column data property
+				$columnIdx = intval($request['order'][$i]['column']);
+				$requestColumn = $request['columns'][$columnIdx];
+
+				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
+				$column = $columns[ $columnIdx ];
+
+				if ( $requestColumn['orderable'] == 'true' ) {
+					$dir = $request['order'][$i]['dir'] === 'asc' ?
+						'ASC' :
+						'DESC';
+
+					$orderBy[] = '`'.$column['db'].'` '.$dir;
+				}
+			}
+
+			$order = 'ORDER BY '.implode(', ', $orderBy);
+		}
+
+		return $order;
+	}
+
+
+
+
+
+	
+
+
 }
 
 

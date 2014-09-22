@@ -21,6 +21,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 <link rel="stylesheet" href="../css/bootstrap.css">
 <link rel="stylesheet" href="../css/styles-ui2.css">
+<link rel="stylesheet" href="../css/dataTables.css">
 <!--
 <link rel="stylesheet" href="css/main-ui.css">
 <link rel="stylesheet" href="css/styles-ui.css">
@@ -46,10 +47,38 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
         	<section>
             	<div class="row">
                 	<div class="col-md-12 title">
-                		<h1>Check</h1>
+                		<h1>Checks Record</h1>
+                        
                 	</div>
                 </div>
-                
+                <div class="row">
+                	<div class="tb-data-container">
+                    	<table id="vcvchkdtl" class="display tb-data" cellspacing="0" cellpadding="0" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Ref No</th>
+                                <th>Check No</th>
+                                <th>Bank</th>
+                                <th>Check Date</th>
+                                <th>Payee</th>
+                                <th>Check Amount</th>
+                            </tr>
+                        </thead>
+                        <!--
+                        <tfoot>
+                            <tr>
+                                <th>&nbsp;</th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </tfoot>
+                        -->
+                    </table>
+                    </div>
+                </div>
       		</section>
         </div>
   
@@ -66,14 +95,21 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 <link rel="stylesheet" href="css/styles-ui.css">
 -->
 
+<script src="/js/vendors/jquery-1.11.1.min.js"></script>
+<script src="/js/vendors/jquery.dataTables.1.10.2-min.js"></script>
+
+
+<script src="../js/vendors/bootstrap.min.js"></script>
+
+<!--
 <script src="../js/vendors/jquery-1.10.1.min.js"></script>
 <script src="../js/vendors/jquery-ui-1.10.3.js"></script>
-<!--
+
 <script src="../js/vendors/jquery-ui-1.10.3.js"></script>
 <script src="../js/vendors/jquery-1.9.1.js"></script>
 <script src="js/vendors/underscore-min.js"></script>
 <script src="js/vendors/backbone-min.js"></script>
--->
+
 <script src="../js/vendors/underscore-min.js"></script>
 <script src="../js/vendors/backbone-min.js"></script>
 <script src="../js/vendors/bootstrap.min.js"></script>
@@ -90,12 +126,48 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 
 <script src="../js/common.js"></script>
 <script src="../js/highcharts.js"></script>
-<script src="../js/app.js"></script>
 
+-->
+<script src="/js/common.js"></script>
+<script>    
+var table = $('.tb-data').DataTable({
+        "dom": '<"top"f>rt<"bottom"lip><"clear">',
+        "pagingType": "simple_numbers",
+        "processing": true,
+        "serverSide": true,
+        "order": [[ 4, "asc"]],
+        //"stateSave": true,
+        //"ajax": "/api/dt/vcvchkdtl",
+        "ajax": "/api/dt/s/vcvchkdtl",
+        "aoColumns": [
+            { "mData": "refno" },
+            { "mData": "checkno" },
+            { "mData": "bankcode" },
+            { "mData": "checkdate" },
+            { "mData": "payee" },
+            { "mData": "amount" }
+            ],
+        "fnRowCallback": function( nRow, aData, iDisplayIndex, iDisplayIndexFull ) {
+                $(nRow).attr("data-id", aData.id);
+                $(nRow).attr("id", aData.id);
+        }
+    });
 
-<script>
 
 $(document).ready(function(e) {
+	
+	
+	
+
+
+    
+   
+    
+
+
+
+
+    
 	
 	
 	
