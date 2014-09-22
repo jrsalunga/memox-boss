@@ -56,7 +56,7 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
                     	<table id="vcvchkdtl" class="display tb-data" cellspacing="0" cellpadding="0" width="100%">
                         <thead>
                             <tr>
-                                <th>Ref No</th>
+                                <th>CV Ref No</th>
                                 <th>Check No</th>
                                 <th>Bank</th>
                                 <th>Check Date</th>
@@ -138,7 +138,7 @@ var table = $('.tb-data').DataTable({
         "order": [[ 4, "asc"]],
         //"stateSave": true,
         //"ajax": "/api/dt/vcvchkdtl",
-        "ajax": "/api/dt/s/vcvchkdtl",
+        "ajax": "/api/dt/vcvchkdtl",
         "aoColumns": [
             { 
                 "mData": "refno",

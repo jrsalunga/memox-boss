@@ -30,6 +30,17 @@ class vCvchkdtl extends DatabaseObject{
 	public $bankid;
 	public $chkctr;
 	
+	
+	public static $dt_columns = array(
+        array('db'=>'refno', 'dt'=>'refno'),
+        array('db'=>'checkno', 'dt'=>'checkno'),
+        array('db'=>'bankcode', 'dt'=>'bankcode'),
+        array('db'=>'checkdate', 'dt'=>'checkdate'),
+        array('db'=>'payee', 'dt'=>'payee'),
+        array('db'=>'amount', 'dt'=>'amount'),
+        array('db'=>'id', 'dt'=>'id'),
+        array('db'=>'cvhdrid', 'dt'=>'cvhdrid')
+    );
 
 	
 	

@@ -241,7 +241,7 @@ class SSP {
 		 * Output
 		 */
 		return array(
-			"sql" => $sql,
+			//"sql" => $sql,
 			"draw"            => intval( $request['draw'] ),
 			"recordsTotal"    => intval( $recordsTotal ),
 			"recordsFiltered" => intval( $recordsFiltered ),

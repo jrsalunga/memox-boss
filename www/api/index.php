@@ -99,8 +99,8 @@ $app->delete('/v/:table/:id',  'deleteRealTable');
 $app->get('/datatables/:table',  'datatables');
 $app->get('/datatables/v/:table',  'datatables2');
 
-$app->get('/dt/v/:table', 'vdt');
-$app->get('/dt/s/:table', 'sdt');
+$app->get('/dt/:table', 'dt');
+
 
 $app->get('/search/:table', 'searchTable');
 $app->get('/search/txn/v/:table/:supplierid', 'searchTxnViewTable');
@@ -157,45 +157,6 @@ $app->get('/report/apvhdr-account', 'getApvhdrAccount');
 $app->get('/report/cvhdr-account', 'getCvhdrAccount');
 
 /*****************************  Run App **************************/
-
-function dt($table){
-    //echo $table;
-
-    //$table = 'datatables_demo';
-
-    $primaryKey = 'id';
-
-    $columns = array(
-        array('db'=>'refno', 'dt'=>0),
-        array('db'=>'checkno', 'dt'=>1),
-        array('db'=>'bankcode', 'dt'=>2),
-        array('db'=>'checkdate', 'dt'=>3),
-        array('db'=>'payee', 'dt'=>4),
-        array('db'=>'amount', 'dt'=>5,
-            'formatter'=>function($d, $row){
-                return number_format($d, 2);
-            }
-        ),
-        array('db'=>'id', 'dt'=>6)
-    );
-
-
-    $sql_details = array(
-        'user' => 'root',
-        'pass' => 'p@55w0rd',
-        'db'   => 'memox',
-        'host' => 'localhost'
-    );
-
-
-    echo json_encode(
-        SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns)
-    );
-
-
-}
-
-
 
 
 
@@ -1499,97 +1460,10 @@ function datatables2($cTable) {
 }
 
 
-function vdt($cTable){
-
-    $database = MySQLDatabase2::getInstance();
-    $app = \Slim\Slim::getInstance();
-
-    $table = substr_replace($cTable, 'v', 0, 0);
-
-    $request = $_GET;
-    $columns = array(
-        array('db'=>'refno', 'dt'=>0),
-        array('db'=>'checkno', 'dt'=>1),
-        array('db'=>'bankcode', 'dt'=>2),
-        array('db'=>'checkdate', 'dt'=>3),
-        array('db'=>'payee', 'dt'=>4),
-        array('db'=>'amount', 'dt'=>5,
-            'formatter'=>function($d, $row){
-                return number_format($d, 2);
-            }
-        ),
-        array('db'=>'id', 'dt'=>6)
-    );
-    
-
-        $bindings = array();
-        //$db = SSP::sql_connect();
-        $db = $database;
-
-        // Build the SQL query string from the request
-        $limit = SSP::limit( $request, $columns );
-        $order = SSP::order( $request, $columns );
-        $where = SSP::filter( $request, $columns, $bindings );
-
-        //echo $where." ".$order." ".$limit;
-
-        // Main query to actually get the data
-        //$data = SSP::sql_exec
-        /*
-        $data = $database->query($bindings,
-            "SELECT SQL_CALC_FOUND_ROWS `".implode("`, `", SSP::pluck($columns, 'db'))."`
-             FROM `$table`
-             $where
-             $order
-             $limit"
-        );
-        */
-        $fsQuery = "SELECT SQL_CALC_FOUND_ROWS `".implode("`, `", SSP::pluck($columns, 'db'))."`
-             FROM `$table`
-             $where
-             $order
-             $limit";
-
-        $cTable = ucfirst($table);
-
-        $oTable = $cTable::find_by_sql($fsQuery);
-
-
-        
-        $resFilterLength = $database->query("SELECT FOUND_ROWS()");
-        $recordsFiltered = $resFilterLength[0][0];
-
-        // Total data set length
-        $resTotalLength = $database->query(
-            "SELECT COUNT(`id`)
-             FROM   `$table`"
-        );
-        $recordsTotal = $resTotalLength[0][0];
-
-
-        /*
-         * Output
-         */
-        $out = array(
-            //"sql"             => $fsQuery,
-            "draw"            => intval( $request['draw'] ),
-            "recordsTotal"    => intval( $recordsTotal ),
-            "recordsFiltered" => intval( $recordsFiltered ),
-            "data"            => $oTable
-        );
-
-
-        echo json_encode($out);
-
-}
-
-
-function sdt($table){
-
-
+function dt($table){
 
     $primaryKey = 'id';
-
+    /*
     $columns = array(
         array('db'=>'refno', 'dt'=>'refno'),
         array('db'=>'checkno', 'dt'=>'checkno'),
@@ -1597,17 +1471,19 @@ function sdt($table){
         array('db'=>'checkdate', 'dt'=>'checkdate'),
         array('db'=>'payee', 'dt'=>'payee'),
         array('db'=>'amount', 'dt'=>'amount'),
-        /*
-        array('db'=>'amount', 'dt'=>5,
-            'formatter'=>function($d, $row){
-                return number_format($d, 2);
-            }
-        ),
-        */
         array('db'=>'id', 'dt'=>'id'),
         array('db'=>'cvhdrid', 'dt'=>'cvhdrid')
     );
+    */
+    //echo $table.' '.substr($table, 0, 1).'<br>'; 
 
+    if(substr($table, 0, 1)==='v'){
+        $cTable = substr_replace($table, strtoupper(substr($table, 1, 1)), 1, 1);
+    } else {
+        $cTable = ucfirst($table);
+    }
+
+    $columns = $cTable::$dt_columns;
 
     echo json_encode(
         SSP::simple( $_GET, $table, $primaryKey, $columns , true)
