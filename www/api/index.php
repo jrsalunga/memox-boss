@@ -1591,12 +1591,12 @@ function sdt($table){
     $primaryKey = 'id';
 
     $columns = array(
-        array('db'=>'refno', 'dt'=>0),
-        array('db'=>'checkno', 'dt'=>1),
-        array('db'=>'bankcode', 'dt'=>2),
-        array('db'=>'checkdate', 'dt'=>3),
-        array('db'=>'payee', 'dt'=>4),
-        array('db'=>'amount', 'dt'=>5),
+        array('db'=>'refno', 'dt'=>'refno'),
+        array('db'=>'checkno', 'dt'=>'checkno'),
+        array('db'=>'bankcode', 'dt'=>'bankcode'),
+        array('db'=>'checkdate', 'dt'=>'checkdate'),
+        array('db'=>'payee', 'dt'=>'payee'),
+        array('db'=>'amount', 'dt'=>'amount'),
         /*
         array('db'=>'amount', 'dt'=>5,
             'formatter'=>function($d, $row){
@@ -1604,8 +1604,8 @@ function sdt($table){
             }
         ),
         */
-        array('db'=>'id', 'dt'=>6),
-        array('db'=>'cvhdrid', 'dt'=>7)
+        array('db'=>'id', 'dt'=>'id'),
+        array('db'=>'cvhdrid', 'dt'=>'cvhdrid')
     );
 
 

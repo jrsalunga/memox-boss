@@ -31,7 +31,7 @@ class SSP {
 	 *  @param  array $data    Data from the SQL get
 	 *  @return array          Formatted data in a row based format
 	 */
-	static function data_output ( $columns, $data , $json=true)
+	static function data_output ( $columns, $data )
 	{
 		$out = array();
 
@@ -41,30 +41,19 @@ class SSP {
 			for ( $j=0, $jen=count($columns) ; $j<$jen ; $j++ ) {
 				$column = $columns[$j];
 
-				
+				// Is there a formatter?
 				if ( isset( $column['formatter'] ) ) {
-					//
-					if($json){
-						$row[ $column['db'] ] = $column['formatter']( $data[$i][ $column['db'] ], $data[$i] );
-					} else {
-						
-						$row[ $column['dt'] ] = $column['formatter']( $data[$i][ $column['db'] ], $data[$i] );
-					}	
-				} else {
-					if($json){
-						$row[$column['db']] = $data[$i][$columns[$j]['db']];
-					} else {
-						$row[ $column['dt'] ] = $data[$i][ $columns[$j]['db'] ];
-					}
+					$row[ $column['dt'] ] = $column['formatter']( $data[$i][ $column['db'] ], $data[$i] );
 				}
-				
+				else {
+					$row[ $column['dt'] ] = $data[$i][ $columns[$j]['db'] ];
+				}
 			}
 
 			$out[] = $row;
 		}
 
 		return $out;
-		//return $json ? $out : json_encode($out);
 	}
 
 
@@ -88,19 +77,6 @@ class SSP {
 		return $limit;
 	}
 
-	static function get_table_headers($bindings, $table){
-
-		$sql = "DESCRIBE ". $table;
-    	$rows = $database2->query($bindings, $sql);
-	    $aColumns = array();
-	    
-	    foreach ($rows as $row) {
-	    	$aColumns[] = $row[0];
-	    }
-		
-	    return $aColumns;
-	}
-
 
 	/**
 	 * Ordering
@@ -114,41 +90,27 @@ class SSP {
 	static function order ( $request, $columns )
 	{
 		$order = '';
-		//echo json_encode($request['order']);
+
 		if ( isset($request['order']) && count($request['order']) ) {
 			$orderBy = array();
-			$dtColumns = self::pluck( $columns, 'db' );
-			//echo json_encode($dtColumns)."<br>";
-			//echo json_encode($columns[5])."<br>";
+			$dtColumns = self::pluck( $columns, 'dt' );
 
 			for ( $i=0, $ien=count($request['order']) ; $i<$ien ; $i++ ) {
 				// Convert the column index into the column data property
 				$columnIdx = intval($request['order'][$i]['column']);
-				//echo $columnIdx."<br>";
 				$requestColumn = $request['columns'][$columnIdx];
-				//echo $requestColumn['data']."<br>";
-				//var_dump($requestColumn);
-				//echo "<br>";
+
 				$columnIdx = array_search( $requestColumn['data'], $dtColumns );
-				//echo "columnIdx ".$columnIdx."<br>";
 				$column = $columns[ $columnIdx ];
-				
-				//echo $requestColumn['orderable']."<br>";
 
 				if ( $requestColumn['orderable'] == 'true' ) {
-					//echo $column['db']."<br>";
-
 					$dir = $request['order'][$i]['dir'] === 'asc' ?
 						'ASC' :
 						'DESC';
 
 					$orderBy[] = '`'.$column['db'].'` '.$dir;
-
-					//echo json_encode($orderBy)."<br>";;
 				}
 			}
-
-
 
 			$order = 'ORDER BY '.implode(', ', $orderBy);
 		}
@@ -176,9 +138,9 @@ class SSP {
 	{
 		$globalSearch = array();
 		$columnSearch = array();
-		$dtColumns = self::pluck( $columns, 'db' );
+		$dtColumns = self::pluck( $columns, 'dt' );
 
-		if (isset($request['search']) && $request['search']['value'] != '' ) {
+		if ( isset($request['search']) && $request['search']['value'] != '' ) {
 			$str = $request['search']['value'];
 
 			for ( $i=0, $ien=count($request['columns']) ; $i<$ien ; $i++ ) {
@@ -243,7 +205,7 @@ class SSP {
 	 *  @param  array $columns Column information array
 	 *  @return array          Server-side processing response array
 	 */
-	static function simple ( $request, $table, $primaryKey, $columns, $json=false)
+	static function simple ( $request, $table, $primaryKey, $columns )
 	{
 		$bindings = array();
 		$db = self::sql_connect();
@@ -258,13 +220,8 @@ class SSP {
 			 $where
 			 $order
 			 $limit";
-
 		// Main query to actually get the data
-		$data = self::sql_exec( $db, $bindings, "SELECT SQL_CALC_FOUND_ROWS `".implode("`, `", self::pluck($columns, 'db'))."`
-			 FROM `$table`
-			 $where
-			 $order
-			 $limit");
+		$data = self::sql_exec( $db, $bindings, $sql);
 
 		// Data set length after filtering
 		$resFilterLength = self::sql_exec( $db,
@@ -288,7 +245,7 @@ class SSP {
 			"draw"            => intval( $request['draw'] ),
 			"recordsTotal"    => intval( $recordsTotal ),
 			"recordsFiltered" => intval( $recordsFiltered ),
-			"data"            => self::data_output( $columns, $data, $json)
+			"data"            => self::data_output( $columns, $data )
 		);
 	}
 
