@@ -292,7 +292,7 @@ $(document).ready(function(e) {
 	
 	$.getJSON('/api/report/cvhdr-supplier?fr=<?=$dr->fr?>&to=<?=$dr->to?>&posted=<?=$posted?>&data=json', function (cvhdrs){	
 		 
-		 var minlen = 10,
+		 var minlen = 20,
 		 	maxlen = 100,
 		 	minpct = 1,
 			maxpct = 2.5,
