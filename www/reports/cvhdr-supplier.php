@@ -171,6 +171,8 @@ if(isset($_GET['q']) && $_GET['q']!=''){
 												echo '<td title="Bank: '.$chld_cvhdr->bank.'">'.$chld_cvhdr->bankcode.'</td>';
 												echo '<td title="Check No">';
 												echo $chld_cvhdr->checkno == 0 ? '-':'<span class="glyphicon glyphicon-money"></span> '. $chld_cvhdr->checkno;
+												$childs = vCvchkdtl::find_all_by_field('checkno', $chld_cvhdr->checkno);
+												echo count($childs) > 1 ? ' <span class="glyphicon glyphicon-warning" title="Duplicate"></span>':'';
 												echo '</td>';
 												echo '<td title="Check Date">'. date('M j, Y', strtotime($chld_cvhdr->checkdate)) .'</td>';
 												echo '<td title="CV ';

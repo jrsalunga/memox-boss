@@ -85,12 +85,12 @@ function daterange(){
 
 $(document).ready(function(e) {
 	
-	 $(".pop").popover({
-    html: true,
-    content: function () {
-        return $(".pop-content").html();
-    }
-  });
+	$(".pop").popover({
+    	html: true,
+    	content: function () {
+        	return $(".pop-content").html();
+    	}
+  	});
 	
 	/*
 	$('td.checkno').each(function( idx, el ){
