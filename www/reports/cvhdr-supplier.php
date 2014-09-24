@@ -302,11 +302,12 @@ $(document).ready(function(e) {
 			
 		 
 		
-		//console.log(cvhdrs.length); 
-		if(cvhdrs.length > maxlen){
-			alert('Cannot render graph. Too large date range parameter.');
+		console.log(cvhdrs.length); 
+		if(cvhdrs.length >= minlen){
+		//if(cvhdrs.length > maxlen){
+		//	alert('Cannot render graph. Too large date range parameter.');
 			
-		} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {
+		//} else if((cvhdrs.length <= maxlen) && (cvhdrs.length >= minlen)) {
 			//console.log('mid len');	
 			//console.log(cvhdrs.length);
 			var level = parseInt(cvhdrs.length/minlen);
