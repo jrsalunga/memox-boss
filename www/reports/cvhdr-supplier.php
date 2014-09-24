@@ -170,9 +170,16 @@ if(isset($_GET['q']) && $_GET['q']!=''){
 												echo '<td title="CV Ref No"><a href="/reports/check-print/'.$chld_cvhdr->cvhdrid.'" target="_blank">'.$chld_cvhdr->refno .'</a></td>';
 												echo '<td title="Bank: '.$chld_cvhdr->bank.'">'.$chld_cvhdr->bankcode.'</td>';
 												echo '<td title="Check No">';
-												echo $chld_cvhdr->checkno == 0 ? '-':'<span class="glyphicon glyphicon-money"></span> '. $chld_cvhdr->checkno;
-												$childs = vCvchkdtl::find_all_by_field('checkno', $chld_cvhdr->checkno);
-												echo count($childs) > 1 ? ' <span class="glyphicon glyphicon-warning" title="Duplicate"></span>':'';
+												echo $chld_cvhdr->checkno == 0 ? '-':'<span class="glyphicon glyphicon-money" style="color:#5cb85c;"></span> ';
+												 
+													$childs = vCvchkdtl::find_all_by_field('checkno', $chld_cvhdr->checkno);
+													if(count($childs) > 1){
+														echo ' <a href="/masterfiles/check?q='.$chld_cvhdr->checkno.'" target="_blank"> '. $chld_cvhdr->checkno .'</a> ';
+														echo ' <span class="glyphicon glyphicon-warning" title="Duplicate" style="color:#f0ad4e;"></span>';
+													} else {
+														echo $chld_cvhdr->checkno;	
+													}
+													
 												echo '</td>';
 												echo '<td title="Check Date">'. date('M j, Y', strtotime($chld_cvhdr->checkdate)) .'</td>';
 												echo '<td title="CV ';
