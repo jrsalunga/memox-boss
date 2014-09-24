@@ -168,9 +168,13 @@ var table = $('.tb-data').DataTable({
 
 $(document).ready(function(e) {
 	
-	
-	
+	<?php
+        if(isset($_GET['q']) && $_GET['q'] != ''){
+            echo 'table.search('.$_GET['q'].').draw();';
+        }
+	   
 
+    ?>
 
     
    
