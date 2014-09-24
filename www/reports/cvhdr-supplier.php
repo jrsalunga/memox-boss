@@ -295,7 +295,7 @@ $(document).ready(function(e) {
 		 var minlen = 10,
 		 	maxlen = 100,
 		 	minpct = 1,
-			maxpct = 1.5,
+			maxpct = 2.5,
 		 	suppliersData = [],
 			drilldownSeries = [];
 			
