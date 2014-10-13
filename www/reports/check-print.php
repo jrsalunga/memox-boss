@@ -209,7 +209,7 @@ $(document).ready(function(){
                         <td class="total-line" colspan="4">Total APV Amount</td>
                         <td class="total-value">
 						<span
-                        <?=($cvhdr->totapvamt!=$totapvamt)?'style="color:red;" title="not balance on the total of  APVs individual amount: '. number_format($totapvamt,2).'"':'title="AP total individual amount: '. number_format($totapvamt,2).'"'?>
+                        <?=(round($cvhdr->totapvamt,2)!=round($totapvamt,2))?'style="color:red;" title="not balance on the total of  APVs individual amount: '. number_format($totapvamt,2).'"':'title="AP total individual amount: '. number_format($totapvamt,2).'"'?>
                         >&#8369;</span>
 						<?=number_format($cvhdr->totapvamt,2)?></td>
                     </tr>
