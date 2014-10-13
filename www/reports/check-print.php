@@ -255,7 +255,7 @@ $(document).ready(function(){
                     	<td class="blank" colspan="0"></td>
                         <td class="blank" colspan="0"></td>
                         -->
-                        <td class="total-line" colspan="3">Total Check Amount</td>
+                        <td class="total-line" colspan="3" title="CV totchkamt: <?=$cvhdr->totchkamt?> / All: <?=$totchkamt?>">Total Check Amount</td>
                         <td class="total-value">
                         <span
                         <?=($cvhdr->totchkamt!=$totchkamt)?'style="color:red;" title="not balance on the total of CHKs individual amount: '. number_format($totchkamt,2).'"':'title="CV total individual amount: '. number_format($totchkamt,2).'"'?>
