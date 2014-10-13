@@ -195,7 +195,7 @@ $(document).ready(function(){
 						echo '<td>'.date('m/d/Y', strtotime($cvapvdtl->due)).'</td>';
 						echo '<td>'.$cvapvdtl->supprefno.'</td>';
 						echo '<td>'.$cvapvdtl->porefno.'</td>';
-						echo "<td>&#8369; ". number_format($cvapvdtl->amount,2) ."</td>";
+						echo "<td>". number_format($cvapvdtl->amount,2) ."</td>"; //&#8369;
 						echo "</tr>";
 						$totapvamt = $totapvamt + $cvapvdtl->amount;
 					}
@@ -239,7 +239,10 @@ $(document).ready(function(){
 						$bank = Bank::find_by_id($cvchkdtl->bankacctid);
 						//echo json_encode($bank);
 						echo "<tr>";
-						echo "<td>". $bank->code .' / '. $bank->acctno ."</td><td>". $cvchkdtl->checkno ."</td><td>". date('m/d/Y', strtotime($cvchkdtl->checkdate)) ."</td><td>&#8369; ". number_format($cvchkdtl->amount,2) ."</td>";
+						echo "<td>". $bank->code .' / '. $bank->acctno ."</td>";
+						echo "<td>". $cvchkdtl->checkno ."</td>";
+						echo "<td>". date('m/d/Y', strtotime($cvchkdtl->checkdate)) ."</td>";
+						echo "<td>". number_format($cvchkdtl->amount,2) ."</td>"; //&#8369; 
 						echo "</tr>";
 						$totchkamt = $totchkamt + $cvchkdtl->amount;
 					}
