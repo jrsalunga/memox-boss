@@ -6,8 +6,8 @@ $(document).ready(function() {
 	//ComputeItemAmount();
   	
 	//$('.table-model input[type=checkbox]').css('border','1px red solid').val(1);
-	//$('.header-logo').attr('src','/images/mfi-logo.png');
-	//$('.navbar-brand').text('Modularfusion Inc');
+	$('.header-logo').attr('src','/images/mfi-logo.png');
+	$('.navbar-brand').text('Modularfusion Inc');
 	
 	
 	

@@ -393,7 +393,16 @@ td.hover {
 												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
 													echo 'style="color:#f0ad4e;"';	
 												}
-												echo ' class="bnk-'.$cvchkdtl->bankcode.' checkno" >'.$cvchkdtl->checkno;
+												echo ' class="bnk-'.$cvchkdtl->bankcode.' checkno" >';
+												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
+													echo '<a href="/masterfiles/check?q='.$cvchkdtl->checkno.'" style="color:#f0ad4e;" target="_blank">'.$cvchkdtl->checkno.'</a>';
+												} else {
+													echo $cvchkdtl->checkno;
+												}
+												
+												
+
+
 												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
 													
 													$childs = vCvchkdtl::find_all_by_field('checkno', $cvchkdtl->checkno);

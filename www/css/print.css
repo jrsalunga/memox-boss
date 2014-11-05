@@ -337,10 +337,12 @@ table td, table th {
 .glyphicon-print:before {
   content: "\e045";
 }
-.glyphicon-chevron-left:before {
+.glyphicon.glyphicon-chevron-left:before {
+  font-family: 'Glyphicons Halflings';
   content: "\e079";
 }
-.glyphicon-chevron-right:before {
+.glyphicon.glyphicon-chevron-right:before {
+  font-family: 'Glyphicons Halflings';
   content: "\e080";
 }
 

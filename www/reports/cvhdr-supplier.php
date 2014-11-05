@@ -173,7 +173,7 @@ if(isset($_GET['q']) && $_GET['q']!=''){
 												echo $chld_cvhdr->checkno == 0 ? '-':'<span class="glyphicon glyphicon-money" style="color:#5cb85c;"></span> ';
 												 
 													$childs = vCvchkdtl::find_all_by_field('checkno', $chld_cvhdr->checkno);
-													if(count($childs) > 1){
+													if(count($childs) > 1 && $chld_cvhdr->checkno != 0){
 														echo ' <a href="/masterfiles/check?q='.$chld_cvhdr->checkno.'" target="_blank"> '. $chld_cvhdr->checkno .'</a> ';
 														echo ' <span class="glyphicon glyphicon-warning" title="Duplicate" style="color:#f0ad4e;"></span>';
 													} else {
