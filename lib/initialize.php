@@ -82,6 +82,8 @@ require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.view.cvhdr.php');
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.vproject.php');
 
+require_once(ROOT.DS.'classes'.DS.'vendors'.DS.'PHPExcel.php');
+
 
 
 require_once(ROOT.DS.'classes'.DS.'model'.DS.'class.hc.pie.php');
