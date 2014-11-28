@@ -181,16 +181,19 @@ class vCvchkdtl extends DatabaseObject{
 	*	fetch all check details with @param but not cancelled fiter with bankid or posted/status
 	*	url: /report/chk-day ~ Check Brakdown
 	*/
-	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL){
+	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL, $supplierid=NULL){
 		$sql = "SELECT a.*, (SELECT COUNT(checkno) FROM vcvchkdtl WHERE checkno = a.checkno AND cancelled = 0) as chkctr FROM ". static::$table_name. " a";
 		$sql .= " WHERE checkdate = '".$checkdate."' AND cancelled = 0 ";
 		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
 			$sql .= "AND posted = '".$posted."' "; 
 		}
 		if((!is_null($bankid) || $bankid!="") && is_uuid($bankid)){
-			$sql .= "AND bankid = '".$bankid."'"; 
+			$sql .= "AND bankid = '".$bankid."' "; 
 		}
-		$sql .= " ORDER BY bankcode ASC, payee";
+		if((!is_null($supplierid) || $supplierid!="") && is_uuid($supplierid)){
+			$sql .= "AND supplierid = '".$supplierid."' "; 
+		}
+		$sql .= "ORDER BY bankcode ASC, payee";
 		
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? $result_array : false;
