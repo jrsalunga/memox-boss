@@ -191,7 +191,11 @@ $(document).ready(function(){
 						//$code = Apvhdr::row($cvapvdtl->apvhdrid,0);
 						echo "<tr>";
 						echo "<td><a style=\"text-decoration: none; color: #000;\" target=\"_blank\" href=\"/reports/accounts-payable-print/". $cvapvdtl->apvhdrid ."\">";
-						echo  $cvapvdtl->refno ."</a></td>";
+						
+                        //$accountid = Apvdtl::find_by_field_id('apvhdr', $cvapvdtl->apvhdrid)->getField('accountid');
+                        $account = Account::row(Apvdtl::find_by_field_id('apvhdr', $cvapvdtl->apvhdrid)->getField('accountid'), 0, TRUE);
+                        echo  $cvapvdtl->refno ." / ";
+                        echo '<span title="'.$account->descriptor.'">'. $account->code ."</span></a></td>";
 						echo '<td>'.date('m/d/Y', strtotime($cvapvdtl->due)).'</td>';
 						echo '<td>'.$cvapvdtl->supprefno.'</td>';
 						echo '<td>'.$cvapvdtl->porefno.'</td>';
