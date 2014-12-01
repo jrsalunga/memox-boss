@@ -87,10 +87,20 @@ class DatabaseObject {
             $row = $database->fetch_array($result_set);
             return array_shift($row);
 	}
+
+	public function getField($field){
+		return $this->$field;
+	}
 	
-	public static function row($id,$col) {
+	public static function row($id,$col,$toObject=FALSE) {
 		global $database;
 		$sql = "SELECT * FROM ".static::$table_name." WHERE id = '".$id."'";
+
+		if($toObject){
+			$result_array = static::find_by_sql($sql);
+			return !empty($result_array) ? array_shift($result_array) : false;
+		}
+
 		$result_set = $database->query($sql);
 		$row = $database->fetch_array($result_set);
 	
