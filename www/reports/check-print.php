@@ -192,10 +192,24 @@ $(document).ready(function(){
 						echo "<tr>";
 						echo "<td><a style=\"text-decoration: none; color: #000;\" target=\"_blank\" href=\"/reports/accounts-payable-print/". $cvapvdtl->apvhdrid ."\">";
 						
-                        //$accountid = Apvdtl::find_by_field_id('apvhdr', $cvapvdtl->apvhdrid)->getField('accountid');
-                        $account = Account::row(Apvdtl::find_by_field_id('apvhdr', $cvapvdtl->apvhdrid)->getField('accountid'), 0, TRUE);
-                        echo  $cvapvdtl->refno ." / ";
-                        echo '<span title="'.$account->descriptor.'">'. $account->code ."</span></a></td>";
+                        /*
+                        $apvdtl = Apvdtl::find_by_field_id('apvhdr', $cvapvdtl->apvhdrid);
+
+                        global $database;
+                        //echo $database->last_query;
+
+                        if(isset($apvdtl)){
+                            $account = Account::row($apvdtl->accountid, 0, TRUE);
+                            $acct_desc = $account->descriptor;
+                            $acct_code = $account->code;
+                        } else {
+                            $acct_desc = ' ';
+                            $acct_code = ' ';
+                        }
+                        */
+                        
+                        echo  $cvapvdtl->refno ;
+                       // echo '<span title="'.$acct_desc.'">'.$acct_code."</span></a></td>";
 						echo '<td>'.date('m/d/Y', strtotime($cvapvdtl->due)).'</td>';
 						echo '<td>'.$cvapvdtl->supprefno.'</td>';
 						echo '<td>'.$cvapvdtl->porefno.'</td>';
