@@ -331,6 +331,13 @@ class vCvchkdtl extends DatabaseObject{
 		$result_array = static::find_by_sql($sql);
 		return !empty($result_array) ? $result_array : false;
 	}
+
+
+
+	function daySummary(){
+
+		
+	}
 	
 	
 }

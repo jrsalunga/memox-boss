@@ -20,84 +20,6 @@ $bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']
 $supplierid = (isset($_GET['supplierid']) && is_uuid($_GET['supplierid'])) ? $_GET['supplierid']:NULL;
 
 
-if(isset($_GET['output']) && $_GET['output']==='excel'){
-
-
-	if (PHP_SAPI == 'cli')
-		die('This example should only be run from a Web Browser');
-	/** Include PHPExcel */
-
-	// Create new PHPExcel object
-	$objPHPExcel = new PHPExcel();
-	// Set document properties
-	$objPHPExcel->getProperties()
-		->setCreator("MemoXpress Boss Module")
-		->setLastModifiedBy("MemoXpress Boss Module")
-		->setTitle("Office 2007 XLSX Test Document")
-		->setSubject("Office 2007 XLSX Test Document")
-		->setDescription("Test document for Office 2007 XLSX, generated using PHP classes.")
-		->setKeywords("office 2007 openxml php")
-		->setCategory("Test result file");
-	// Add some data
-	$objPHPExcel->setActiveSheetIndex(0)
-	            ->setCellValue('A1', 'Days')
-	            ->setCellValue('B1', 'CV Ref No')
-	            ->setCellValue('C1', 'Bank')
-	            ->setCellValue('D1', 'Check No')
-	            ->setCellValue('E1', 'Bank')
-	            ->setCellValue('F1', 'Payee')
-	            ->setCellValue('G1', 'Check Amount');
-
-
-	$ctr = 2;
-	foreach($dr->getDaysInterval() as $date){
-    	$currdate = $date->format("Y-m-d");
-
-    	$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted);
-										
-		$len = count($cvchkdtls);
-
-		if($cvchkdtls){
-			
-			foreach ($cvchkdtls as $cvchkdtl) {
-
-				$objPHPExcel->setActiveSheetIndex(0)
-	            ->setCellValue('A'.$ctr, $date->format("m/d/Y"))
-	            ->setCellValue('B'.$ctr, $cvchkdtl->refno)
-	            ->setCellValue('C'.$ctr, $cvchkdtl->bankcode)
-	            ->setCellValue('D'.$ctr, $cvchkdtl->checkno)
-	            ->setCellValue('E'.$ctr, $cvchkdtl->bank)
-	            ->setCellValue('F'.$ctr, $cvchkdtl->payee)
-	            ->setCellValue('G'.$ctr, $cvchkdtl->amount);
-				$ctr++;
-			}
-		}
-	    
-    }
-	
-
-
-	
-	// Rename worksheet
-	$objPHPExcel->getActiveSheet()->setTitle('Simple');
-	// Set active sheet index to the first sheet, so Excel opens this as the first sheet
-	$objPHPExcel->setActiveSheetIndex(0);
-	// Redirect output to a client’s web browser (Excel2007)
-	header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-	header('Content-Disposition: attachment;filename="01simple.xlsx"');
-	header('Cache-Control: max-age=0');
-	// If you're serving to IE 9, then the following may be needed
-	header('Cache-Control: max-age=1');
-	// If you're serving to IE over SSL, then the following may be needed
-	header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT'); // Date in the past
-	header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT'); // always modified
-	header ('Cache-Control: cache, must-revalidate'); // HTTP/1.1
-	header ('Pragma: public'); // HTTP/1.0
-	$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-	$objWriter->save('php://output');
-	exit;
-}
-
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -455,13 +377,16 @@ td.hover {
 										*/
 										
 											
-										
+										$summary = array();
 										$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted,$supplierid);
-										
-										$len = count($cvchkdtls);
+										$prev_bank_tot = 0;
+										$prev_bank = '';
+										$len = count($cvchkdtls) + 1;
 										if($cvchkdtls){
 											echo '<td rowspan="'.$len.'">';
 											echo $date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td>';
+											
+											
 											foreach($cvchkdtls as $cvchkdtl){
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'">';
 												echo '<a href="/reports/check-print/'.$cvchkdtl->cvhdrid.'" target="_blank">'.$cvchkdtl->refno.'</a>';
@@ -482,8 +407,33 @@ td.hover {
 												} else {
 													echo $cvchkdtl->checkno;
 												}
+												/*
+												if($prev_bank == $cvchkdtl->bankcode){
+													$prev_bank_tot = $prev_bank_tot + $cvchkdtl->amount;
+												} else {
+													array_push($summary, array('bankcode'=>$prev_bank, 'totamount'=>$prev_bank_tot));
+													$prev_bank = $cvchkdtl->bankcode;
+													$prev_bank_tot = 0;
+												}
+												*/
+												/*
+												$summary[$cvchkdtl->bankcode]['bankcode'] = $cvchkdtl->bankcode;
+
+												if(!isset($summary[$cvchkdtl->bankcode]['totamount'])){
+													$summary[$cvchkdtl->bankcode]['totamount'] = 0;
+												}
+												$summary[$cvchkdtl->bankcode]['totamount'] = $summary[$cvchkdtl->bankcode]['totamount'] + $cvchkdtl->amount;
+												$summary[$cvchkdtl->bankcode]['posted'] = $cvchkdtl->posted;
 												
+
 												
+												if(array_key_exists($cvchkdtl->bankcode, $summary)) {
+									                $summary[$cvchkdtl->bankcode] +=  $cvchkdtl->amount;
+									            } else {
+									                $summary[$cvchkdtl->bankcode] =  $cvchkdtl->amount;
+									            }
+												
+												*/
 
 
 												if($cvchkdtl->chkctr > 1 && $cvchkdtl->checkno!=0){
@@ -531,10 +481,46 @@ td.hover {
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
 												echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
 											}
+
+											echo '</tr>';
+
+	    									echo '<tr>';
+	                                        echo '<td colspan="5" class="day-summary">';
+
+	                                        		//echo json_encode($summary).'<br>';
+	                                        		$rs = summaryReportPerDay($cvchkdtls, 'bankcode');
+	                                        		echo '<ul>';
+	                                        		$tot=0;
+	                                        		foreach($rs as $k => $v){
+														//echo $k.' - '.$v['totamt'].'<br>';
+														echo '<li>'.$k.' <span>'.number_format($v['totamt'],2).'</span></li>';
+														$tot += $v['totamt'];
+													}
+	                                        		/*
+	                                        		foreach ($summary as $key => $value) {
+	                                        			//echo $value['bankcode'].'-'.$value['totamount'].'<br>';
+	                                        			echo '<li>'.$key.' <span>'.number_format($value,2).'</span></li>';
+	                                        		}
+	                                        		
+	                                     			$s = array_map(function($e){
+	                                     				//echo json_encode($e).'<br>';
+	                                     				return $e['totamount'];
+	                                     			}, $summary);
+													*/
+													echo '<li>Total Amount: <span>'. number_format($tot,2).'</span></li>';	
+	                                     			//echo array_sum($s);
+
+													echo '<li>Total Check: <span>';
+	                                        		echo $len-1;
+	                                        		echo '</span></li>';
+	                                        		echo '</ul>';
+	                                        echo '</td>';
+	                                        echo '</tr>';
 										} else {
 											echo '<td>'.$date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+											echo '</tr>';
 										}
-    									echo '</tr>';
+    									
     								}
     							?>
                             </tbody>

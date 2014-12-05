@@ -2157,6 +2157,7 @@ function exportChkday(){
     $r = $app->request();
     $fr = $database->escape_value($r->get('fr'));
     $to = $database->escape_value($r->get('to'));
+
     $posted = (intval($r->get('posted'))===1 || intval($r->get('posted'))===0) ? $r->get('posted'):NULL;
     $bankid = $database->escape_value($r->get('bankid'));
     $supplierid = $database->escape_value($r->get('supplierid'));
@@ -2184,7 +2185,7 @@ function exportChkday(){
                 ->setCellValue('A1', 'Days')
                 ->setCellValue('B1', 'CV Ref No')
                 ->setCellValue('C1', 'Posted')
-                ->setCellValue('D1', 'Bank')
+                ->setCellValue('D1', 'Bank Code')
                 ->setCellValue('E1', 'Check No')
                 ->setCellValue('F1', 'Bank')
                 ->setCellValue('G1', 'Payee')
@@ -2218,7 +2219,7 @@ function exportChkday(){
 
     
     // Rename worksheet
-    $objPHPExcel->getActiveSheet()->setTitle('Check Breakdown');
+    $objPHPExcel->getActiveSheet()->setTitle($fr .' - '. $to);
     // Set active sheet index to the first sheet, so Excel opens this as the first sheet
     $objPHPExcel->setActiveSheetIndex(0);
     // Redirect output to a client’s web browser (Excel2007)

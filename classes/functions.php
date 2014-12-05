@@ -374,6 +374,13 @@ function hrefer_next($dr){
 
 
 
+function validateDate($date, $format = 'Y-m-d H:i:s'){
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}
+
+
+
 
 
 
@@ -450,6 +457,27 @@ class DT {
 	
 
 
+}
+
+
+
+
+
+function summaryReportPerDay($datas,$uf='id'){
+	$arr = array();
+	$chkctr=0;
+	foreach($datas as $data){
+		
+		if(array_key_exists($data->bankcode, $arr)) {
+			$arr[$data->{$uf}]['totamt'] +=  $data->amount;
+		} else {
+			$arr[$data->{$uf}]['totamt'] =  $data->amount;
+			$arr[$data->{$uf}]['checkdate'] = $data->checkdate;
+
+		}
+	}
+	
+	return $arr;	
 }
 
 

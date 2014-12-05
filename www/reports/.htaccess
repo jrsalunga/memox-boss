@@ -1,6 +1,6 @@
 RewriteEngine on
 
-
+ 
 RewriteRule ^index(\/.*)*$ /reports/index.php
 RewriteRule ^apvhdr-age(\/.*)*$ /reports/apvhdr-age.php
 RewriteRule ^apvhdr(\/.*)*$ /reports/apvhdr.php
