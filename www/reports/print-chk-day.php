@@ -7,13 +7,20 @@ if(isset($_GET['fr']) && isset($_GET['to'])){
 } else {
 	$dr = new DateRange(NULL,NULL,false);	
 }
+
+
+$uri = parse_url($_SERVER['REQUEST_URI']);
+
+
 if(isset($_GET['ref']) && $_GET['ref']=='print'){
-	$uri = parse_url($_SERVER['REQUEST_URI']);
-	$uri = parse_str($uri['query']);
+	parse_str($uri['query']);
 	$back_uri = 'chk-day?fr='.$fr.'&to='.$to;
+	
 } else {
 	$back_uri = 'chk-day';
 }
+
+
 ?>
 <!DOCTYPE HTML>
 <html lang="en-ph">
@@ -166,10 +173,13 @@ table.table tr td {
                     Back
                 </button>
                 -->
-                <button type="button" class="btn btn-default" onClick="window.print()">
-                    <span class="glyphicon glyphicon-print"></span>
-                    Print
-                </button>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" onClick="window.print()">
+                        <span class="glyphicon glyphicon-print"></span>
+                        Print
+                    </button>
+                    <a class="btn btn-default" href="/api/export/chk-day?<?=$uri['query']?>"><span class="glyphicon glyphicon-save"></span> Export</a>
+                </div>
                 
                 <div class="btn-group">
                     <a class="btn btn-default <?=!isset($_GET['posted'])?'active':''?>" href="?fr=<?=$dr->fr?>&to=<?=$dr->to?>"><span class="glyphicon glyphicon-floppy"></span> All</a>

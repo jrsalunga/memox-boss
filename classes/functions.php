@@ -481,5 +481,12 @@ function summaryReportPerDay($datas,$uf='id'){
 }
 
 
+function getQueryString($get=NULL){
+	foreach ($_GET as $key => $value) 
+		$arr[$key]= sanitize($value);
+	return (!empty($arr) || !is_null($arr)) ? $arr:FALSE;
+}
+
+
 
 ?>

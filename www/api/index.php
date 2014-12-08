@@ -64,6 +64,14 @@ function hi($name) {
 }
 
 
+$app->get('/getheaders', function () {
+    $app = \Slim\Slim::getInstance();
+    $r = $app->request();
+
+    var_dump($r);
+ 
+});
+    
 
 $app->post('/AuthUserLogin',  'authUserLogin');
 
