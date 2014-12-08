@@ -379,8 +379,11 @@ td.hover {
 											
 										$summary = array();
 										$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted,$supplierid);
+										/*
 										$prev_bank_tot = 0;
 										$prev_bank = '';
+										*/
+										$real_chk_ctr = 0;
 										$len = count($cvchkdtls) + 1;
 										if($cvchkdtls){
 											echo '<td rowspan="'.$len.'">';
@@ -406,6 +409,11 @@ td.hover {
 													echo '<a href="/masterfiles/check?q='.$cvchkdtl->checkno.'" style="color:#f0ad4e;" target="_blank">'.$cvchkdtl->checkno.'</a>';
 												} else {
 													echo $cvchkdtl->checkno;
+												}
+
+
+												if($cvchkdtl->checkno!=0){
+													$real_chk_ctr++;
 												}
 												/*
 												if($prev_bank == $cvchkdtl->bankcode){
@@ -510,7 +518,7 @@ td.hover {
 													echo '<li>Total Amount: <span>'. number_format($tot,2).'</span></li>';	
 	                                     			//echo array_sum($s);
 
-													echo '<li>Total Check: <span>';
+													echo '<li>Total Check: <span>'. $real_chk_ctr.' / ';
 	                                        		echo $len-1;
 	                                        		echo '</span></li>';
 	                                        		echo '</ul>';
