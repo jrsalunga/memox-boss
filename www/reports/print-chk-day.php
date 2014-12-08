@@ -145,6 +145,10 @@ table {
 table.table[style*="fixed"] {
 	display:none;
 } 
+table.table tr td {
+	padding: 2px 8px;
+	font-size: 10px;
+}
 </style>
 </head>
 <body>
