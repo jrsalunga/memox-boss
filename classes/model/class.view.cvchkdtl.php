@@ -42,6 +42,9 @@ class vCvchkdtl extends DatabaseObject{
         array('db'=>'cvhdrid', 'dt'=>'cvhdrid')
     );
 
+
+    public static $recordset = array();
+
 	
 	
 	public static function find_all($order=NULL) {
@@ -178,8 +181,8 @@ class vCvchkdtl extends DatabaseObject{
 	
 	/*	
 	*	@param: checkdate, bankid, posted   @return: array of obj
-	*	fetch all check details with @param but not cancelled fiter with bankid or posted/status
-	*	url: /report/chk-day ~ Check Brakdown
+	*	fetch all check details with @param but not cancelled filter with bankid or posted/status
+	*	url: /report/chk-day ~ Check Breakdown
 	*/
 	public static function find_by_date_with_bankid($checkdate, $bankid=NULL, $posted=NULL, $supplierid=NULL){
 		$sql = "SELECT a.*, (SELECT COUNT(checkno) FROM vcvchkdtl WHERE checkno = a.checkno AND cancelled = 0) as chkctr FROM ". static::$table_name. " a";
@@ -196,7 +199,145 @@ class vCvchkdtl extends DatabaseObject{
 		$sql .= "ORDER BY bankcode ASC, payee";
 		
 		$result_array = static::find_by_sql($sql);
-		return !empty($result_array) ? $result_array : false;
+		static::$recordset = !empty($result_array) ? $result_array : false;
+		return static::$recordset;
+	}
+
+
+	/*	
+	*	@param: checkdate, bankid, posted   
+	*   @return: array recordset and saved to static::recordset
+	*	fetch all check details with @param but not cancelled filter with bankid or posted/status or supplerid
+	*	url: /report/chk-day ~ Check Breakdown
+	*/
+	public static function checkBreakdown($fr=NULL, $to=NULL, $bankid=NULL, $posted=NULL, $supplierid=NULL){
+		$sql = "SELECT a.*, (SELECT COUNT(checkno) FROM cvchkdtl WHERE checkno = a.checkno AND cancelled = 0) as chkctr FROM ". static::$table_name. " a";
+		//$sql .= " WHERE checkdate = '".$checkdate."' AND cancelled = 0 ";
+		$sql .= " WHERE a.checkdate BETWEEN '".$fr."' AND '".$to."' AND a.cancelled = 0 ";
+		
+		if((!is_null($posted) || $posted!="") && ($posted==1 || $posted==0)){
+			$sql .= "AND a.posted = '".$posted."' "; 
+		}
+		if((!is_null($bankid) || $bankid!="") && is_uuid($bankid)){
+			$sql .= "AND a.bankid = '".$bankid."' "; 
+		}
+		if((!is_null($supplierid) || $supplierid!="") && is_uuid($supplierid)){
+			$sql .= "AND a.supplierid = '".$supplierid."' "; 
+		}
+		$sql .= "ORDER BY a.checkdate ASC, a.bankcode ASC, a.payee ASC";
+		
+		$result_array = static::find_by_sql($sql);
+		static::$recordset = !empty($result_array) ? $result_array : false;
+		return static::$recordset;
+	}
+
+	/*	
+	*	@param: checkdate, bankid, posted   
+	*   @return: summarized array recordset 
+	*	summarize the static::recorset from self::checkBreakdown
+	*	url: /report/chk-day ~ Check Breakdown
+	*/
+	public static function checkBreakdownSummary($fr=NULL, $to=NULL, $bankid=NULL, $posted=NULL, $supplierid=NULL){
+		
+		self::checkBreakdown($fr, $to, $bankid, $posted, $supplierid);
+		
+		$arr =  array();
+		$arr['gtotchkamt'] = 0;
+		$arr['gtotrec'] = 0;
+		$arr['gtotposted'] = 0;
+		$arr['gctrposted'] = 0;
+		$arr['gtotunposted'] = 0;
+		$arr['gctrunposted'] = 0;
+		$arr['gtotcheck'] = 0;
+		$arr['gctrcheck'] = 0;
+		$arr['gtotcash'] = 0;				
+		$arr['gctrcash'] = 0;
+		$arr['rs'] = array();
+		$currdate = FALSE;
+		foreach (static::$recordset as $cvchkdtl) {
+
+			if($currdate != $cvchkdtl->checkdate){
+
+				$currdate = $cvchkdtl->checkdate;
+				
+				$arr['rs'][$currdate] = array();			
+				$arr['rs'][$currdate]['totchkamt'] = 0;	
+				$arr['rs'][$currdate]['totrec'] = 0;
+				$arr['rs'][$currdate]['totposted'] = 0;
+				$arr['rs'][$currdate]['ctrposted'] = 0;
+				$arr['rs'][$currdate]['totunposted'] = 0;
+				$arr['rs'][$currdate]['ctrunposted'] = 0;
+				$arr['rs'][$currdate]['totcheck'] = 0;
+				$arr['rs'][$currdate]['ctrcheck'] = 0;
+				$arr['rs'][$currdate]['totcash'] = 0;				
+				$arr['rs'][$currdate]['ctrcash'] = 0;
+				$arr['rs'][$currdate]['data'] = array();
+			}
+
+			if($cvchkdtl->posted == 1){
+				$arr['rs'][$currdate]['totposted'] += $cvchkdtl->amount;
+				$arr['rs'][$currdate]['ctrposted'] ++;
+				$arr['gtotposted'] += $cvchkdtl->amount;
+				$arr['gctrposted'] ++;
+
+			} else {
+				$arr['rs'][$currdate]['totunposted'] += $cvchkdtl->amount;
+				$arr['rs'][$currdate]['ctrunposted'] ++;
+				$arr['gtotunposted'] += $cvchkdtl->amount;
+				$arr['gctrunposted'] ++;
+			}
+
+			if($cvchkdtl->checkno == 0){
+				$arr['rs'][$currdate]['totcash'] += $cvchkdtl->amount;
+				$arr['rs'][$currdate]['ctrcash'] ++;
+				$arr['gtotcash'] += $cvchkdtl->amount;
+				$arr['gctrcash'] ++;
+			} else { 
+				$arr['rs'][$currdate]['totcheck'] += $cvchkdtl->amount;
+				$arr['rs'][$currdate]['ctrcheck'] ++;
+				$arr['gtotcheck']+= $cvchkdtl->amount;
+				$arr['gctrcheck'] ++;
+			}
+
+			foreach ($cvchkdtl as $key => $value) {
+				 $obj[$key]  = $value;
+			}
+			array_push($arr['rs'][$currdate]['data'], $obj);
+
+
+			$arr['rs'][$currdate]['totchkamt'] += $cvchkdtl->amount;
+			$arr['gtotchkamt'] += $cvchkdtl->amount;
+			$arr['rs'][$currdate]['totrec']++;
+			$arr['gtotrec'] ++;
+
+		}
+		return !empty($arr) ? $arr : FALSE;
+	}
+
+
+	/*	
+	*	@param: field
+	*	summarize all recordset and compute total;
+	*	url: /report/print-chk-day ~ Print Check Breakdown
+	*/
+	public static function getTotal($field=NULL){
+		$arr['all'] = $arr['posted'] = $arr['unposted'] = $arr['check'] = $arr['cash'] = 0;
+		foreach (static::$recordset as $obj) {
+			$arr['all'] += $obj->{$field};
+			if($obj->posted == 1)
+				$arr['posted'] += $obj->{$field};
+			else 
+				$arr['unposted'] += $obj->{$field};
+
+			if($obj->checkno == 0)
+				$arr['cash'] += $obj->{$field};
+			else 
+				$arr['check'] += $obj->{$field};
+
+
+		}
+		return $arr;
+
 	}
 	
 	/*	
