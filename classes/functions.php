@@ -379,6 +379,10 @@ function validateDate($date, $format = 'Y-m-d H:i:s'){
     return $d && $d->format($format) == $date;
 }
 
+function validateDateNow($date, $format = 'Y-m-d H:i:s'){
+    return validateDate($date, $format) ? $date : date('Y-m-d', strtotime('now'));
+}
+
 
 
 
