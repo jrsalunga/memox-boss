@@ -256,10 +256,13 @@ table.table tr td {
 					*/
 					$posted = (isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)) ? $_GET['posted']:NULL;
 					$bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']:NULL;	
-										
-					$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted);
+				    $supplierid = (isset($_GET['supplierid']) && is_uuid($_GET['supplierid'])) ? $_GET['supplierid']:NULL;			
+					$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted,$upplierid);
                     
-					$len = count($cvchkdtls);
+
+                    $summary = array();
+                    $real_chk_ctr = 0;
+					$len = count($cvchkdtls) + 1;
                     
                     if($len > 0){
                         echo '<td rowspan="'.$len.'">';
@@ -280,15 +283,34 @@ table.table tr td {
 							echo '</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'" >'.$cvchkdtl->payee.'</td>';
                             echo '<td class="bnk-'.$cvchkdtl->bankcode.'"  style="text-align:right;">'.number_format($cvchkdtl->amount,2).'</td></tr>';
+                            
+                            if($cvchkdtl->checkno!=0){
+                                $real_chk_ctr++;
+                            }
                         }
+                        echo '</tr>';
+                        echo '<tr>';
+                        echo '<td colspan="5" class="day-summary day-summary-bw">';
+
+                                $rs = summaryReportPerDay($cvchkdtls, 'bankcode');
+                                echo '<ul>';
+                                $tot=0;
+                                foreach($rs as $k => $v){
+                                    echo '<li>'.$k.' <span>'.number_format($v['totamt'],2).'</span></li>';
+                                    $tot += $v['totamt'];
+                                }
+
+                                echo '<li>Total Amount: <span>'. number_format($tot,2).'</span></li>';  
+
+                                echo '<li>Total Check: <span>'. $real_chk_ctr.' / ';
+                                echo $len-1;
+                                echo '</span></li>';
+                                echo '</ul>';
+                        echo '</td>';
+                        echo '</tr>';
                     } else {
                         echo '<td>'.$date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
                     }
-                    
-                    
-                    
-                    //echo $database->last_query;
-                    
                     
                     echo '</tr>';
                 }
