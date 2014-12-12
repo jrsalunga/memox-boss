@@ -467,17 +467,27 @@ class DT {
 
 
 
-function summaryReportPerDay($datas,$uf='id'){
+function summaryReportPerDay($datas,$uf='id', $obj=TRUE){
 	$arr = array();
 	$chkctr=0;
-	foreach($datas as $data){
-		
-		if(array_key_exists($data->bankcode, $arr)) {
-			$arr[$data->{$uf}]['totamt'] +=  $data->amount;
-		} else {
-			$arr[$data->{$uf}]['totamt'] =  $data->amount;
-			$arr[$data->{$uf}]['checkdate'] = $data->checkdate;
-
+	echo $obj;
+	if($obj) {
+		foreach($datas as $data){
+			if(array_key_exists($data->bankcode, $arr)) {
+				$arr[$data->{$uf}]['totamt'] +=  $data->amount;
+			} else {
+				$arr[$data->{$uf}]['totamt'] =  $data->amount;
+				$arr[$data->{$uf}]['checkdate'] = $data->checkdate;
+			}
+		}
+	} else {
+		foreach($datas as $key => $data){
+			if(array_key_exists($data['bankcode'], $arr)) {				
+				$arr[$data[$uf]]['totamt'] +=  $data['amount'];
+			} else {
+				$arr[$data[$uf]]['totamt'] =  $data['amount'];
+				$arr[$data[$uf]]['checkdate'] = $data['amount'];
+			}
 		}
 	}
 	
