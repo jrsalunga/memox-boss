@@ -2,7 +2,7 @@
 include_once('../../lib/initialize.php');
 include_once('../../classes/class.cleanurl.php');
 #error_reporting(E_ALL);
-ini_set('display_errors','Off');
+//ini_set('display_errors','On');
 $cleanUrl->setParts('apvhdrid');
 
 //echo $apvhdrid;

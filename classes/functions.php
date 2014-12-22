@@ -470,7 +470,6 @@ class DT {
 function summaryReportPerDay($datas,$uf='id', $obj=TRUE){
 	$arr = array();
 	$chkctr=0;
-	echo $obj;
 	if($obj) {
 		foreach($datas as $data){
 			if(array_key_exists($data->bankcode, $arr)) {
@@ -502,5 +501,3 @@ function getQueryString($get=NULL){
 }
 
 
-
-?>

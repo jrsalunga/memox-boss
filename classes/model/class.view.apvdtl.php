@@ -3,7 +3,7 @@
 // probably smart to require it before we start.
 require_once(ROOT.DS.'classes'.DS.'database.php');
 
-class vApvdtl extends DatabaseObject{
+class vApvdtl extends DatabaseObject {
 	
 	protected static $table_name="vapvdtl";
 	protected static $db_fields = array('id', 'apvhdrid' ,'accountid' ,'type' ,'projectid' ,'amount' ,'refno' ,'account' ,'account_code' ,'project' ,'date');

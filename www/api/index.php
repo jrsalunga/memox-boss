@@ -170,6 +170,9 @@ $app->get('/report/cvhdr-account', 'getCvhdrAccount');
 $app->get('/export/chk-day', 'exportChkday');
 
 
+$app->get('/export/checkbreakdown', 'exportCheckBreakdown');
+
+
 /*****************************  Run App **************************/
 
 
@@ -2154,6 +2157,57 @@ function apvGetDue(){
 
     echo json_encode($result);
 
+}
+
+function exportCheckBreakdown(){
+    global $database;
+    $app = \Slim\Slim::getInstance();
+    
+    $r = $app->request();
+    $fr = $database->escape_value($r->get('fr'));
+    $to = $database->escape_value($r->get('to'));
+
+    $posted = (intval($r->get('posted'))===1 || intval($r->get('posted'))===0) ? $r->get('posted'):NULL;
+    $bankid = $database->escape_value($r->get('bankid'));
+    $supplierid = $database->escape_value($r->get('supplierid'));
+
+    //echo validateDateNow($to, 'Y-m-d');
+
+    $range = new DateRange($fr,$to,false,120);
+
+    //echo $range->fr.'</br>';
+    //echo $range->to;
+
+    //vCvchkdtl::checkBreakdown($range->fr,$range->to,$bankid,$posted,$supplierid);
+    $cvchkdts = vCvchkdtl::checkBreakdownSummary($range->fr,$range->to,$bankid,$posted,$supplierid);
+
+    echo json_encode($cvchkdts);
+    exit;
+    
+    foreach($range->getDaysInterval() as $date){
+
+        //echo json_encode($cvchkdts['rs'][$date->format("Y-m-d")]['data']).'<br>';
+
+        foreach($cvchkdts['rs'][$date->format("Y-m-d")]['data'] as $key => $value){
+            //echo $key.' - '.json_encode($value).'<br>';
+
+            echo $value['checkno'].'<br>';
+
+            
+        }
+
+    }
+    exit;
+
+    foreach ($cvchkdts['rs'] as $g => $d) {
+       // echo $g.'<br>';
+
+        
+        foreach ($d['data'] as $key) {
+            echo $key['checkno'].'<br>';
+        } 
+        
+    }
 }
 
 

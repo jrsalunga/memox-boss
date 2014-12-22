@@ -233,32 +233,92 @@ table.table tr td {
 	<table class="table table-bordered">
         <thead>
             <tr>
-            <?php
-                echo '<th>Day(s)</th><th>CV Ref No</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>';
-            ?>
+            <th>Day(s)</th><th>CV Ref No</th><th>Bank</th><th>Check No</th><th>Payee</th><th>Check Amount</th>
             </tr>
         </thead>
         <tbody>
             <?php
+                $posted = (isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)) ? $_GET['posted']:NULL;
+                $bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']:NULL;  
+                $supplierid = (isset($_GET['supplierid']) && is_uuid($_GET['supplierid'])) ? $_GET['supplierid']:NULL;
+
+                $cvchkdts = vCvchkdtl::checkBreakdownSummary($dr->fr,$dr->to,$bankid,$posted,$supplierid);
+
+                //echo $cvchkdts['gtotchkamt'];
+
                 foreach($dr->getDaysInterval() as $date){
-                    $currdate = $date->format("Y-m-d");
+                    $rs = $cvchkdts['rs'][$date->format("Y-m-d")];
                     echo '<tr>';
-                    /*
-                    $sql = "SELECT * FROM vcvchkdtl ";
-                    $sql .= "WHERE checkdate = '".$currdate."' AND cancelled = 0 ";
-					if(isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)){
-						$sql .= "AND posted = '".$_GET['posted']."' ";
-					} 
-                    $sql .= "ORDER BY bankcode ASC, payee";
-                    $cvchkdtls = vCvchkdtl::find_by_sql($sql); 
-                    //global $database;
-					//echo $database->last_query;
-					*/
-					$posted = (isset($_GET['posted']) && ($_GET['posted']==1 || $_GET['posted']==0)) ? $_GET['posted']:NULL;
-					$bankid = (isset($_GET['bankid']) && is_uuid($_GET['bankid'])) ? $_GET['bankid']:NULL;	
-				    $supplierid = (isset($_GET['supplierid']) && is_uuid($_GET['supplierid'])) ? $_GET['supplierid']:NULL;			
-					$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted,$upplierid);
+                    $len = $rs['totrec'];
+
+                    if(intval($len) > 0){
+                        $currdate = false;
+                        foreach($rs['data'] as $key => $cvchkdtl){
+                                
+                            if($currdate != $date->format("Y-m-d")){
+                                $span = $len + 1;
+                                echo '<td rowspan="'.$span.'">';
+                                echo $date->format("M j, Y").'<div>'.$date->format("l").'<div></td>';
+
+                                $currdate = $date->format("Y-m-d");
                     
+                                
+                            }
+                               
+                            
+                            echo '<td>'.$cvchkdtl['refno'];
+                            if($cvchkdtl['posted'])
+                                echo '<span class="glyphicon glyphicon-posted-bw pull-right" title="posted"></span>';
+                            else 
+                                echo '<span class="glyphicon glyphicon-unposted-bw pull-right" style="line-height: 1.3;" title="unposted"></span>';
+                            echo '</td><td>'.$cvchkdtl['bankcode'].'</td>';
+                            echo '<td>'.$cvchkdtl['checkno'];
+                            if($cvchkdtl['chkctr'] > 1 && $cvchkdtl['checkno']!=0)
+                                echo ' <span class="glyphicon glyphicon-warning"></span>';
+                            echo '</td><td>'.$cvchkdtl['payee'].'</td>';
+                            echo '<td style="text-align:right;">'.number_format($cvchkdtl['amount'],2).'</td>';
+                            echo '</tr>';
+                        }
+                        echo '</tr>';               
+                        echo '<td colspan="5" class="day-summary day-summary-bw">';
+                                //echo 'fasd';
+                                $rs2 = summaryReportPerDay($rs['data'], 'bankcode', false);
+                                //echo json_encode($rs2);
+                                echo '<ul>';
+                                $tot=0;
+                                foreach($rs2 as $k => $v){
+                                    echo '<li>';
+                                    echo $k.' <span>'.number_format($v['totamt'],2).'</span></li>';
+                                    $tot += $v['totamt'];
+                                }
+
+                                echo '<li title="Total amount on recordset: '.number_format($rs['totchkamt'],2).'">Total Amount:'; 
+                                echo '<span>'. number_format($tot,2).'</span></li>';  
+
+                                echo '<li>Total Check: <span>'. $rs['ctrcheck'].' / '. $rs['totrec'];
+            
+                                echo '</span></li>';
+                                echo '</ul>';
+                        echo '</td>';
+                        echo '</tr>';
+                    } else {
+                        echo '<td>'.$date->format("M j, Y").'<div><em>'.$date->format("l").'</em></div></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>';
+                    }
+
+                   
+                    /*
+
+					$cvchkdtls = vCvchkdtl::find_by_date_with_bankid($currdate,$bankid,$posted,$upplierid);
+                    //global $database;
+                    //echo $database->last_query;
+
+                    $tot = vCvchkdtl::getTotal('amount');
+                    
+                    $gamt += $tot['all'];
+                    $gposted +=$tot['posted'];
+                    $gunposted += $tot['unposted'];
+                    $gcash += $tot['cash'];
+                    $gcheck += $tot['check'];
 
                     $summary = array();
                     $real_chk_ctr = 0;
@@ -313,6 +373,8 @@ table.table tr td {
                     }
                     
                     echo '</tr>';
+
+                    */
                 }
             ?>
         </tbody>
